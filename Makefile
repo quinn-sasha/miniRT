@@ -6,7 +6,7 @@ CC := cc
 RM := rm -f
 RMDIR := rm -rf
 
-MLX_DIR := minilibx-linux
+MLX_DIR := minilibx
 MLX := $(MLX_DIR)/libmlx.a
 GET_NEXT_LINE_DIR := get_next_line
 GET_NEXT_LINE := $(GET_NEXT_LINE_DIR)/libget_next_line.a
