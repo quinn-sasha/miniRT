@@ -6,15 +6,15 @@ CC := cc
 RM := rm -f
 RMDIR := rm -rf
 
+LIBFT_DIR := libft
+LIBFT := $(LIBFT_DIR)/libft.a
 MLX_DIR := minilibx
 MLX := $(MLX_DIR)/libmlx.a
-GET_NEXT_LINE_DIR := get_next_line
-GET_NEXT_LINE := $(GET_NEXT_LINE_DIR)/libget_next_line.a
-LIBPATH := -L$(MLX_DIR) -L$(GET_NEXT_LINE_DIR)
-LIBS := -lget_next_line -lmlx_Linux -lm -lXext -lX11
+LIBPATH := -L$(MLX_DIR) -L$(LIBFt_DIR)
+LIBS := -lft -lmlx_Linux -lm -lXext -lX11
 
 INCLUDE_DIR := include
-INCLUDES := -I$(INCLUDE_DIR) -I$(MLX_DIR)
+INCLUDES := -I$(INCLUDE_DIR)
 CFLAGS := -Wall -Wextra -Werror
 
 # TODO
@@ -33,20 +33,25 @@ ifeq ($(UNAME),arm)
 endif
 
 # General rules
-all: $(NAME) $(MLX)
+all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(LIBFT) $(MLX) $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LIBPATH) $(FRAMEWORK) $(OBJS) -o $(NAME)
+
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+$(MLX):
+	$(MAKE) -C $(MLX_DIR)
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 	@mkdir -p $$(dirname $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(MLX):
-	$(MAKE) -C $(MLX_DIR)
-
 clean:
 	$(RMDIR) $(OBJ_DIR)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C $(MLX_DIR) fclean
 
 fclean: clean
 	$(RM) $(NAME)
