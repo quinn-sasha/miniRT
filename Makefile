@@ -18,7 +18,7 @@ INCLUDES := -I$(INCLUDE_DIR) -I$(MLX_DIR)
 CFLAGS := -Wall -Wextra -Werror
 
 # TODO
-SRCS := 
+SRCS :=
 
 OBJ_DIR := objs
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
