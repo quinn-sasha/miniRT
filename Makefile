@@ -1,52 +1,66 @@
 # Variables
 NAME := miniRT
 SRC_DIR := src
+OBJ_DIR := objs
+LIBFT_DIR := libft
+MLX_DIR := minilibx
+INCLUDE_DIR := include
 
 CC := cc
+CFLAGS := -Wall -Wextra -Werror
 RM := rm -f
 RMDIR := rm -rf
 
-MLX_DIR := minilibx
-MLX := $(MLX_DIR)/libmlx.a
-GET_NEXT_LINE_DIR := get_next_line
-GET_NEXT_LINE := $(GET_NEXT_LINE_DIR)/libget_next_line.a
-LIBPATH := -L$(MLX_DIR) -L$(GET_NEXT_LINE_DIR)
-LIBS := -lget_next_line -lmlx_Linux -lm -lXext -lX11
-
-INCLUDE_DIR := include
-INCLUDES := -I$(INCLUDE_DIR) -I$(MLX_DIR)
-CFLAGS := -Wall -Wextra -Werror
-
-# TODO
-SRCS := 
-
-OBJ_DIR := objs
-OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-
-# Platform compatibility
-
+# --- OS Detection & Configuration ---
 UNAME := $(shell uname -s)
 
-# arm
-ifeq ($(UNAME),arm)
-	FRAMEWORK := -framework OpenGL -framework AppKit
+ifeq ($(UNAME), Linux)
+    MLX_LIB_NAME := mlx_Linux
+    MLX_FILE := libmlx_Linux.a
+    MLX_FLAGS := -lXext -lX11 -lm
+else
+    MLX_LIB_NAME := mlx
+    MLX_FILE := libmlx.a
+    MLX_FLAGS := -framework OpenGL -framework AppKit -lm
 endif
+# ------------------------------------
 
-# General rules
-all: $(NAME) $(MLX)
+LIBFT := $(LIBFT_DIR)/libft.a
+MLX := $(MLX_DIR)/$(MLX_FILE)
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LIBPATH) $(FRAMEWORK) $(OBJS) -o $(NAME)
+LIBPATH := -L$(MLX_DIR) -L$(LIBFT_DIR)
+LIBS := -lft -l$(MLX_LIB_NAME) $(MLX_FLAGS)
 
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
-	@mkdir -p $$(dirname $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+INCLUDES := -I$(INCLUDE_DIR) -I$(MLX_DIR)
+
+SRCS := $(SRC_DIR)/color.c \
+        $(SRC_DIR)/hook.c \
+        $(SRC_DIR)/main.c \
+        $(SRC_DIR)/simple_raytracing.c \
+        $(SRC_DIR)/vector3.c
+
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+
+# Rules
+all: $(NAME)
+
+$(NAME): $(LIBFT) $(MLX) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBPATH) $(LIBS) -o $(NAME)
+
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
 
 $(MLX):
 	$(MAKE) -C $(MLX_DIR)
 
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
 clean:
 	$(RMDIR) $(OBJ_DIR)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C $(MLX_DIR) clean 
 
 fclean: clean
 	$(RM) $(NAME)
