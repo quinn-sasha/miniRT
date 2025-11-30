@@ -16,8 +16,12 @@ t_vector3 vec3_sub(t_vector3 v1, t_vector3 v2) {
   return vec3_init(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 }
 
-t_vector3 vec3_dot(t_vector3 v1, t_vector3 v2) {
-  return vec3_init(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+t_vector3 vec3_scale(t_vector3 v, double scalar) {
+  return vec3_init(v.x * scalar, v.y * scalar, v.z * scalar);
+}
+
+double vec3_dot(t_vector3 v1, t_vector3 v2) {
+  return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 double vec3_length(t_vector3 v) {
