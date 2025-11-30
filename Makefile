@@ -11,7 +11,6 @@ CFLAGS := -Wall -Wextra -Werror
 RM := rm -f
 RMDIR := rm -rf
 
-# --- OS Detection & Configuration ---
 UNAME := $(shell uname -s)
 
 ifeq ($(UNAME), Linux)
