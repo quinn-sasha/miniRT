@@ -2,6 +2,7 @@
 #define MINIRT_H
 
 #include "../libft/libft.h"
+#include "color.h"
 #include "hook_macros.h"
 #include "mlx.h"
 #include "vector3.h"
@@ -55,6 +56,6 @@ void free_mlx_resources_if_allocated(t_data *data);
 int destroy_window(t_data *data);
 int handle_keypress(int keysym, t_data *data);
 // simple_raytracing.c
-int simple_raytracing(t_data data);
+int simple_raytracing(t_data *data);
 
 #endif
