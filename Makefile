@@ -11,6 +11,7 @@ CFLAGS := -Wall -Wextra -Werror
 RM := rm -f
 RMDIR := rm -rf
 
+# -- Platform compatibility -----------
 UNAME := $(shell uname -s)
 
 ifeq ($(UNAME), Linux)
