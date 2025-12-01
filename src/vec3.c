@@ -1,4 +1,6 @@
 #include "vec3.h"
+#include <math.h>
+#include <stdio.h>
 
 t_vec3 vec3_init(double x, double y, double z) {
   t_vec3 result;
