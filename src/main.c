@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include "../includes/color.h"
+#include "../includes/vec3.h"
 
 #define IMAGE_WIDTH 256
 #define IMAGE_HEIGHT 256
@@ -7,8 +9,7 @@
 int main(void)
 {
     int i, j;
-    double r, g, b;
-    int ir, ig, ib;
+    t_color pixel_color;
 
     // PPM ヘッダの出力 (P3 フォーマット)
     // "P3"
@@ -19,13 +20,12 @@ int main(void)
         fprintf(stderr, "\rScanlines remaining: %d ", j);
         fflush(stderr); //バッファを強制的にフラッシュしすぐに表示させる
         for (i = 0; i < IMAGE_WIDTH; ++i){
-            r = (double)i / (IMAGE_WIDTH - 1);
-            g = (double)j / (IMAGE_HEIGHT - 1);
-            b = 0.25;
-            ir = (int)(255.999 * r);
-            ig = (int)(255.999 * g);
-            ib = (int)(255.999 * b);
-            printf("%d %d %d\n", ir, ig, ib);   
+            pixel_color = vec3_new(
+                (double)i / (IMAGE_WIDTH - 1),
+                (double)j / (IMAGE_HEIGHT - 1),
+                0.25
+            );
+            write_color(pixel_color);
         }
     }
     fprintf(stderr, "\nDone.\n");
