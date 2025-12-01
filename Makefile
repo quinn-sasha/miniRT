@@ -33,11 +33,8 @@ LIBS := -lft -l$(MLX_LIB_NAME) $(MLX_FLAGS)
 
 INCLUDES := -I$(INCLUDE_DIR) -I$(MLX_DIR)
 
-SRCS := $(SRC_DIR)/color.c \
-        $(SRC_DIR)/hook.c \
+SRCS := $(SRC_DIR)/vec3.c \
         $(SRC_DIR)/main.c \
-        $(SRC_DIR)/simple_raytracing.c \
-        $(SRC_DIR)/vector3.c
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
