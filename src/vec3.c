@@ -1,0 +1,72 @@
+#include "../includes/vec3.h"
+#include <stdio.h>
+
+t_vec3 vec3_new(double x, double y, double z)
+{
+    t_vec3 v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    return (v);
+}
+
+t_vec3 vec3_zero(void)
+{
+    t_vec3 v;
+    v.x = 0.0;
+    v.y = 0.0;
+    v.z = 0.0;
+    return (v);
+}
+
+t_vec3 vec3_add(t_vec3 u, t_vec3 v)
+{
+    return vec3_new(u.x - v.x, u.y - v.y, u.z - v.z);
+}
+
+t_vec3 vec3_mult(t_vec3 u, t_vec3 v)
+{
+    return vec3_new(u.x * v.x, u.y * v.y, u.z * v.z);
+}
+
+t_vec3 vec3_mult_scalar(t_vec3 v, double t)
+{
+    return vec3_new(v.x * t, v.y * t, v.z * t);
+}
+
+t_vec3 vec3_div_scalar(t_vec3 v, double t)
+{
+    return vec3_mult_scalar(v, 1.0 / t);
+}
+
+t_vec3 vec3_neg(t_vec3 v)
+{
+    return vec3_new(-v.x, -v.y, -v.z);
+}
+
+double vec3_length_squared(t_vec3 v)
+{
+    return v.x * v.x + v.y * v.y + v.z * v.z;
+}
+
+double vec3_length(t_vec3 v)
+{
+    return sqrt(vec3_length_squared(v));
+}
+
+double vec3_dot(t_vec3 u, t_vec3 v)
+{
+    return u.x * v.x + u.y * v.y + u.z * v.z;
+}
+
+t_vec3 vec3_cross(t_vec3 u, t_vec3 v)
+{
+    return vec3_new(u.y * v.z - u.z * v.y,
+                    u.z * v.x - u.x * v.z,
+                    u.x * v.y - u.y * v.x);
+}
+
+t_vec3 vec3_unit_vector(t_vec3 v)
+{
+    return vec3_div_scalar(v, vec3_length(v));
+}

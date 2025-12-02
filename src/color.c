@@ -1,9 +1,11 @@
-#include "minirt.h"
+#include "../includes/color.h"
 
-uint32_t create_rgb(int red, int green, int blue) {
-  uint32_t result = 0;
-  result = result | blue;
-  result = result | (green << 8);
-  result = result | (red << 16);
-  return result;
+void write_color(t_color pixel_color)
+{
+    int ir, ig, ib;
+
+    ir = (int)(255.999 * pixel_color.x);
+    ig = (int)(255.999 * pixel_color.y);
+    ib = (int)(255.999 * pixel_color.z);
+    printf("%d %d %d\n", ir, ig, ib);
 }
