@@ -14,6 +14,10 @@ t_vec3 vec3_scale(t_vec3 v, double scalar) {
   return vec3_init(v.x * scalar, v.y * scalar, v.z * scalar);
 }
 
+t_vec3 vec3_divide(t_vec3 v, double scalar) {
+  return vec3_scale(v, 1 / scalar);
+}
+
 t_vec3 vec3_add(t_vec3 a, t_vec3 b) {
   return vec3_init(a.x + b.x, a.y + b.y, a.z + b.z);
 }
