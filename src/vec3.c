@@ -1,4 +1,4 @@
-#include "../includes/vec3.h"
+#include "vec3.h"
 #include <stdio.h>
 
 t_vec3 vec3_new(double x, double y, double z)
@@ -20,6 +20,11 @@ t_vec3 vec3_zero(void)
 }
 
 t_vec3 vec3_add(t_vec3 u, t_vec3 v)
+{
+    return vec3_new(u.x + v.x, u.y + v.y, u.z + v.z);
+}
+
+t_vec3 vec3_sub(t_vec3 u, t_vec3 v)
 {
     return vec3_new(u.x - v.x, u.y - v.y, u.z - v.z);
 }

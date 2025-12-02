@@ -1,4 +1,4 @@
-#include "../includes/color.h"
+#include "color.h"
 
 void write_color(t_color pixel_color)
 {
