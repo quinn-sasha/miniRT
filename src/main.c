@@ -6,21 +6,19 @@
 #define IMAGE_WIDTH 384
 #define ASPECT_RATIO (16.0 / 9.0)
 #define MAX_COLOR_VALUE 255
-#define FOCAL_LENGTH 1.0
+#define FOCAL_LENGTH 1.0 //カメラの焦点距離　視点からビューポートまでの距離
 
 t_color ray_color(t_ray r);
 
 int main(void)
 {
-    int i, j;
+    int row, col;
     int image_height;
     t_color pixel_color;
     t_ray r;
 
     //画像設定
     image_height = (int)(IMAGE_WIDTH / ASPECT_RATIO);
-    if (image_height < 1)
-        image_height = 1; //最小高さは１
 
     // PPM ヘッダの出力 (P3 フォーマット)
     // "P3"
@@ -34,9 +32,9 @@ int main(void)
 
     //視点(origin)は(0.0.0)
     t_point3 origin = vec3_new(0, 0, 0);
-    //ビューポートの横方向ベクトル
+    //ビューポートの幅全体を表すベクトル
     t_vec3 horizontal = vec3_new(viewport_width, 0, 0);
-    //ビューポートの横方向ベクトル
+    //ビューポートの高さ方向を表すベクトル
     t_vec3 vertical = vec3_new(0, viewport_height, 0);
     //ビューポートの左下隅(lower_left_corner)の座標計算
     // LLC = origin - horizontal / 2 - vertical / 2 - (0, 0, focal_length)
@@ -48,12 +46,13 @@ int main(void)
               lower_left_corner = vec3_sub(lower_left_corner, v_half);
               lower_left_corner = vec3_sub(lower_left_corner, focus_vec);
 
-    for (j = image_height - 1; j >= 0; --j){
-        fprintf(stderr, "\rScanlines remaining: %d ", j);
+    for (row = image_height - 1; row >= 0; --row){
+        fprintf(stderr, "\rScanlines remaining: %d ", row);
         fflush(stderr); //バッファを強制的にフラッシュしすぐに表示させる
-        for (i = 0; i < IMAGE_WIDTH; ++i){
-            double u = (double)i / (IMAGE_WIDTH - 1);
-            double v = (double)j / (image_height - 1);
+        for (col = 0; col < IMAGE_WIDTH; ++col){
+          //現在のピクセル位置(col, row)をビューポート上の0.0から1.0の間の座標(u, v)に変換　正規化座標
+            double u = (double)col / (IMAGE_WIDTH - 1);
+            double v = (double)row / (image_height - 1);
             //レイの方向ベクトルを計算
             //direction = lower_left_corner + u*horizontal + v*vertical - origin
             t_vec3 scaled_h = vec3_mult_scalar(horizontal, u);
@@ -74,3 +73,6 @@ int main(void)
     fprintf(stderr, "\nDone.\n");
     return (0);
 }
+
+//なぜ焦点距離だけ下がるのか
+//レイの方向ベクトルの計算

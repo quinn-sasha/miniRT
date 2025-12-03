@@ -2,8 +2,9 @@
 #include "color.h"
 #include "vec3.h"
 #include <stdbool.h>
+#include <math.h>
 
-bool hit_sphere(t_point3 center, double radius, t_ray r)
+double hit_sphere(t_point3 center, double radius, t_ray r)
 {
     // vec3 oc = r.origin() - center;
     t_vec3 oc = vec3_sub(r.origin, center);
@@ -12,21 +13,26 @@ bool hit_sphere(t_point3 center, double radius, t_ray r)
     double a = vec3_length_squared(r.direction);
 
     // b = 2 * (D・OC)
-    double b = 2.0 * vec3_dot(oc, r.direction);
+    double half_b = vec3_dot(oc, r.direction);
 
     // c = OC・OC - r^2
     double c = vec3_length_squared(oc) - radius * radius;
 
     // 判別式: discriminant = b^2 - 4ac
-    double discriminant = b * b - 4 * a * c;
+    double discriminant = half_b * half_b - a * c;
 
-    // return (discriminant > 0);
-    // 判別式が正であれば、実数解（交点）が存在する
-    return (discriminant > 0.0);
+    if (discriminant < 0.0)
+        return (-1.0);
+    //近い交点の方だけ扱う
+    double t_hit = (-half_b - sqrt(discriminant)) / a;
+    //t < 0の交点があっても無視する判定はray_colorに任せる
+    return (t_hit);
 }
 
+//   (P(t) - C)⋅(P(t) - C) = r^2 レイが球と交わるならあるｔでP(t)が球の方程式を満たす。
+//   t^2b⋅b+2tb⋅(A−C)+(A−C)⋅(A−C)−r^2=0
+//　　今のままだとt < 0で交わる場合にもピクセルが赤くなる。
 
-//レイが何も物体に当たらなかった場合の背景色を計算する
 t_color ray_color(t_ray r)
 {
     //仮の球体　中心(0, 0, -1), 半径0.5
@@ -38,8 +44,23 @@ t_color ray_color(t_ray r)
 
     if (t_hit > 0.0)
     {
-        return (vec3_new(1.0, 0.0, 0.0));
+        //法線の計算と可視化
+
+        //a.交点P(t)を計算
+        t_point3 p = ray_at(r, t_hit);
+
+        //b.外向きの法線ベクトル N を計算
+        //球だと交点から中心を引いたベクトルが法線と同じ向き
+        t_vec3 outward_normal = vec3_sub(p, sphere_center);
+
+        //c.法線を単位ベクトルに正規化
+        t_vec3 N = vec3_unit_vector(outward_normal);
+
+        //d.法線ベクトルNの成分 [-1, 1] を色 [0, 1]にマッピングし可視化
+        t_color normal_color = vec3_new(N.x + 1.0, N.y + 1.0, N.z + 1.0);
+        return (vec3_mult_scalar(normal_color, 0.5));
     }
+
     // 2.背景色の計算 (交差しなかった場合)
 
     t_vec3 unit_direction;
@@ -49,7 +70,7 @@ t_color ray_color(t_ray r)
     t_color temp_color_a;
     t_color temp_color_b;
 
-    //レイの方向ベクトルを単位ベクトルに正規化
+    //レイの方向ベクトルを単位ベクトルに正規化　背景の色にベクトルの長さは関係ない
     unit_direction = vec3_unit_vector(r.direction);
     //垂直成分を[-1, 1]から[0, 1]の範囲にマップ (グラデーション係数t)
     t = 0.5 * (unit_direction.y + 1.0);
