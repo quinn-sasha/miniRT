@@ -8,6 +8,8 @@ typedef struct s_color {
 } t_color;
 
 t_color init_color(double red, double green, double blue);
+t_color add_color(t_color a, t_color b);
+t_color scale_color(t_color color, double scalar);
 void write_color(int fd, t_color color);
 
 #endif

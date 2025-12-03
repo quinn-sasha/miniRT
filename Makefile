@@ -35,7 +35,8 @@ INCLUDES := -I$(INCLUDE_DIR) # -I$(MLX_DIR)
 
 SRCS := $(SRC_DIR)/vec3.c \
         $(SRC_DIR)/main.c \
-        $(SRC_DIR)/color.c
+        $(SRC_DIR)/color.c \
+				$(SRC_DIR)/ray.c
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

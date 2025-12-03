@@ -18,11 +18,17 @@ t_vec3 vec3_divide(t_vec3 v, double scalar) {
   return vec3_scale(v, 1 / scalar);
 }
 
+t_vec3 vec3_inverse(t_vec3 v) { return vec3_scale(v, -1); }
+
 t_vec3 vec3_add(t_vec3 a, t_vec3 b) {
   return vec3_init(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-t_vec3 vec3_subtract(t_vec3 a, t_vec3 b) {
+t_vec3 vec3_add_triple(t_vec3 a, t_vec3 b, t_vec3 c) {
+  return vec3_add(a, vec3_add(b, c));
+}
+
+t_vec3 vec3_sub(t_vec3 a, t_vec3 b) {
   return vec3_init(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
