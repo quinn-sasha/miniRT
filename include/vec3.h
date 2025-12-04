@@ -14,6 +14,7 @@ t_vec3 vec3_divide(t_vec3 v, double scalar);
 t_vec3 vec3_add(t_vec3 a, t_vec3 b);
 t_vec3 vec3_add_triple(t_vec3 a, t_vec3 b, t_vec3 c);
 t_vec3 vec3_sub(t_vec3 a, t_vec3 b);
+double vec3_length_squared(t_vec3 v);
 double vec3_length(t_vec3 v);
 double vec3_dot(t_vec3 a, t_vec3 b);
 t_vec3 vec3_normalize(t_vec3 v);
