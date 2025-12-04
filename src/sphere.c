@@ -1,4 +1,5 @@
 #include "sphere.h"
+#include "hittable.h"
 #include <math.h>
 
 t_sphere init_sphere(t_vec3 center, double radius) {
@@ -8,8 +9,8 @@ t_sphere init_sphere(t_vec3 center, double radius) {
   return new_sphere;
 }
 
-bool hit_sphere(t_ray ray, double min_t, double max_t, t_hit_record *hit_record,
-                t_sphere sphere) {
+bool hits_sphere(t_ray ray, double min_t, double max_t,
+                 t_hit_record *hit_record, t_sphere sphere) {
   t_vec3 sphere2camera = vec3_sub(ray.origin, sphere.center);
   double a = vec3_length_squared(ray.direction);
   double half_b = vec3_dot(sphere2camera, ray.direction);
@@ -28,7 +29,8 @@ bool hit_sphere(t_ray ray, double min_t, double max_t, t_hit_record *hit_record,
     return false;
   hit_record->t = t;
   hit_record->intersection = ray_at(ray, t);
-  hit_record->normal_vector = vec3_divide(
+  t_vec3 outward_normal_vector = vec3_divide(
       vec3_sub(hit_record->intersection, sphere.center), sphere.radius);
+  set_fronts_face_and_normal_vector(hit_record, ray, outward_normal_vector);
   return true;
 }
