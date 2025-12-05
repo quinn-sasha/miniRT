@@ -1,5 +1,5 @@
 #include "sphere.h"
-#include "hittable.h"
+#include "hit_record.h"
 #include <math.h>
 
 t_sphere init_sphere(t_vec3 center, double radius) {

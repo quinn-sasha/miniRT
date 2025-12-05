@@ -1,4 +1,4 @@
-#include "hittable.h"
+#include "hit_record.h"
 
 void set_fronts_face_and_normal_vector(t_hit_record *record, t_ray ray,
                                        t_vec3 outward_normal_vector) {

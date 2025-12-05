@@ -1,5 +1,5 @@
-#ifndef HITTABLE_H
-#define HITTABLE_H
+#ifndef HIT_RECORD_H
+#define HIT_RECORD_H
 
 #include "ray.h"
 #include "vec3.h"
@@ -14,5 +14,4 @@ typedef struct s_hit_record {
 
 void set_fronts_face_and_normal_vector(t_hit_record *record, t_ray ray,
                                        t_vec3 outward_normal_vector);
-
 #endif
