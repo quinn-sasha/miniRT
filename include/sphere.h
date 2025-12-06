@@ -11,7 +11,7 @@ typedef struct s_sphere {
   double radius;
 } t_sphere;
 
-t_sphere init_sphere(t_vec3 center, double radius);
+t_sphere *new_sphere(t_vec3 center, double radius);
 bool hits_sphere(t_ray ray, double min_t, double max_t,
                  t_hit_record *hit_record, t_sphere sphere);
 

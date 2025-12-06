@@ -1,11 +1,13 @@
 #include "sphere.h"
 #include "hit_record.h"
 #include <math.h>
+#include <stdlib.h>
 
-t_sphere init_sphere(t_vec3 center, double radius) {
-  t_sphere new_sphere;
-  new_sphere.center = center;
-  new_sphere.radius = radius;
+// TODO: malloc error handling
+t_sphere *new_sphere(t_vec3 center, double radius) {
+  t_sphere *new_sphere = malloc(sizeof(t_sphere));
+  new_sphere->center = center;
+  new_sphere->radius = radius;
   return new_sphere;
 }
 
