@@ -12,5 +12,6 @@ typedef struct s_xorshift64_state {
 
 void init_xorshift64_state(t_xorshift64_state *state);
 double random_double(t_xorshift64_state *state);
+double random_double_range(t_xorshift64_state *state, double min, double max);
 
 #endif // !RANDOM_NUMBER_GENERATOR_H

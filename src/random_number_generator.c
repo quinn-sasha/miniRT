@@ -18,3 +18,7 @@ double random_double(t_xorshift64_state *state) {
   uint64_t result = xorshift64(state);
   return (result >> 11) * INVERSE_TWO_POW_53;
 }
+
+double random_double_range(t_xorshift64_state *state, double min, double max) {
+  return min + (max - min) * random_double(state);
+}

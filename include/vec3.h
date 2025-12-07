@@ -1,6 +1,8 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include "random_number_generator.h"
+
 typedef struct s_vec3 {
   double x;
   double y;
@@ -20,5 +22,9 @@ double vec3_dot(t_vec3 a, t_vec3 b);
 t_vec3 vec3_normalize(t_vec3 v);
 void vec3_print(t_vec3 v);
 t_vec3 vec3_cross(t_vec3 a, t_vec3 b);
+t_vec3 init_random_vec3(t_xorshift64_state *state);
+t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min,
+                              double max);
+t_vec3 get_random_unit_vec3(t_xorshift64_state *state);
 
 #endif

@@ -1,5 +1,7 @@
 #include "vec3.h"
+#include "random_number_generator.h"
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 t_vec3 vec3_init(double x, double y, double z) {
@@ -52,4 +54,26 @@ void vec3_print(t_vec3 v) { printf("x: %e, y: %e, z: %e\n", v.x, v.y, v.z); }
 t_vec3 vec3_cross(t_vec3 a, t_vec3 b) {
   return vec3_init(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
                    a.x * b.y - a.y * b.x);
+}
+
+t_vec3 init_random_vec3(t_xorshift64_state *state) {
+  double x = random_double(state);
+  double y = random_double(state);
+  double z = random_double(state);
+  return vec3_init(x, y, z);
+}
+
+t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min,
+                              double max) {
+  double x = random_double_range(state, min, max);
+  double y = random_double_range(state, min, max);
+  double z = random_double_range(state, min, max);
+  return vec3_init(x, y, z);
+}
+
+t_vec3 get_random_unit_vec3(t_xorshift64_state *state) {
+  double a = random_double_range(state, 0, 2 * M_PI);
+  double z = random_double_range(state, -1, 1);
+  double small_r = sqrt(1 - z * z);
+  return vec3_init(small_r * cos(a), small_r * sin(a), z);
 }

@@ -1,4 +1,5 @@
 #include "color.h"
+#include "math.h"
 #include "utils.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -35,9 +36,9 @@ void write_color(int fd, t_color color, int num_samples_per_pixel) {
   double blue = color.blue;
 
   double scalar = 1.0 / num_samples_per_pixel;
-  red *= scalar;
-  green *= scalar;
-  blue *= scalar;
+  red = sqrt(scalar * red);
+  green = sqrt(scalar * green);
+  blue = sqrt(scalar * blue);
   int r = 256 * clamp(red, 0.0, 0.999);
   int g = 256 * clamp(green, 0.0, 0.999);
   int b = 256 * clamp(blue, 0.0, 0.999);
