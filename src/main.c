@@ -1,21 +1,14 @@
+#include "camera.h"
 #include "color.h"
 #include "hit_record.h"
 #include "object_list.h"
+#include "random_number_generator.h"
 #include "ray.h"
 #include "vec3.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
-
-static t_vec3 get_lower_left_corner(t_vec3 camera, t_vec3 horizontal,
-                                    t_vec3 vertical, double focal_length) {
-  t_vec3 minus_half_horizontal = vec3_inverse(vec3_divide(horizontal, 2));
-  t_vec3 minus_half_vertical = vec3_inverse(vec3_divide(vertical, 2));
-  t_vec3 minus_z_componet = vec3_inverse(vec3_init(0, 0, focal_length));
-  return vec3_add_triple(camera, minus_half_horizontal,
-                         vec3_add(minus_half_vertical, minus_z_componet));
-}
 
 static t_color get_ray_color(t_ray ray, t_object_list *list) {
   t_hit_record hit_record;
@@ -41,14 +34,8 @@ int main(void) {
   dprintf(fd, "P3\n");
   dprintf(fd, "%d %d\n255\n", image_width, image_height);
 
-  double viewport_height = 2.0;
-  double viewport_width = viewport_height * aspect_ratio;
-  double focal_length = 1.0;
-  t_vec3 camera = vec3_init(0, 0, 0);
-  t_vec3 horizontal = vec3_init(viewport_width, 0, 0);
-  t_vec3 vertical = vec3_init(0, viewport_height, 0);
-  t_vec3 lower_left_corner =
-      get_lower_left_corner(camera, horizontal, vertical, focal_length);
+  t_viewport viewport = init_viewport(aspect_ratio, 2.0 * aspect_ratio, 2.0);
+  t_camera camera = init_camera(viewport, vec3_init(0, 0, 0), 1.0);
 
   t_object_list object_list;
   init_object_list(&object_list);
@@ -57,18 +44,21 @@ int main(void) {
   object_list_insert_sphere_last(&object_list,
                                  new_sphere(vec3_init(0, -100.5, -1), 100));
 
+  const int num_samples_per_pixel = 100;
+  t_xorshift64_state state;
+  init_xorshift64_state(&state);
   for (int col = image_height - 1; col >= 0; col--) {
     for (int row = 0; row < image_width; row++) {
       dprintf(STDERR_FILENO, "Scanlines remaining: %d ", col);
 
-      double x_offset = (double)row / (image_width - 1);
-      double y_offset = (double)col / (image_height - 1);
-      t_vec3 offset_from_lower_left =
-          vec3_add_triple(lower_left_corner, vec3_scale(horizontal, x_offset),
-                          vec3_scale(vertical, y_offset));
-      t_ray ray = init_ray(camera, vec3_sub(offset_from_lower_left, camera));
-      t_color pixel_color = get_ray_color(ray, &object_list);
-      write_color(fd, pixel_color);
+      t_color pixel_color = init_color(0, 0, 0);
+      for (int sample = 0; sample < num_samples_per_pixel; sample++) {
+        double x_offset = (row + random_double(&state)) / (image_width - 1);
+        double y_offset = (col + random_double(&state)) / (image_height - 1);
+        t_ray ray = get_ray(camera, x_offset, y_offset);
+        pixel_color = add_color(pixel_color, get_ray_color(ray, &object_list));
+      }
+      write_color(fd, pixel_color, num_samples_per_pixel);
     }
   }
   dprintf(STDERR_FILENO, "Done\n");

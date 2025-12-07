@@ -1,4 +1,5 @@
 #include "color.h"
+#include "utils.h"
 #include <stdio.h>
 #include <unistd.h>
 
@@ -28,9 +29,17 @@ t_color scale_color(t_color color, double scalar) {
 
 // 各成分を[0, 255]に変換する
 // 255.999 をかけることで、0.999...をかける場合でも白(255)になるようにする
-void write_color(int fd, t_color color) {
-  int red = 255.999 * color.red;
-  int green = 255.999 * color.green;
-  int blue = 255.999 * color.blue;
-  dprintf(fd, "%d %d %d\n", red, green, blue);
+void write_color(int fd, t_color color, int num_samples_per_pixel) {
+  double red = color.red;
+  double green = color.green;
+  double blue = color.blue;
+
+  double scalar = 1.0 / num_samples_per_pixel;
+  red *= scalar;
+  green *= scalar;
+  blue *= scalar;
+  int r = 256 * clamp(red, 0.0, 0.999);
+  int g = 256 * clamp(green, 0.0, 0.999);
+  int b = 256 * clamp(blue, 0.0, 0.999);
+  dprintf(fd, "%d %d %d\n", r, g, b);
 }

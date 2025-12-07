@@ -10,6 +10,7 @@ typedef struct s_xorshift64_state {
   uint64_t data;
 } t_xorshift64_state;
 
-uint64_t xorshift64(t_xorshift64_state *state);
+void init_xorshift64_state(t_xorshift64_state *state);
+double random_double(t_xorshift64_state *state);
 
 #endif // !RANDOM_NUMBER_GENERATOR_H
