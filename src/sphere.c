@@ -4,10 +4,11 @@
 #include <stdlib.h>
 
 // TODO: malloc error handling
-t_sphere *new_sphere(t_vec3 center, double radius) {
+t_sphere *new_sphere(t_vec3 center, double radius, t_material material) {
   t_sphere *new_sphere = malloc(sizeof(t_sphere));
   new_sphere->center = center;
   new_sphere->radius = radius;
+  new_sphere->material = material;
   return new_sphere;
 }
 
@@ -34,5 +35,6 @@ bool hits_sphere(t_ray ray, double min_t, double max_t,
   t_vec3 outward_normal_vector = vec3_divide(
       vec3_sub(hit_record->intersection, sphere.center), sphere.radius);
   set_fronts_face_and_normal_vector(hit_record, ray, outward_normal_vector);
+  hit_record->material = sphere.material;
   return true;
 }
