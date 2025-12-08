@@ -13,11 +13,11 @@ typedef struct s_sphere
 t_sphere sphere_new(t_point3 cen, double r);
 
 bool hit_sphere(
-	const t_ray r,
-	double t_min,
-	double t_max,
-	t_hit_record *rec,
-	const t_sphere sp //球の情報（center, radius）へのポインタ
+	const t_ray ray,
+	double min_t,
+	double max_t,
+	t_hit_record *hit_rec,
+	const t_sphere *sphere//球の情報（center, radius）へのポインタ
 );
 
 #endif

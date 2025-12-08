@@ -11,6 +11,6 @@ typedef struct s_ray
 
 t_ray ray_new(t_point3 origin, t_vec3 direction);
 //レイ上の点P(t) = O + tDを計算
-t_point3 ray_at(t_ray r, double t);
+t_point3 ray_at(t_ray ray, double t);
 
 #endif

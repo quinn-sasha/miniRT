@@ -4,33 +4,33 @@
 
 //--初期化関数--
 
-t_sphere sphere_new(t_point3 cen, double r)
+t_sphere sphere_new(t_point3 center, double radius)
 {
-	t_sphere sp;
-	sp.center = cen;
-	sp.radius = r;
-	return (sp);
+	t_sphere sphere;
+	sphere.center = center;
+	sphere.radius = radius;
+	return (sphere);
 }
 
 bool hit_sphere(
-	const t_ray r,
-	double t_min,
-	double t_max,
-	t_hit_record *rec,
-	const t_sphere sp
+	const t_ray ray,
+	double min_t,
+	double max_t,
+	t_hit_record *hit_rec,
+	const t_sphere *sphere
 )
 {
     // 1.レイと球の中心を結ぶ　vec3 oc = r.origin() - center;
-    t_vec3 oc = vec3_sub(r.origin, sp.center);
+    t_vec3 oc = vec3_sub(ray.origin, sphere->center);
 
     // a = D・D (方向ベクトルの長さの二乗)
-    double a = vec3_length_squared(r.direction);
+    double a = vec3_length_squared(ray.direction);
 
     // b = 2 * (D・OC)
-    double half_b = vec3_dot(oc, r.direction);
+    double half_b = vec3_dot(oc, ray.direction);
 
     // c = OC・OC - r^2
-    double c = vec3_length_squared(oc) - sp.radius * sp.radius;
+    double c = vec3_length_squared(oc) - sphere->radius * sphere->radius;
 
     // 判別式: discriminant = b^2 - 4ac
     double discriminant = half_b * half_b - a * c;
@@ -42,38 +42,24 @@ bool hit_sphere(
 		double root = sqrt(discriminant);
 
 		//カメラに近い方の交点
-		double t_temp = (-half_b - root) / a;
+		double smaller_t = (-half_b - root) / a;
+		double	bigger_t = (-half_b + root) / a;
+		double t;
 
-		if (t_temp < t_max && t_temp > t_min)
-		{
-			rec->t = t_temp;
-			rec->p = ray_at(r, rec->t);
-
+		if (smaller_t < max_t && smaller_t > min_t)
+			t = smaller_t;
+		else if (bigger_t > min_t && bigger_t < max_t)
+			t = bigger_t;
+		else
+			return (false);
+		hit_rec->t = t;
+		//交点のベクトル
+		hit_rec->intersection = ray_at(ray, t);
 			//法線の計算
-			t_vec3 outward_normal = vec3_div_scalar(vec3_sub(rec->p, sp.center), sp.radius);
+		t_vec3 outward_normal = vec3_div_scalar(vec3_sub(hit_rec->intersection, sphere->center), sphere->radius);
 
-			//法線の向きを設定
-			set_face_normal(r, outward_normal, rec);
+		//法線の向きを調整し、front_faceフラグを設定する。
+		set_face_normal(ray, outward_normal, hit_rec);
 
-			return (true);
-		}
-		// b) カメラから遠い方の交点をチェック (カメラに近い方が範囲外だった場合)
-    // t_temp = (-half_b + root) / a
-    t_temp = (-half_b + root) / a;
-    if (t_temp < t_max && t_temp > t_min)
-    {
-        // 衝突情報を hit_record に記録
-        rec->t = t_temp;
-        rec->p = ray_at(r, rec->t);
-
-        // 法線の計算: N = (P - C) / r
-        t_vec3 outward_normal = vec3_div_scalar(vec3_sub(rec->p, sp.center), sp.radius);
-
-        // 法線の向きを設定
-        set_face_normal(r, outward_normal, rec);
-
-        return (true); // 交差あり
-    }
-		//どちらの交点もt_min/t_maxの範囲外
-		return (false);
+		return (true);
 }

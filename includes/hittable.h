@@ -7,27 +7,27 @@
 //レイと物体が交差したときに必要な全ての情報をまとめて記録するためのもの
 typedef struct s_hit_record
 {
-	t_point3 p; //レイと物体が交差した交点の３次元
+	t_point3 intersection; //レイと物体が交差した交点の３次元
 
-	t_vec3 normal; //交点における物体の法線ベクトル
+	t_vec3 normal_vector; //交点における物体の法線ベクトル
 
-	double t; //レイの原点から交点までの距離
+	double t; //ray parameter
 
 	//法線がレイの内側を向いているか外側を向いているかを記録するフラグ
 	bool	front_face;
 
 } t_hit_record;
 
-// t_ray r : レイ
-// double t_min : 許容される最初のt値
-// double t_max : 許容される最大のt値
+// t_ray ray : レイ
+// double min_t : 許容される最初のt値
+// double max_t : 許容される最大のt値
 // t_hit_record *rec : 交差情報を書き込むためのポインタ
 // void *object_ptr : 呼び出しもとの特定のオブジェクトへのポインタ
 typedef bool (*t_hit_func)(const t_ray, double, double, t_hit_record *, void *);
 
 //補助関数
 //法線の向きを調整し、front_faceフラグを設定する
-void set_face_normal(t_ray r, t_vec3 outward_normal, t_hit_record *rec);
+void set_face_normal(t_ray ray, t_vec3 outward_normal, t_hit_record *hit_rec);
 
 #endif
 
