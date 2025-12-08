@@ -28,6 +28,14 @@ t_color scale_color(t_color color, double scalar) {
   return new_color;
 }
 
+t_color dot_color(t_color color1, t_color color2) {
+  t_color new_color;
+  new_color.red = color1.red * color2.red;
+  new_color.green = color1.green * color2.green;
+  new_color.blue = color1.blue * color2.blue;
+  return new_color;
+}
+
 // 各成分を[0, 255]に変換する
 // 255.999 をかけることで、0.999...をかける場合でも白(255)になるようにする
 void write_color(int fd, t_color color, int num_samples_per_pixel) {

@@ -35,8 +35,9 @@ INCLUDES := -I$(INCLUDE_DIR) # -I$(LIBFT_DIR) # -I$(MLX_DIR)
 
 SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/color.c \
-				$(SRC_DIR)/hit_utils.c \
+				$(SRC_DIR)/hit_record.c \
 				$(SRC_DIR)/main.c \
+				$(SRC_DIR)/material.c \
 				$(SRC_DIR)/math_utils.c \
 				$(SRC_DIR)/object_list.c \
 				$(SRC_DIR)/random_number_generator.c \

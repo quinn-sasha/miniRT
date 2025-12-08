@@ -71,9 +71,30 @@ t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min,
   return vec3_init(x, y, z);
 }
 
+t_vec3 get_random_vec3_in_unit_shpere(t_xorshift64_state *state) {
+  while (true) {
+    t_vec3 result = init_random_vec3_range(state, -1, 1);
+    if (vec3_length_squared(result) >= 1)
+      continue;
+    return result;
+  }
+}
+
 t_vec3 get_random_unit_vec3(t_xorshift64_state *state) {
   double a = random_double_range(state, 0, 2 * M_PI);
   double z = random_double_range(state, -1, 1);
   double small_r = sqrt(1 - z * z);
   return vec3_init(small_r * cos(a), small_r * sin(a), z);
+}
+
+t_vec3 get_diffuse_vector_from_intersection(t_vec3 intersection,
+                                            t_vec3 normal_vector,
+                                            t_xorshift64_state *state) {
+  return vec3_add_triple(intersection, normal_vector,
+                         get_random_unit_vec3(state));
+}
+
+t_vec3 reflect(t_vec3 incoming, t_vec3 normal) {
+  double temp = vec3_dot(incoming, normal);
+  return vec3_add(incoming, vec3_scale(normal, -2 * temp));
 }
