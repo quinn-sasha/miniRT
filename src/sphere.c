@@ -17,11 +17,11 @@ bool hit_sphere(
 	double t_min,
 	double t_max,
 	t_hit_record *rec,
-	const t_sphere *sp
+	const t_sphere sp
 )
 {
     // 1.レイと球の中心を結ぶ　vec3 oc = r.origin() - center;
-    t_vec3 oc = vec3_sub(r.origin, sp->center);
+    t_vec3 oc = vec3_sub(r.origin, sp.center);
 
     // a = D・D (方向ベクトルの長さの二乗)
     double a = vec3_length_squared(r.direction);
@@ -30,7 +30,7 @@ bool hit_sphere(
     double half_b = vec3_dot(oc, r.direction);
 
     // c = OC・OC - r^2
-    double c = vec3_length_squared(oc) - sp->radius * sp->radius;
+    double c = vec3_length_squared(oc) - sp.radius * sp.radius;
 
     // 判別式: discriminant = b^2 - 4ac
     double discriminant = half_b * half_b - a * c;
@@ -50,7 +50,7 @@ bool hit_sphere(
 			rec->p = ray_at(r, rec->t);
 
 			//法線の計算
-			t_vec3 outward_normal = vec3_div_scalar(vec3_sub(rec->p, sp->center), sp->radius);
+			t_vec3 outward_normal = vec3_div_scalar(vec3_sub(rec->p, sp.center), sp.radius);
 
 			//法線の向きを設定
 			set_face_normal(r, outward_normal, rec);
@@ -67,7 +67,7 @@ bool hit_sphere(
         rec->p = ray_at(r, rec->t);
 
         // 法線の計算: N = (P - C) / r
-        t_vec3 outward_normal = vec3_div_scalar(vec3_sub(rec->p, sp->center), sp->radius);
+        t_vec3 outward_normal = vec3_div_scalar(vec3_sub(rec->p, sp.center), sp.radius);
 
         // 法線の向きを設定
         set_face_normal(r, outward_normal, rec);

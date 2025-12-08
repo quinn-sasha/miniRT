@@ -17,7 +17,7 @@ bool hit_sphere(
 	double t_min,
 	double t_max,
 	t_hit_record *rec,
-	const t_sphere *sp //球の情報（center, radius）へのポインタ
+	const t_sphere sp //球の情報（center, radius）へのポインタ
 );
 
 #endif
