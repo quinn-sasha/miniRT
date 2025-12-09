@@ -12,7 +12,7 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world)
 
     if (hit_hittable_list(ray, 0.001, INFINITY, &rec, world))
     {
-        t_color normal_added = vec3_add(rec.normal_vector, vec3_new(1.0, 1.0, 1.0));
+        t_color normal_added = vec3_add(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
         return (vec3_mult_scalar(normal_added, 0.5));
     }
 
@@ -21,8 +21,8 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world)
     //垂直成分を[-1, 1]から[0, 1]の範囲にマップ (グラデーション係数t)
     double t = 0.5 * (unit_direction.y + 1.0);
     //線形補間(lerp):color = (1-t) * start_color + t * end_color
-    t_color white = vec3_new(1.0, 1.0, 1.0);
-    t_color sky_blue = vec3_new(0.5, 0.7, 1.0);
+    t_color white = init_vec3(1.0, 1.0, 1.0);
+    t_color sky_blue = init_vec3(0.5, 0.7, 1.0);
     //(1.0 - t) * color_a
     t_color color_a = vec3_mult_scalar(white, 1.0 - t);
     t_color color_b = vec3_mult_scalar(sky_blue, t);
@@ -33,18 +33,18 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world)
 void    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t num_obj)
 {
     // リストの初期化 (NUM_SCENE_OBJECTS の数だけメモリを確保)
-    *world_list = hittable_list_new(num_obj);
+    *world_list = init_hittable_list(num_obj);
     // 1. 中央の球
     t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere1 = sphere_new(vec3_new(0, 0, -1), 0.5);
-    t_hittable hittable1 = hittable_new(sphere1, hit_sphere); //なぜ球とその関数を一緒にするんだっけ
+    *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5);
+    t_hittable hittable1 = init_hittable(sphere1, hit_sphere); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable1);
     sphere_ptrs[0] = sphere1; //開放用にポインタを保存
 
     // 2. 地面の球
     t_sphere *sphere2 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere2 = sphere_new(vec3_new(0, -100.5, -1), 100.0);
-    t_hittable hittable2 = hittable_new(sphere2, hit_sphere); //なぜ球とその関数を一緒にするんだっけ
+    *sphere2 = init_sphere(init_vec3(0, -100.5, -1), 100.0);
+    t_hittable hittable2 = init_hittable(sphere2, hit_sphere); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable2);
     sphere_ptrs[1] = sphere2; //開放用にポインタを保存
 }

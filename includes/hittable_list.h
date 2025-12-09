@@ -24,13 +24,13 @@ typedef struct s_hittable_list
 } t_hittable_list;
 
 //リストの初期化
-t_hittable_list	hittable_list_new(size_t capacity);
+t_hittable_list	init_hittable_list(size_t capacity);
 
 //リストに物体を追加
 void	hittable_list_add(t_hittable_list *list, t_hittable obj);
 
 //　t_hittableの初期化
-t_hittable	hittable_new(void *obj, t_hit_func hit_func);
+t_hittable	init_hittable(void *obj, t_hit_func hit_func);
 
 
 //リスト全体の衝突判定

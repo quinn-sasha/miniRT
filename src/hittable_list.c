@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 // リストの初期化 (必要な物体の数 (capacity) を引数に取る)
-t_hittable_list hittable_list_new(size_t capacity)
+t_hittable_list init_hittable_list(size_t capacity)
 {
     t_hittable_list list;
 
@@ -26,7 +26,7 @@ t_hittable_list hittable_list_new(size_t capacity)
 }
 
 // t_hittable の初期化 (変更なし)
-t_hittable hittable_new(void *obj, t_hit_func hit_func)
+t_hittable init_hittable(void *obj, t_hit_func hit_func)
 {
     t_hittable hittable;
     hittable.object = obj;

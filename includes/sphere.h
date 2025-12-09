@@ -10,7 +10,7 @@ typedef struct s_sphere
 	double radius; //半径
 } t_sphere;
 
-t_sphere sphere_new(t_point3 cen, double r);
+t_sphere init_sphere(t_point3 cen, double r);
 
 bool hit_sphere(
 	const t_ray ray,

@@ -11,10 +11,9 @@ typedef struct s_vec3
 } t_vec3;
 
 typedef t_vec3 t_point3;
-typedef t_vec3 t_color;
 
 // コンストラクタ / 初期化
-t_vec3 vec3_new(double x, double y, double z);
+t_vec3 init_vec3(double x, double y, double z);
 t_vec3 vec3_zero(void); // e{0,0,0} のためのコンストラクタ
 
 // 基本的なベクトル演算
