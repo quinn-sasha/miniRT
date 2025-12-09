@@ -17,7 +17,15 @@ bool hit_sphere(
 	double min_t,
 	double max_t,
 	t_hit_record *hit_rec,
-	const t_sphere *sphere//球の情報（center, radius）へのポインタ
+	void	*object_ptr //sphereだけでないのも受け取る？
+);
+
+bool hit_sphere_impl(
+	const t_ray ray,
+	double min_t,
+	double max_t,
+	t_hit_record *hit_rec,
+	const t_sphere *sphere // <-- const t_sphere * を受け取る
 );
 
 #endif

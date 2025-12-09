@@ -37,7 +37,11 @@ SRCS := $(SRC_DIR)/color.c \
         $(SRC_DIR)/main.c \
         $(SRC_DIR)/ray_color.c \
         $(SRC_DIR)/ray.c \
-        $(SRC_DIR)/vec3.c
+        $(SRC_DIR)/vec3.c \
+        $(SRC_DIR)/hittable_list.c \
+        $(SRC_DIR)/hittable_utils.c \
+        $(SRC_DIR)/math_utils.c \
+        $(SRC_DIR)/sphere.c 
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

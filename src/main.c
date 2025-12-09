@@ -2,23 +2,29 @@
 #include "color.h"
 #include "vec3.h"
 #include "ray.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
 #define IMAGE_WIDTH 384
 #define ASPECT_RATIO (16.0 / 9.0)
 #define MAX_COLOR_VALUE 255
 #define FOCAL_LENGTH 1.0 //カメラの焦点距離　視点からビューポートまでの距離
 
-t_color ray_color(t_ray r);
+t_color ray_color(const t_ray ray, const t_hittable_list *world);
+void    init_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj);
+void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj);
 
 int main(void)
 {
     int row, col;
     int image_height;
     t_color pixel_color;
-    t_ray r;
+    t_ray ray;
 
     //画像設定
     image_height = (int)(IMAGE_WIDTH / ASPECT_RATIO);
+    if (image_height < 1)
+        image_height = 1;
 
     // PPM ヘッダの出力 (P3 フォーマット)
     // "P3"
@@ -46,6 +52,15 @@ int main(void)
               lower_left_corner = vec3_sub(lower_left_corner, v_half);
               lower_left_corner = vec3_sub(lower_left_corner, focus_vec);
 
+    // 物体リストと個々の物体（球）をヒープに確保
+    //TODO: 今はマクロで物体の数を定義しているが渡された数だけ確保するようにする
+    const size_t num_objects = NUM_SCENE_OBJECTS;
+    t_hittable_list world_list;
+    t_sphere    *sphere_ptrs[num_objects];
+
+    //物体リストと個々の物体をヒープに確保
+    init_world(&world_list, sphere_ptrs, num_objects);
+
     for (row = image_height - 1; row >= 0; --row){
         fprintf(stderr, "\rScanlines remaining: %d ", row);
         fflush(stderr); //バッファを強制的にフラッシュしすぐに表示させる
@@ -63,13 +78,14 @@ int main(void)
             //originは(0,0,0)なので省略
 
             //レイを初期化
-            r = ray_new(origin, direction);
+            ray = ray_new(origin, direction);
             //レイの色を計算
-            pixel_color = ray_color(r);
+            pixel_color = ray_color(ray, &world_list);
             //色を出力
             write_color(pixel_color);
         }
     }
+    cleanup_world(&world_list, sphere_ptrs, num_objects);
     fprintf(stderr, "\nDone.\n");
     return (0);
 }

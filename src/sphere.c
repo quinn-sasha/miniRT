@@ -12,7 +12,7 @@ t_sphere sphere_new(t_point3 center, double radius)
 	return (sphere);
 }
 
-bool hit_sphere(
+bool hit_sphere_impl(
 	const t_ray ray,
 	double min_t,
 	double max_t,
@@ -62,4 +62,20 @@ bool hit_sphere(
 		set_face_normal(ray, outward_normal, hit_rec);
 
 		return (true);
+}
+
+// ★ 2. ラッパー関数: リストから呼ばれるための窓口　ここはすべての球に対応するようにする
+bool hit_sphere(
+    const t_ray ray,
+    double min_t,
+    double max_t,
+    t_hit_record *hit_rec,
+    void *object_ptr // void * を受け取る
+)
+{
+    // void * を t_sphere * にキャスト
+    const t_sphere *sphere_ptr = (const t_sphere *)object_ptr;
+
+    // 実装関数に処理を委譲
+    return hit_sphere_impl(ray, min_t, max_t, hit_rec, sphere_ptr);
 }

@@ -2,6 +2,7 @@
 #include "vec3.h"
 
 // 法線の向きを調整し、front_faceフラグを設定する
+//　レイが物体のどちらからやってきたかに関する情報
 void	set_face_normal(t_ray ray, t_vec3 outward_normal, t_hit_record *hit_rec)
 {
 	//レイの方向ベクトルと法線ベクトルの内積をチェックする
