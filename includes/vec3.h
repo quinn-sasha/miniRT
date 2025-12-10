@@ -2,6 +2,7 @@
 # define  VEC3_H
 
 #include <math.h>
+#include "random_number_generator.h"
 
 typedef struct s_vec3
 {
@@ -35,6 +36,9 @@ t_vec3 vec3_mult(t_vec3 u, t_vec3 v); // 要素ごとの積
 t_vec3 vec3_mult_scalar(t_vec3 v, double t);
 t_vec3 vec3_div_scalar(t_vec3 v, double t);
 t_vec3 vec3_neg(t_vec3 v); // 単項マイナス (-)
+t_vec3 get_random_vec3_in_unit_sphere(t_xorshift64_state *state);
+t_vec3 get_random_unit_vec3(t_xorshift64_state *state);
+t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state);
 
 // 長さ・ノルムの計算
 double vec3_length_squared(t_vec3 v);
@@ -51,6 +55,7 @@ t_color add_color(t_color a, t_color b);
 t_color scale_color(t_color color, double scalar);
 t_color dot_color(t_color color1, t_color color2);
 void write_color(t_color pixel_color, const int num_samples_per_pixel);
+// void write_color(t_color pixel_color);
 
 
 #endif

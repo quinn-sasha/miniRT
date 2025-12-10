@@ -1,4 +1,4 @@
-#include "math_utils.h"
+#include "random_number_generator.h"
 #include <iso646.h>
 
 void init_xorshift64_state(t_xorshift64_state *state) {

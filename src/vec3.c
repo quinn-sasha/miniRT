@@ -1,5 +1,7 @@
 #include "vec3.h"
+#include <math.h>
 #include <stdio.h>
+#include <stdbool.h>
 //ベクトルを生成
 t_vec3 init_vec3(double x, double y, double z)
 {
@@ -75,4 +77,48 @@ t_vec3 vec3_cross(t_vec3 u, t_vec3 v)
 t_vec3 vec3_unit_vector(t_vec3 v)
 {
     return vec3_div_scalar(v, vec3_length(v));
+}
+
+t_vec3 init_random_vec3(t_xorshift64_state *state)
+{
+    double x = random_double(state);
+    double y = random_double(state);
+    double z = random_double(state);
+    return init_vec3(x, y, z);
+}
+
+t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min, double max)
+{
+    double x = random_double_range(state, min, max);
+    double y = random_double_range(state, min, max);
+    double z = random_double_range(state, min, max);
+    return init_vec3(x, y, z);
+}
+
+t_vec3 get_random_vec3_in_unit_sphere(t_xorshift64_state *state)
+{
+    while (true)
+    {
+        t_vec3 result = init_random_vec3_range(state, -1, 1);
+        if (vec3_length_squared(result) >= 1)
+            continue; //ループの最初の処理に戻る
+        return (result);
+    }
+}
+
+t_vec3 get_random_unit_vec3(t_xorshift64_state *state)
+{
+    double a = random_double_range(state, 0, 2 * M_PI);
+    double z = random_double_range(state, -1, 1);
+    double small_r = sqrt(1 - z * z);
+    return init_vec3(small_r * cos(a), small_r * sin(a), z);
+}
+
+t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state)
+{
+    t_vec3 in_unit_sphere = get_random_vec3_in_unit_sphere(state);
+    if (vec3_dot(in_unit_sphere, normal) > 0.0)
+        return (in_unit_sphere);
+    else
+        return vec3_neg(in_unit_sphere);
 }

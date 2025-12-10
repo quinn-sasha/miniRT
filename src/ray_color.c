@@ -2,19 +2,46 @@
 #include "hittable_list.h"
 #include "vec3.h"
 #include "sphere.h"
+#include "random_number_generator.h"
 #include <stdbool.h>
 #include <math.h>
 
-t_color ray_color(const t_ray ray, const t_hittable_list *world)
+//拡散反射とレイの再帰を導入
+//衝突点における法線ベクトルの先端が単位球の中心になる　単位球内のランダムなベクトルを加算
+//散乱方向の決定 散乱レイの目標点target - 衝突点rec.p 　再帰　新しい散乱レイの色を計算するために関数が再帰的
+//0.5 * ray_color()　拡散反射マテリアルにおける光の吸収（減衰）
+//物体が見える色は(マテリアルの色)×（散乱レイから返ってきた光の色）
+t_color ray_color(const t_ray ray, const t_hittable_list *world,
+                  t_xorshift64_state *state, int num_recursions)
 {
+    if (num_recursions <= 0)
+        return init_color(0, 0, 0);
+
     t_hit_record rec;
     t_vec3 final_color_vec;
     t_vec3_color converter;
 
     if (hit_hittable_list(ray, 0.001, INFINITY, &rec, world))
     {
-        t_vec3 normal_added = vec3_add(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
-        final_color_vec = vec3_mult_scalar(normal_added, 0.5);
+        // t_vec3 normal_added = vec3_add(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
+        // final_color_vec = vec3_mult_scalar(normal_added, 0.5);
+
+        t_vec3_color tmp_converter;
+        //散乱レイの目標点を決定
+        // t_point3 target = vec3_add(rec.intersection, rec.normal_vector);
+        // target = vec3_add(target ,get_random_unit_vec3(state));
+
+        t_point3 target = vec3_add(rec.intersection, random_in_hemisphere(rec.normal_vector, state));
+
+        //散乱方向の計算
+        t_vec3 scattered_direction = vec3_sub(target, rec.intersection);
+
+        //散乱レイを生成
+        t_ray scattered_ray = init_ray(rec.intersection, scattered_direction);
+
+        tmp_converter.color = ray_color(scattered_ray, world, state, num_recursions - 1);
+        t_vec3 incoming_color_vec = tmp_converter.vec;
+        final_color_vec = vec3_mult_scalar(incoming_color_vec, 0.5);
     }
     else
     {

@@ -8,7 +8,7 @@
 
 #define MAX_COLOR_VALUE 255
 
-t_color ray_color(const t_ray ray, const t_hittable_list *world);
+t_color ray_color(const t_ray ray, const t_hittable_list *world, t_xorshift64_state *state, int num_recursions);
 void    init_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj);
 void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj);
 
@@ -17,6 +17,7 @@ int main(void)
     const double aspect_ratio  = (double)16 / 9; //width / height
     const int   image_width = 384;
     const int   image_height = image_width / aspect_ratio;
+    const int   num_recursions = 50;
 
     // PPM ヘッダの出力 (P3 フォーマット)
     // "P3" [幅] [高さ] [最大色値]
@@ -51,10 +52,11 @@ int main(void)
                 //レイの方向ベクトルを計算
                 t_ray  ray = get_ray(camera, x_offset, y_offset);
                 //レイの色を計算
-                pixel_color = add_color(pixel_color, ray_color(ray, &world_list));
+                pixel_color = add_color(pixel_color, ray_color(ray, &world_list, &state, num_recursions));
             }
             //色を出力
             write_color(pixel_color, num_samples_per_pixel);
+            // write_color(pixel_color);
         }
     }
     cleanup_world(&world_list, sphere_ptrs, num_objects);

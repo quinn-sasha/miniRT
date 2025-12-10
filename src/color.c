@@ -42,9 +42,9 @@ void  write_color(t_color color, const int num_samples_per_pixel)
   double blue = color.blue;
 
   double scale = 1.0 / num_samples_per_pixel;
-  red *= scale;
-  green *= scale;
-  blue *= scale;
+  red = sqrt(red * scale);
+  green = sqrt(green * scale);
+  blue = sqrt(blue * scale);
 
   int r = 256 * clamp(red, 0.0, 0.999);
   int g = 256 * clamp(green, 0.0, 0.999);
@@ -52,13 +52,3 @@ void  write_color(t_color color, const int num_samples_per_pixel)
 
   printf("%d %d %d\n", r, g, b);
 }
-
-// void write_color(t_color pixel_color)
-// {
-//     int ir, ig, ib;
-
-//     ir = (int)(255.999 * pixel_color.x);
-//     ig = (int)(255.999 * pixel_color.y);
-//     ib = (int)(255.999 * pixel_color.z);
-//     printf("%d %d %d\n", ir, ig, ib);
-// }
