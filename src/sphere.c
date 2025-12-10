@@ -4,7 +4,7 @@
 
 //--初期化関数--
 
-t_sphere sphere_new(t_point3 center, double radius)
+t_sphere init_sphere(t_point3 center, double radius)
 {
 	t_sphere sphere;
 	sphere.center = center;

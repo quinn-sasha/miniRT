@@ -1,4 +1,7 @@
-#include "color.h"
+#include "vec3.h"
+#include "math.h"
+#include "utils.h"
+#include <stdio.h>
 
 t_color init_color(double red, double green, double blue) {
   t_color result;
@@ -30,6 +33,24 @@ t_color dot_color(t_color color1, t_color color2) {
   new_color.green = color1.green * color2.green;
   new_color.blue = color1.blue * color2.blue;
   return new_color;
+}
+
+void  write_color(t_color color, const int num_samples_per_pixel)
+{
+  double red = color.red;
+  double green = color.green;
+  double blue = color.blue;
+
+  double scale = 1.0 / num_samples_per_pixel;
+  red *= scale;
+  green *= scale;
+  blue *= scale;
+
+  int r = 256 * clamp(red, 0.0, 0.999);
+  int g = 256 * clamp(green, 0.0, 0.999);
+  int b = 256 * clamp(blue, 0.0, 0.999);
+
+  printf("%d %d %d\n", r, g, b);
 }
 
 // void write_color(t_color pixel_color)

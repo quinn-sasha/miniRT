@@ -1,6 +1,5 @@
 #include "ray.h"
 #include "hittable_list.h"
-#include "color.h"
 #include "vec3.h"
 #include "sphere.h"
 #include <stdbool.h>
@@ -9,25 +8,32 @@
 t_color ray_color(const t_ray ray, const t_hittable_list *world)
 {
     t_hit_record rec;
+    t_vec3 final_color_vec;
+    t_vec3_color converter;
 
     if (hit_hittable_list(ray, 0.001, INFINITY, &rec, world))
     {
-        t_color normal_added = vec3_add(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
-        return (vec3_mult_scalar(normal_added, 0.5));
+        t_vec3 normal_added = vec3_add(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
+        final_color_vec = vec3_mult_scalar(normal_added, 0.5);
     }
+    else
+    {
+        //レイの方向ベクトルを単位ベクトルに正規化　背景の色にベクトルの長さは関係ない
+        t_vec3 unit_direction = vec3_unit_vector(ray.direction);
+        //垂直成分を[-1, 1]から[0, 1]の範囲にマップ (グラデーション係数t)
+        double t = 0.5 * (unit_direction.y + 1.0);
+        //線形補間(lerp):color = (1-t) * start_color + t * end_color
+        t_vec3 white = init_vec3(1.0, 1.0, 1.0);
+        t_vec3 sky_blue = init_vec3(0.5, 0.7, 1.0);
+        //(1.0 - t) * color_a
+        t_vec3 color_a = vec3_mult_scalar(white, 1.0 - t);
+        t_vec3 color_b = vec3_mult_scalar(sky_blue, t);
 
-    //レイの方向ベクトルを単位ベクトルに正規化　背景の色にベクトルの長さは関係ない
-    t_vec3 unit_direction = vec3_unit_vector(ray.direction);
-    //垂直成分を[-1, 1]から[0, 1]の範囲にマップ (グラデーション係数t)
-    double t = 0.5 * (unit_direction.y + 1.0);
-    //線形補間(lerp):color = (1-t) * start_color + t * end_color
-    t_color white = init_vec3(1.0, 1.0, 1.0);
-    t_color sky_blue = init_vec3(0.5, 0.7, 1.0);
-    //(1.0 - t) * color_a
-    t_color color_a = vec3_mult_scalar(white, 1.0 - t);
-    t_color color_b = vec3_mult_scalar(sky_blue, t);
+        final_color_vec = vec3_add(color_a, color_b);
+    }
+    converter.vec = final_color_vec;
 
-    return (vec3_add(color_a, color_b));
+    return converter.color;
 }
 
 void    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t num_obj)

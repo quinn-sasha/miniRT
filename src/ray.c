@@ -2,7 +2,7 @@
 #include "ray.h"
 
 //初期化
-t_ray ray_new(t_point3 origin, t_vec3 direction)
+t_ray init_ray(t_point3 origin, t_vec3 direction)
 {
     t_ray r;
     r.origin = origin;

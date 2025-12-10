@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "ray.h"
+#include "vec3.h"
 
 t_viewport init_viewport(double aspect_ratio, double width, double height)
 {
@@ -34,4 +35,22 @@ t_camera init_camera(t_viewport viewport, t_vec3 origin, double focal_legth) {
   camera.lower_left_corner = get_lower_left_corner(
       origin, camera.horizontal, camera.vertical, focal_legth);
   return camera;
+}
+
+//正規化座標からレイを生成する関数
+t_ray get_ray(t_camera camera, double x_offset, double y_offset)
+{
+  //レイの方向ベクトルを計算
+  //direction = lower_left_corner + u*horizontal + v*vertical - origin
+  t_vec3 scaled_h = vec3_mult_scalar(camera.horizontal, x_offset);
+  t_vec3 scaled_v = vec3_mult_scalar(camera.vertical, y_offset);
+
+  t_vec3  view_point = vec3_add(camera.lower_left_corner, scaled_h);
+          view_point = vec3_add(view_point, scaled_v);
+  // 2. レイの方向ベクトルを計算: Direction = P - Origin
+  // (このケースでは Origin が (0,0,0) なので view_point そのものだが、将来の拡張のために vec3_sub を使う)
+  t_vec3 direction = vec3_sub(view_point, camera.origin);
+
+  // 3.レイを生成し返す
+  return (init_ray(camera.origin, direction));
 }

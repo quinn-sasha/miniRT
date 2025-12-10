@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "color.h"
 #include "vec3.h"
 #include "ray.h"
 #include "hittable_list.h"
@@ -18,7 +17,6 @@ int main(void)
     const double aspect_ratio  = (double)16 / 9; //width / height
     const int   image_width = 384;
     const int   image_height = image_width / aspect_ratio;
-    t_ray ray;
 
     // PPM ヘッダの出力 (P3 フォーマット)
     // "P3" [幅] [高さ] [最大色値]
@@ -36,6 +34,7 @@ int main(void)
     //物体リストと個々の物体をヒープに確保
     init_world(&world_list, sphere_ptrs, num_objects);
 
+    const  int num_samples_per_pixel = 100;
     t_xorshift64_state state;
     init_xorshift64_state(&state);
     for (int col = image_height - 1; col >= 0; --col){
@@ -44,24 +43,18 @@ int main(void)
             fflush(stderr); //バッファを強制的にフラッシュしすぐに表示させる
 
             t_color pixel_color = init_color(0, 0, 0);
-          //現在のピクセル位置(col, row)をビューポート上の0.0から1.0の間の座標(u, v)に変換　正規化座標
-            double u = (double)col / (image_width - 1);
-            double v = (double)row / (image_height - 1);
-            //レイの方向ベクトルを計算
-            //direction = lower_left_corner + u*horizontal + v*vertical - origin
-            t_vec3 scaled_h = vec3_mult_scalar(horizontal, u);
-            t_vec3 scaled_v = vec3_mult_scalar(vertical, v);
-
-            t_vec3 direction = vec3_add(camera.lower_left_corner, scaled_h);
-                   direction = vec3_add(direction, scaled_v);
-            //originは(0,0,0)なので省略
-
-            //レイを初期化
-            ray = init_ray(origin, direction);
-            //レイの色を計算
-            pixel_color = ray_color(ray, &world_list);
+            for (int sample = 0; sample < num_samples_per_pixel; sample++)
+            {
+                //現在のピクセル位置(col, row)をビューポート上の0.0から1.0の間の座標(u, v)に変換　正規化座標
+                double x_offset = (row + random_double(&state)) / (image_width - 1);
+                double y_offset = (col + random_double(&state)) / (image_height - 1);
+                //レイの方向ベクトルを計算
+                t_ray  ray = get_ray(camera, x_offset, y_offset);
+                //レイの色を計算
+                pixel_color = add_color(pixel_color, ray_color(ray, &world_list));
+            }
             //色を出力
-            write_color(pixel_color);
+            write_color(pixel_color, num_samples_per_pixel);
         }
     }
     cleanup_world(&world_list, sphere_ptrs, num_objects);
