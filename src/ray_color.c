@@ -26,22 +26,30 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world,
         // t_vec3 normal_added = vec3_add(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
         // final_color_vec = vec3_mult_scalar(normal_added, 0.5);
 
-        t_vec3_color tmp_converter;
-        //散乱レイの目標点を決定
-        // t_point3 target = vec3_add(rec.intersection, rec.normal_vector);
-        // target = vec3_add(target ,get_random_unit_vec3(state));
+        // t_vec3_color tmp_converter;
+        // //散乱レイの目標点を決定
+        // // t_point3 target = vec3_add(rec.intersection, rec.normal_vector);
+        // // target = vec3_add(target ,get_random_unit_vec3(state));
 
-        t_point3 target = vec3_add(rec.intersection, random_in_hemisphere(rec.normal_vector, state));
+        // t_point3 target = vec3_add(rec.intersection, random_in_hemisphere(rec.normal_vector, state));
 
-        //散乱方向の計算
-        t_vec3 scattered_direction = vec3_sub(target, rec.intersection);
+        // //散乱方向の計算
+        // t_vec3 scattered_direction = vec3_sub(target, rec.intersection);
 
-        //散乱レイを生成
-        t_ray scattered_ray = init_ray(rec.intersection, scattered_direction);
+        // //散乱レイを生成
+        // t_ray scattered_ray = init_ray(rec.intersection, scattered_direction);
 
-        tmp_converter.color = ray_color(scattered_ray, world, state, num_recursions - 1);
-        t_vec3 incoming_color_vec = tmp_converter.vec;
-        final_color_vec = vec3_mult_scalar(incoming_color_vec, 0.5);
+        // tmp_converter.color = ray_color(scattered_ray, world, state, num_recursions - 1);
+        // t_vec3 incoming_color_vec = tmp_converter.vec;
+        // final_color_vec = vec3_mult_scalar(incoming_color_vec, 0.5);
+    
+        t_ray scattered;
+        t_color attenuation = rec.material.albedo;
+        if (rec.material.scatters(ray, rec, &scattered, state))
+        {
+            return dot_color(ray_color(scattered, world, state, num_recursions - 1), attenuation);
+        }
+        return init_color(0, 0, 0);
     }
     else
     {
@@ -77,9 +85,23 @@ void    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t n
     // 2. 地面の球
     t_sphere *sphere2 = (t_sphere *)malloc(sizeof(t_sphere));
     *sphere2 = init_sphere(init_vec3(0, -100.5, -1), 100.0);
-    t_hittable hittable2 = init_hittable(sphere2, hit_sphere); //なぜ球とその関数を一緒にするんだっけ
+    t_hittable hittable2 = init_hittable(sphere2, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable2);
     sphere_ptrs[1] = sphere2; //開放用にポインタを保存
+
+     // 3. 右の球
+    t_sphere *sphere3 = (t_sphere *)malloc(sizeof(t_sphere));
+    *sphere2 = init_sphere(init_vec3(1, 0, -1), 0.5);
+    t_hittable hittable3 = init_hittable(sphere3, hit_object); //なぜ球とその関数を一緒にするんだっけ
+    hittable_list_add(world_list, hittable3);
+    sphere_ptrs[2] = sphere3; //開放用にポインタを保存
+
+     // 4. 左の球
+    t_sphere *sphere4 = (t_sphere *)malloc(sizeof(t_sphere));
+    *sphere2 = init_sphere(init_vec3(-1, 0, -1), 0.5);
+    t_hittable hittable4 = init_hittable(sphere4, hit_object); //なぜ球とその関数を一緒にするんだっけ
+    hittable_list_add(world_list, hittable4);
+    sphere_ptrs[3] = sphere4; //開放用にポインタを保存
 }
 
 void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj)

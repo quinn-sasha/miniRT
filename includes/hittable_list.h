@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 #define MAX_OBJECTS 100
-#define NUM_SCENE_OBJECTS 2
+#define NUM_SCENE_OBJECTS 4
 
 typedef struct s_hittable
 {

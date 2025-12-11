@@ -39,6 +39,7 @@ t_vec3 vec3_neg(t_vec3 v); // 単項マイナス (-)
 t_vec3 get_random_vec3_in_unit_sphere(t_xorshift64_state *state);
 t_vec3 get_random_unit_vec3(t_xorshift64_state *state);
 t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state);
+t_vec3 reflect(t_vec3 incoming, t_vec3 normal);
 
 // 長さ・ノルムの計算
 double vec3_length_squared(t_vec3 v);
