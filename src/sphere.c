@@ -60,12 +60,14 @@ bool hit_sphere_impl(
 
 		//法線の向きを調整し、front_faceフラグを設定する。
 		set_face_normal(ray, outward_normal, hit_rec);
+		
+		hit_rec->material = sphere->material; 
 
 		return (true);
 }
 
 // ★ 2. ラッパー関数: リストから呼ばれるための窓口　ここはすべての球に対応するようにする
-bool hit_sphere(
+bool hit_object(
     const t_ray ray,
     double min_t,
     double max_t,

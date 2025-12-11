@@ -1,18 +1,19 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "hittable.h"
+#include "hit_record.h"
 #include "vec3.h"
 
 typedef struct s_sphere
 {
 	t_point3 center;
 	double radius; //半径
+	t_material material; //materialはレイが球に当たり散乱レイを計算するのに参照する
 } t_sphere;
 
 t_sphere init_sphere(t_point3 cen, double r);
 
-bool hit_sphere(
+bool hit_object(
 	const t_ray ray,
 	double min_t,
 	double max_t,

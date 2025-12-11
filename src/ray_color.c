@@ -70,7 +70,7 @@ void    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t n
     // 1. 中央の球
     t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
     *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5);
-    t_hittable hittable1 = init_hittable(sphere1, hit_sphere); //なぜ球とその関数を一緒にするんだっけ
+    t_hittable hittable1 = init_hittable(sphere1, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable1);
     sphere_ptrs[0] = sphere1; //開放用にポインタを保存
 

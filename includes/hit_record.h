@@ -2,6 +2,7 @@
 #define HITTABLE_H
 
 #include "ray.h"
+#include "material.h"
 #include <stdbool.h>
 
 //レイと物体が交差したときに必要な全ての情報をまとめて記録するためのもの
@@ -15,6 +16,8 @@ typedef struct s_hit_record
 
 	//法線がレイの内側を向いているか外側を向いているかを記録するフラグ
 	bool	front_face;
+
+	t_material	material;
 
 } t_hit_record;
 

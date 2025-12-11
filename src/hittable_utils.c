@@ -1,4 +1,4 @@
-#include "hittable.h"
+#include "hit_record.h"
 #include "vec3.h"
 
 // 法線の向きを調整し、front_faceフラグを設定する

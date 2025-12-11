@@ -122,3 +122,9 @@ t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state)
     else
         return vec3_neg(in_unit_sphere);
 }
+
+t_vec3 reflect(t_vec3 incoming, t_vec3 normal)
+{
+    double temp = vec3_dot(incoming, normal);
+    
+}

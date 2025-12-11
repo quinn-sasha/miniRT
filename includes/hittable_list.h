@@ -1,7 +1,7 @@
 #ifndef HITTABLE_LIST_H
 #define HITTABLE_LIST_H
 
-#include "hittable.h"
+#include "hit_record.h"
 #include <stdlib.h>
 #include <stdbool.h>
 
