@@ -128,3 +128,23 @@ t_vec3 reflect(t_vec3 incoming, t_vec3 normal)
     double temp = vec3_dot(incoming, normal);
     return vec3_add(incoming, vec3_mult_scalar(normal, -2 * temp));
 }
+
+t_vec3 refract(t_vec3 incoming, t_vec3 normal, double etai_over_etat)
+{
+    double cos_theta = vec3_dot(vec3_neg(incoming), normal);
+
+    double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+    if (etai_over_etat * sin_theta > 1.0)
+        return init_vec3(0, 0, 0);
+
+    //屈折レイの並行成分の計算
+    t_vec3 temp = vec3_add(incoming, vec3_mult_scalar(normal, cos_theta));
+    t_vec3 reflact_parallel = vec3_mult_scalar(temp ,etai_over_etat);
+
+    //屈折レイの垂直成分の計算
+    //  vec3 r_out_perp = -sqrt(1.0 - r_out_parallel.length_squared()) * n;
+    double reflact_parallel_squared = vec3_length_squared(reflact_parallel);
+    t_vec3 reflact_perp = vec3_mult_scalar(normal ,-sqrt(1.0 - reflact_parallel_squared));
+
+    return vec3_add(reflact_parallel, reflact_perp);
+}
