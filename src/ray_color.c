@@ -42,7 +42,7 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world,
         // tmp_converter.color = ray_color(scattered_ray, world, state, num_recursions - 1);
         // t_vec3 incoming_color_vec = tmp_converter.vec;
         // final_color_vec = vec3_mult_scalar(incoming_color_vec, 0.5);
-    
+
         t_ray scattered;
         t_color attenuation = rec.material.albedo;
         if (rec.material.scatters(ray, rec, &scattered, state))
@@ -75,30 +75,31 @@ void    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t n
 {
     // リストの初期化 (NUM_SCENE_OBJECTS の数だけメモリを確保)
     *world_list = init_hittable_list(num_obj);
+    double fuzz = 0.3;
     // 1. 中央の球
     t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5);
+    *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5, init_lambertian_material(init_color(0.7, 0.3, 0.3), fuzz));
     t_hittable hittable1 = init_hittable(sphere1, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable1);
     sphere_ptrs[0] = sphere1; //開放用にポインタを保存
 
     // 2. 地面の球
     t_sphere *sphere2 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere2 = init_sphere(init_vec3(0, -100.5, -1), 100.0);
+    *sphere2 = init_sphere(init_vec3(0, -100.5, -1), 100.0, init_lambertian_material(init_color(0.8, 0.8, 0.0), fuzz));
     t_hittable hittable2 = init_hittable(sphere2, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable2);
     sphere_ptrs[1] = sphere2; //開放用にポインタを保存
 
      // 3. 右の球
     t_sphere *sphere3 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere2 = init_sphere(init_vec3(1, 0, -1), 0.5);
+    *sphere3 = init_sphere(init_vec3(1, 0, -1), 0.5, init_metal_material(init_color(0.8, 0.6, 0.2), fuzz));
     t_hittable hittable3 = init_hittable(sphere3, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable3);
     sphere_ptrs[2] = sphere3; //開放用にポインタを保存
 
      // 4. 左の球
     t_sphere *sphere4 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere2 = init_sphere(init_vec3(-1, 0, -1), 0.5);
+    *sphere4 = init_sphere(init_vec3(-1, 0, -1), 0.5, init_metal_material(init_color(0.8, 0.8, 0.8), fuzz));
     t_hittable hittable4 = init_hittable(sphere4, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable4);
     sphere_ptrs[3] = sphere4; //開放用にポインタを保存

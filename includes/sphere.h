@@ -11,7 +11,7 @@ typedef struct s_sphere
 	t_material material; //materialはレイが球に当たり散乱レイを計算するのに参照する
 } t_sphere;
 
-t_sphere init_sphere(t_point3 cen, double r);
+t_sphere init_sphere(t_point3 center, double radius, t_material material);
 
 bool hit_object(
 	const t_ray ray,

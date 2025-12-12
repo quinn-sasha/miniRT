@@ -36,6 +36,7 @@ INCLUDES := -I$(INCLUDE_DIR) -I$(MLX_DIR)
 SRCS := $(SRC_DIR)/camera.c \
         $(SRC_DIR)/color.c \
         $(SRC_DIR)/main.c \
+        $(SRC_DIR)/material.c \
         $(SRC_DIR)/ray_color.c \
         $(SRC_DIR)/ray.c \
         $(SRC_DIR)/vec3.c \

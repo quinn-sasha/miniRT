@@ -4,22 +4,23 @@
 #include "utils.h"
 #include "vec3.h"
 
-t_material init_material(t_material_func p_func, t_color albedo)
+t_material init_material(t_material_func p_func, t_color albedo, double fuzziness)
 {
     t_material material;
     material.scatters = p_func;
     material.albedo = albedo;
+    material.fuzziness = fuzziness;
     return material;
 }
 
-t_material init_lambertian_material(t_color albedo)
+t_material init_lambertian_material(t_color albedo, double fuzziness)
 {
-    return init_material(lambertian_scatters, albedo);
+    return init_material(lambertian_scatters, albedo, fuzziness);
 }
 
-t_material init_metal_material(t_color albedo)
+t_material init_metal_material(t_color albedo, double fuzziness)
 {
-    return init_material(metal_scatters, albedo);
+    return init_material(metal_scatters, albedo, fuzziness);
 }
 
 bool lambertian_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
@@ -35,8 +36,9 @@ bool metal_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
                     t_xorshift64_state *state)
 {
     t_vec3 reflected = reflect(vec3_unit_vector(ray.direction), record.normal_vector);
-    // t_vec3 direction = vec3_add(reflected, vec3_scale(get_random_vec3_in_unit_sphere))
-    *scattered = init_ray(record.intersection, reflected);
+    t_vec3 direction = vec3_add(reflected, vec3_mult_scalar(get_random_vec3_in_unit_sphere(state),
+                                record.material.fuzziness));
+    *scattered = init_ray(record.intersection, direction);
     return (vec3_dot(scattered->direction, record.normal_vector) > 0);
 }
 

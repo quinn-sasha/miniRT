@@ -4,11 +4,12 @@
 
 //--初期化関数--
 
-t_sphere init_sphere(t_point3 center, double radius)
+t_sphere init_sphere(t_point3 center, double radius, t_material material)
 {
 	t_sphere sphere;
 	sphere.center = center;
 	sphere.radius = radius;
+	sphere.material = material;
 	return (sphere);
 }
 
@@ -60,8 +61,8 @@ bool hit_sphere_impl(
 
 		//法線の向きを調整し、front_faceフラグを設定する。
 		set_face_normal(ray, outward_normal, hit_rec);
-		
-		hit_rec->material = sphere->material; 
+
+		hit_rec->material = sphere->material;
 
 		return (true);
 }
