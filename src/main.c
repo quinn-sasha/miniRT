@@ -18,8 +18,7 @@ static t_object_list generate_random_scene(t_xorshift64_state *state) {
   init_object_list(&world);
   t_material ground_material =
       init_lambertian_material(init_color(0.5, 0.5, 0.5));
-  object_list_insert_sphere_last(
-      &world, new_sphere(vec3_init(0, -1000, 0), 1000, ground_material));
+  add_sphere(&world, new_sphere(vec3_init(0, -1000, 0), 1000, ground_material));
 
   for (int i = -11; i < 11; i++) {
     for (int j = -11; j < 11; j++) {
@@ -33,32 +32,26 @@ static t_object_list generate_random_scene(t_xorshift64_state *state) {
         t_color albedo =
             vec3_multiply(init_random_vec3(state), init_random_vec3(state));
         sphere_material = init_lambertian_material(albedo);
-        object_list_insert_sphere_last(
-            &world, new_sphere(center, 0.2, sphere_material));
+        add_sphere(&world, new_sphere(center, 0.2, sphere_material));
         continue;
       }
       if (material_decision < 0.95) {
         t_color albedo = init_random_vec3_range(state, 0.5, 1);
         double fuzziness = random_double_range(state, 0, 0.5);
         sphere_material = init_metal_material(albedo, fuzziness);
-        object_list_insert_sphere_last(
-            &world, new_sphere(center, 0.2, sphere_material));
+        add_sphere(&world, new_sphere(center, 0.2, sphere_material));
         continue;
       }
       sphere_material = init_dielectric_material(1.5); // glass: 1.5
-      object_list_insert_sphere_last(&world,
-                                     new_sphere(center, 0.2, sphere_material));
+      add_sphere(&world, new_sphere(center, 0.2, sphere_material));
     }
   }
   t_material material1 = init_dielectric_material(1.5);
-  object_list_insert_sphere_last(
-      &world, new_sphere(vec3_init(0, 1, 0), 1.0, material1));
+  add_sphere(&world, new_sphere(vec3_init(0, 1, 0), 1.0, material1));
   t_material material2 = init_lambertian_material(init_color(0.4, 0.2, 0.1));
-  object_list_insert_sphere_last(
-      &world, new_sphere(vec3_init(-4, 1, 0), 1.0, material2));
+  add_sphere(&world, new_sphere(vec3_init(-4, 1, 0), 1.0, material2));
   t_material material3 = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0);
-  object_list_insert_sphere_last(
-      &world, new_sphere(vec3_init(4, 1, 0), 1.0, material3));
+  add_sphere(&world, new_sphere(vec3_init(4, 1, 0), 1.0, material3));
   return world;
 }
 
@@ -69,7 +62,7 @@ static t_color calculate_color(t_ray ray, t_object_list *list,
 
   t_hit_record record;
   // Set t bigger than 0 to prevent shadow acne
-  if (object_list_hits(list, ray, 0.001, INFINITY, &record)) {
+  if (hits_any_object(list, ray, 0.001, INFINITY, &record)) {
     t_color attenuation = record.material.albedo; // Assume attenuation = albedo
     t_ray scattered;
     bool return_value;
