@@ -26,10 +26,12 @@ t_vec3 init_random_vec3(t_xorshift64_state *state);
 t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min,
                               double max);
 t_vec3 get_random_vec3_in_unit_shpere(t_xorshift64_state *state);
+t_vec3 get_random_vec3_in_unit_circle(t_xorshift64_state *state);
 t_vec3 get_random_unit_vec3(t_xorshift64_state *state);
 t_vec3 get_diffuse_vector_from_intersection(t_vec3 intersection,
                                             t_vec3 normal_vector,
                                             t_xorshift64_state *state);
 t_vec3 reflect(t_vec3 incoming, t_vec3 normal);
+t_vec3 refract(t_vec3 incoming, t_vec3 n, double eta_in_over_etat);
 
 #endif

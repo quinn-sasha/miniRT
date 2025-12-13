@@ -4,22 +4,27 @@
 #include "ray.h"
 #include "vec3.h"
 
+typedef struct s_screen {
+  int width;
+  int height;
+  double aspect_ratio; // (width / height)
+} t_screen;
+
 typedef struct s_camera {
   t_vec3 origin;
   t_vec3 horizontal;
   t_vec3 vertical;
+  t_vec3 right_dir;
+  t_vec3 above_dir;
   t_vec3 lower_left_corner;
-  double focal_length;
+  double lens_radius;
 } t_camera;
 
-typedef struct s_viewport {
-  double aspect_ratio;
-  double width;
-  double height;
-} t_viewport;
-
-t_viewport init_viewport(double aspect_ratio, double width, double height);
-t_camera init_camera(t_viewport viewport, t_vec3 origin, double focal_legth);
-t_ray get_ray(t_camera camera, double x_offset, double y_offset);
+t_screen init_screen(int width, int height);
+t_camera init_camera(t_vec3 look_from, t_vec3 look_at, t_vec3 view_up,
+                     double aspect_ratio, double hfov, double aperture,
+                     double focus_distance);
+t_ray get_ray(t_camera camera, double x_offset, double y_offset,
+              t_xorshift64_state *state);
 
 #endif // !CAMERA_H

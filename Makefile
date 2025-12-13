@@ -2,7 +2,7 @@
 NAME := a.out
 SRC_DIR := src
 OBJ_DIR := objs
-# LIBFT_DIR := libft
+LIBFT_DIR := libft
 # MLX_DIR := minilibx
 INCLUDE_DIR := include
 
@@ -25,13 +25,13 @@ RMDIR := rm -rf
 # endif
 # ------------------------------------
 
-# LIBFT := $(LIBFT_DIR)/libft.a
+LIBFT := $(LIBFT_DIR)/libft.a
 # MLX := $(MLX_DIR)/$(MLX_FILE)
 
-# LIBPATH := -L$(MLX_DIR) -L$(LIBFT_DIR)
-# LIBS := -lft -l$(MLX_LIB_NAME) $(MLX_FLAGS)
+LIBPATH := -L$(LIBFT_DIR) # -L$(MLX_DIR)
+LIBS := -lft # -l$(MLX_LIB_NAME) $(MLX_FLAGS)
 
-INCLUDES := -I$(INCLUDE_DIR) # -I$(LIBFT_DIR) # -I$(MLX_DIR)
+INCLUDES := -I$(INCLUDE_DIR) -I$(LIBFT_DIR) # -I$(MLX_DIR)
 
 SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/color.c \
@@ -43,7 +43,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/random_number_generator.c \
 				$(SRC_DIR)/ray.c \
 				$(SRC_DIR)/sphere.c \
-				$(SRC_DIR)/utils.c \
+				$(SRC_DIR)/utilities.c \
 				$(SRC_DIR)/vec3.c
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -51,11 +51,11 @@ OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # Rules
 all: $(NAME)
 
-$(NAME): $(OBJS) # $(MLX) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) # $(LIBPATH) $(LIBS) -o $(NAME)
+$(NAME): $(OBJS) $(LIBFT) # $(MLX)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBPATH) $(LIBS) -o $(NAME)
 
-# $(LIBFT):
-# 	$(MAKE) -C $(LIBFT_DIR)
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
 
 # $(MLX):
 # 	$(MAKE) -C $(MLX_DIR)
@@ -66,7 +66,7 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 
 clean:
 	$(RMDIR) $(OBJ_DIR)
-	# $(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C $(LIBFT_DIR) fclean
 	# $(MAKE) -C $(MLX_DIR) clean 
 
 fclean: clean

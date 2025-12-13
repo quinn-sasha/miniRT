@@ -1,6 +1,6 @@
 #include "color.h"
 #include "math.h"
-#include "utils.h"
+#include "utilities.h"
 #include <stdio.h>
 #include <unistd.h>
 

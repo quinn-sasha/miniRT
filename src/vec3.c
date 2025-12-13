@@ -87,6 +87,17 @@ t_vec3 get_random_unit_vec3(t_xorshift64_state *state) {
   return vec3_init(small_r * cos(a), small_r * sin(a), z);
 }
 
+t_vec3 get_random_vec3_in_unit_circle(t_xorshift64_state *state) {
+  while (true) {
+    double x = random_double_range(state, -1, 1);
+    double y = random_double_range(state, -1, 1);
+    t_vec3 result = vec3_init(x, y, 0);
+    if (vec3_length_squared(result) >= 1)
+      continue;
+    return result;
+  }
+}
+
 t_vec3 get_diffuse_vector_from_intersection(t_vec3 intersection,
                                             t_vec3 normal_vector,
                                             t_xorshift64_state *state) {
@@ -97,4 +108,13 @@ t_vec3 get_diffuse_vector_from_intersection(t_vec3 intersection,
 t_vec3 reflect(t_vec3 incoming, t_vec3 normal) {
   double temp = vec3_dot(incoming, normal);
   return vec3_add(incoming, vec3_scale(normal, -2 * temp));
+}
+
+t_vec3 refract(t_vec3 incoming, t_vec3 n, double eta_in_over_etat) {
+  double cos_theta = -vec3_dot(incoming, n);
+  t_vec3 parallel = vec3_scale(vec3_add(incoming, vec3_scale(n, cos_theta)),
+                               eta_in_over_etat);
+  double scalar = -sqrt(1.0 - vec3_length_squared(parallel));
+  t_vec3 perpendicular = vec3_scale(n, scalar);
+  return vec3_add(parallel, perpendicular);
 }
