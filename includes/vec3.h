@@ -31,6 +31,7 @@ t_vec3 vec3_zero(void); // e{0,0,0} のためのコンストラクタ
 
 // 基本的なベクトル演算
 t_vec3 vec3_add(t_vec3 u, t_vec3 v);
+t_vec3 vec3_add_triple(t_vec3 a, t_vec3 b, t_vec3 c);
 t_vec3 vec3_sub(t_vec3 u, t_vec3 v);
 t_vec3 vec3_mult(t_vec3 u, t_vec3 v); // 要素ごとの積
 t_vec3 vec3_mult_scalar(t_vec3 v, double t);
@@ -39,6 +40,7 @@ t_vec3 vec3_neg(t_vec3 v); // 単項マイナス (-)
 t_vec3 get_random_vec3_in_unit_sphere(t_xorshift64_state *state);
 t_vec3 get_random_unit_vec3(t_xorshift64_state *state);
 t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state);
+t_vec3 get_random_vec3_in_unit_circle(t_xorshift64_state *state);
 t_vec3 reflect(t_vec3 incoming, t_vec3 normal); //反射
 t_vec3 refract(t_vec3 incoming, t_vec3 normal, double etai_over_etat); //over 割るまたは~分の~ etat transmitted（透過側）
 

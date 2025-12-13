@@ -14,17 +14,19 @@ void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num
 
 int main(void)
 {
-    const double aspect_ratio  = (double)16 / 9; //width / height
-    const int   image_width = 384;
-    const int   image_height = image_width / aspect_ratio;
-    const int   num_recursions = 50;
+    t_screen screen = init_screen(384, 216);
+    t_vec3 lookfrom = init_vec3(13, 2, 3);
+    t_vec3 lookat = init_vec3(0, 0, 0);
+    t_vec3 view_up = init_vec3(0, 1, 0);
+    double vfov = 45.0;
+    double aperture = 0.1;
+    // double focus_dist = vec3_length(vec3_sub(lookat, lookfrom));
+    t_camera camera = init_camera(lookfrom, lookat, view_up, screen.aspect_ratio,
+                                  vfov, aperture, 10.0);
 
     // PPM ヘッダの出力 (P3 フォーマット)
     // "P3" [幅] [高さ] [最大色値]
-    printf("P3\n%d %d\n%d\n", image_width, image_height, MAX_COLOR_VALUE);
-
-    t_viewport viewport = init_viewport(aspect_ratio, 2.0 * aspect_ratio, 2.0);
-    t_camera camera = init_camera(viewport, init_vec3(0, 0, 0), 1.0);
+    printf("P3\n%d %d\n%d\n", screen.width, screen.height, MAX_COLOR_VALUE);
 
     // 物体リストと個々の物体（球）をヒープに確保
     //TODO: 今はマクロで物体の数を定義しているが渡された数だけ確保するようにする
@@ -35,11 +37,12 @@ int main(void)
     //物体リストと個々の物体をヒープに確保
     init_world(&world_list, sphere_ptrs, num_objects);
 
+    const   int max_recursions = 50;
     const  int num_samples_per_pixel = 100;
     t_xorshift64_state state;
     init_xorshift64_state(&state);
-    for (int col = image_height - 1; col >= 0; --col){
-        for (int row = 0; row < image_width; ++row){
+    for (int col = screen.height - 1; col >= 0; --col){
+        for (int row = 0; row < screen.width; ++row){
             fprintf(stderr, "\rScanlines remaining: %d ", col);
             fflush(stderr); //バッファを強制的にフラッシュしすぐに表示させる
 
@@ -47,12 +50,12 @@ int main(void)
             for (int sample = 0; sample < num_samples_per_pixel; sample++)
             {
                 //現在のピクセル位置(col, row)をビューポート上の0.0から1.0の間の座標(u, v)に変換　正規化座標
-                double x_offset = (row + random_double(&state)) / (image_width - 1);
-                double y_offset = (col + random_double(&state)) / (image_height - 1);
+                double x_offset = (row + random_double(&state)) / (screen.width - 1);
+                double y_offset = (col + random_double(&state)) / (screen.height - 1);
                 //レイの方向ベクトルを計算
-                t_ray  ray = get_ray(camera, x_offset, y_offset);
+                t_ray  ray = get_ray(camera, x_offset, y_offset, &state);
                 //レイの色を計算
-                pixel_color = add_color(pixel_color, ray_color(ray, &world_list, &state, num_recursions));
+                pixel_color = add_color(pixel_color, ray_color(ray, &world_list, &state, max_recursions));
             }
             //色を出力
             write_color(pixel_color, num_samples_per_pixel);

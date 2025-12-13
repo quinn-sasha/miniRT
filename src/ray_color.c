@@ -76,34 +76,56 @@ void    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t n
     // リストの初期化 (NUM_SCENE_OBJECTS の数だけメモリを確保)
     *world_list = init_hittable_list(num_obj);
     double fuzz = 0.5;
-    double ref_idx_glass = 1.5;
+    double refract_idx_glass = 1.5;
+    // double R = cos(M_PI / 4);
     // 1. 中央の球
     t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5, init_lambertian_material(init_color(0.1, 0.2, 0.5), fuzz, ref_idx_glass));
+    *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5, init_lambertian_material(init_color(0.1, 0.2, 0.5), fuzz, refract_idx_glass));
     t_hittable hittable1 = init_hittable(sphere1, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable1);
     sphere_ptrs[0] = sphere1; //開放用にポインタを保存
 
     // 2. 地面の球
     t_sphere *sphere2 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere2 = init_sphere(init_vec3(0, -100.5, -1), 100.0, init_lambertian_material(init_color(0.8, 0.8, 0.0), fuzz, ref_idx_glass));
+    *sphere2 = init_sphere(init_vec3(0, -100.5, -1), 100.0, init_lambertian_material(init_color(0.8, 0.8, 0.0), fuzz, refract_idx_glass));
     t_hittable hittable2 = init_hittable(sphere2, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable2);
-    sphere_ptrs[1] = sphere2; //開放用にポインタを保存
+    sphere_ptrs[1] = sphere2;
 
      // 3. 右の球
     t_sphere *sphere3 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere3 = init_sphere(init_vec3(1, 0, -1), 0.5, init_metal_material(init_color(0.8, 0.6, 0.2), fuzz, ref_idx_glass));
+    *sphere3 = init_sphere(init_vec3(1, 0, -1), 0.5, init_metal_material(init_color(0.8, 0.6, 0.2), fuzz, refract_idx_glass));
     t_hittable hittable3 = init_hittable(sphere3, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable3);
-    sphere_ptrs[2] = sphere3; //開放用にポインタを保存
+    sphere_ptrs[2] = sphere3;
 
      // 4. 左の球
     t_sphere *sphere4 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere4 = init_sphere(init_vec3(-1, 0, -1), 0.5, init_dielectric_material(init_color(1.0, 1.0, 1.0), fuzz, ref_idx_glass));
+    *sphere4 = init_sphere(init_vec3(-1, 0, -1), 0.5, init_dielectric_material(init_color(1.0, 1.0, 1.0), fuzz, refract_idx_glass));
     t_hittable hittable4 = init_hittable(sphere4, hit_object); //なぜ球とその関数を一緒にするんだっけ
     hittable_list_add(world_list, hittable4);
-    sphere_ptrs[3] = sphere4; //開放用にポインタを保存
+    sphere_ptrs[3] = sphere4;
+
+    // 5. 中空のガラス球　負の半径　法線を反転させる　光線が内側から出ることになる
+    t_sphere *sphere5 = (t_sphere *)malloc(sizeof(t_sphere));
+    *sphere5 = init_sphere(init_vec3(-1, 0, -1), -0.45, init_dielectric_material(init_color(1.0, 1.0, 1.0), fuzz, refract_idx_glass));
+    t_hittable hittable5 = init_hittable(sphere5, hit_object); //なぜ球とその関数を一緒にするんだっけ
+    hittable_list_add(world_list, hittable5);
+    sphere_ptrs[4] = sphere5;
+
+    //     // 1. 左の青の球
+    // t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
+    // *sphere1 = init_sphere(init_vec3(-R, 0, -1), R, init_lambertian_material(init_color(0.0, 0.20, 1.0), fuzz, ref_idx_glass));
+    // t_hittable hittable1 = init_hittable(sphere1, hit_object); //なぜ球とその関数を一緒にするんだっけ
+    // hittable_list_add(world_list, hittable1);
+    // sphere_ptrs[0] = sphere1; //開放用にポインタを保存
+
+    // // 2. 右の赤の球
+    // t_sphere *sphere2 = (t_sphere *)malloc(sizeof(t_sphere));
+    // *sphere2 = init_sphere(init_vec3(R, 0, -1), R, init_lambertian_material(init_color(1.0, 0.0, 0.0), fuzz, ref_idx_glass));
+    // t_hittable hittable2 = init_hittable(sphere2, hit_object); //なぜ球とその関数を一緒にするんだっけ
+    // hittable_list_add(world_list, hittable2);
+    // sphere_ptrs[1] = sphere2;
 }
 
 void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj)

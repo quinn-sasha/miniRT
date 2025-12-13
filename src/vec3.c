@@ -26,6 +26,10 @@ t_vec3 vec3_add(t_vec3 u, t_vec3 v)
     return init_vec3(u.x + v.x, u.y + v.y, u.z + v.z);
 }
 
+t_vec3 vec3_add_triple(t_vec3 a, t_vec3 b, t_vec3 c) {
+  return vec3_add(a, vec3_add(b, c));
+}
+
 t_vec3 vec3_sub(t_vec3 u, t_vec3 v)
 {
     return init_vec3(u.x - v.x, u.y - v.y, u.z - v.z);
@@ -123,6 +127,19 @@ t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state)
         return vec3_neg(in_unit_sphere);
 }
 
+t_vec3 get_random_vec3_in_unit_circle(t_xorshift64_state *state)
+{
+    while (true)
+    {
+        double x = random_double_range(state, -1, 1);
+        double y = random_double_range(state, -1, 1);
+        t_vec3 result = init_vec3(x, y, 0);
+        if (vec3_length_squared(result) >= 1)
+            continue; //x^2 + y^2 = < 1.0 を満たす
+        return (result);
+    }
+}
+
 t_vec3 reflect(t_vec3 incoming, t_vec3 normal)
 {
     double temp = vec3_dot(incoming, normal);
@@ -139,12 +156,12 @@ t_vec3 refract(t_vec3 incoming, t_vec3 normal, double etai_over_etat)
 
     //屈折レイの並行成分の計算
     t_vec3 temp = vec3_add(incoming, vec3_mult_scalar(normal, cos_theta));
-    t_vec3 reflact_parallel = vec3_mult_scalar(temp ,etai_over_etat);
+    t_vec3 refract_parallel = vec3_mult_scalar(temp ,etai_over_etat);
 
     //屈折レイの垂直成分の計算
     //  vec3 r_out_perp = -sqrt(1.0 - r_out_parallel.length_squared()) * n;
-    double reflact_parallel_squared = vec3_length_squared(reflact_parallel);
-    t_vec3 reflact_perp = vec3_mult_scalar(normal ,-sqrt(1.0 - reflact_parallel_squared));
+    double refract_parallel_squared = vec3_length_squared(refract_parallel);
+    t_vec3 refract_perp = vec3_mult_scalar(normal ,-sqrt(1.0 - refract_parallel_squared));
 
-    return vec3_add(reflact_parallel, reflact_perp);
+    return vec3_add(refract_parallel, refract_perp);
 }

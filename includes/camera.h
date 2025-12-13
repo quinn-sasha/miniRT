@@ -6,22 +6,25 @@
 
 typedef struct s_camera
 {
-	t_point3 origin; //カメラの位置（視点）
-	t_point3 lower_left_corner; //ビューポートの左下隅のワールド座標
-	t_vec3	horizontal;  //ビューポートの水平方向ベクトル
-	t_vec3	vertical; //ビューポートの垂直方向ベクトル
-	double	focal_length;
+  t_vec3 origin;
+  t_vec3 horizontal;
+  t_vec3 vertical;
+  t_vec3 right_dir;
+  t_vec3 above_dir;
+  t_vec3 lower_left_corner;
+  double lens_radius;
 } t_camera;
 
-typedef struct s_viewport
+typedef struct s_screen
 {
+	int width;
+	int height;
 	double aspect_ratio;
-	double width;
-	double height;
-}	t_viewport;
+}	t_screen;
 
-t_viewport	init_viewport(double aspect_ratio, double width, double height);
-t_camera 		init_camera(t_viewport viewport, t_vec3 origin, double focal_length);
-t_ray	get_ray(t_camera camera, double x_offset, double y_offset);
+t_screen	init_screen(int width, int height);
+t_camera 	init_camera(t_vec3 look_from, t_vec3 look_at, t_vec3 view_up,
+												double aspect_ratio, double hfov, double aperture, double focus_distance);
+t_ray	get_ray(t_camera camera, double x_offset, double y_offset, t_xorshift64_state *state);
 
 #endif
