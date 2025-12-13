@@ -18,19 +18,19 @@ static t_object_list generate_random_scene(t_xorshift64_state *state) {
   init_object_list(&world);
   t_material ground_material =
       init_lambertian_material(init_color(0.5, 0.5, 0.5));
-  add_sphere(&world, new_sphere(vec3_init(0, -1000, 0), 1000, ground_material));
+  add_sphere(&world, new_sphere(init_vec3(0, -1000, 0), 1000, ground_material));
 
   for (int i = -11; i < 11; i++) {
     for (int j = -11; j < 11; j++) {
-      t_vec3 center = vec3_init(i + 0.9 * random_double(state), 0.2,
+      t_vec3 center = init_vec3(i + 0.9 * random_double(state), 0.2,
                                 j + 0.9 * random_double(state));
-      if (vec3_length(vec3_sub(center, vec3_init(4, 0.2, 0))) <= 0.9)
+      if (length_vec3(sub_vec3(center, init_vec3(4, 0.2, 0))) <= 0.9)
         continue;
       double material_decision = random_double(state);
       t_material sphere_material;
       if (material_decision < 0.8) {
         t_color albedo =
-            vec3_multiply(init_random_vec3(state), init_random_vec3(state));
+            multiply_vec3(init_random_vec3(state), init_random_vec3(state));
         sphere_material = init_lambertian_material(albedo);
         add_sphere(&world, new_sphere(center, 0.2, sphere_material));
         continue;
@@ -47,11 +47,11 @@ static t_object_list generate_random_scene(t_xorshift64_state *state) {
     }
   }
   t_material material1 = init_dielectric_material(1.5);
-  add_sphere(&world, new_sphere(vec3_init(0, 1, 0), 1.0, material1));
+  add_sphere(&world, new_sphere(init_vec3(0, 1, 0), 1.0, material1));
   t_material material2 = init_lambertian_material(init_color(0.4, 0.2, 0.1));
-  add_sphere(&world, new_sphere(vec3_init(-4, 1, 0), 1.0, material2));
+  add_sphere(&world, new_sphere(init_vec3(-4, 1, 0), 1.0, material2));
   t_material material3 = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0);
-  add_sphere(&world, new_sphere(vec3_init(4, 1, 0), 1.0, material3));
+  add_sphere(&world, new_sphere(init_vec3(4, 1, 0), 1.0, material3));
   return world;
 }
 
@@ -78,22 +78,22 @@ static t_color calculate_color(t_ray ray, t_object_list *list,
 
     if (!return_value)
       return init_color(0, 0, 0);
-    return vec3_multiply(
+    return multiply_vec3(
         calculate_color(scattered, list, state, num_recursions - 1),
         attenuation);
   }
-  t_vec3 unit_direction = vec3_normalize(ray.direction);
+  t_vec3 unit_direction = normalize_vec3(ray.direction);
   double t = 0.5 * (unit_direction.y + 1.0);
   t_color white = init_color(1.0, 1.0, 1.0);
-  return vec3_add(vec3_scale(white, (1.0 - t)),
-                  vec3_scale(init_color(0.5, 0.7, 1.0), t));
+  return add_vec3(scale_vec3(white, (1.0 - t)),
+                  scale_vec3(init_color(0.5, 0.7, 1.0), t));
 }
 
 int main(void) {
   t_screen screen = init_screen(384, 216);
-  t_vec3 lookfrom = vec3_init(13, 2, 3);
-  t_vec3 lookat = vec3_init(0, 0, 0);
-  t_vec3 view_up = vec3_init(0, 1, 0);
+  t_vec3 lookfrom = init_vec3(13, 2, 3);
+  t_vec3 lookat = init_vec3(0, 0, 0);
+  t_vec3 view_up = init_vec3(0, 1, 0);
   double focus_dist = 10.0;
   t_camera camera = init_camera(lookfrom, lookat, view_up, screen.aspect_ratio,
                                 45, 0.1, focus_dist);
@@ -117,7 +117,7 @@ int main(void) {
         double x_offset = (row + random_double(&state)) / (screen.width - 1);
         double y_offset = (col + random_double(&state)) / (screen.height - 1);
         t_ray ray = get_ray(camera, x_offset, y_offset, &state);
-        pixel_color = vec3_add(
+        pixel_color = add_vec3(
             pixel_color, calculate_color(ray, &world, &state, max_recursions));
       }
       write_color(fd, pixel_color, num_samples_per_pixel);

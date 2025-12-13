@@ -8,5 +8,5 @@ t_ray init_ray(t_vec3 origin, t_vec3 direction) {
 }
 
 t_vec3 ray_at(t_ray ray, double t) {
-  return vec3_add(ray.origin, vec3_scale(ray.direction, t));
+  return add_vec3(ray.origin, scale_vec3(ray.direction, t));
 }
