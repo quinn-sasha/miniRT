@@ -44,6 +44,10 @@ double vec3_dot(t_vec3 a, t_vec3 b) {
   return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+t_vec3 vec3_multiply(t_vec3 a, t_vec3 b) {
+  return vec3_init(a.x * b.x, a.y * b.y, a.z * b.z);
+}
+
 t_vec3 vec3_normalize(t_vec3 v) {
   double length = vec3_length(v);
   return vec3_scale(v, 1 / length);

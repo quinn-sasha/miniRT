@@ -1,5 +1,4 @@
 #include "material.h"
-#include "color.h"
 #include "hit_record.h"
 #include "libft.h"
 #include "random_number_generator.h"
