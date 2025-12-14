@@ -1,7 +1,6 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "color.h"
 #include "random_number_generator.h"
 #include "ray.h"
 #include <stdbool.h>

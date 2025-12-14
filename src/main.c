@@ -74,7 +74,7 @@ static t_color calculate_color(t_ray ray, t_object_list *list,
       return_value =
           dielectric_scatters(ray, record, &scattered, &attenuation, state);
     else
-      exit(EXIT_FAILURE);
+      exit(EXIT_FAILURE); // TODO: print message to debug
 
     if (!return_value)
       return init_color(0, 0, 0);

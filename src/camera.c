@@ -22,13 +22,16 @@ static void set_viewport_width_height(double *width, double *height,
 }
 
 static t_vec3 calculate_lower_left_corner(t_vec3 origin, t_vec3 horizontal,
-                                          t_vec3 vertical, t_vec3 w,
+                                          t_vec3 vertical, t_vec3 back_dir,
                                           double focus_distance) {
-  t_vec3 minus_half_horizontal = inverse_vec3(divide_vec3(horizontal, 2));
-  t_vec3 minus_half_vertical = inverse_vec3(divide_vec3(vertical, 2));
-  t_vec3 z_componet = scale_vec3(w, -focus_distance);
-  return add_triple_vec3(origin, minus_half_horizontal,
-                         add_vec3(minus_half_vertical, z_componet));
+  t_vec3 half_horizontal = divide_vec3(horizontal, 2);
+  t_vec3 half_vertical = divide_vec3(vertical, 2);
+  t_vec3 z_componet = scale_vec3(back_dir, -focus_distance);
+
+  t_vec3 result = sub_vec3(origin, half_horizontal);
+  result = sub_vec3(result, half_vertical);
+  result = add_vec3(result, z_componet);
+  return result;
 }
 
 t_camera init_camera(t_vec3 look_from, t_vec3 look_at, t_vec3 view_up,
@@ -41,15 +44,15 @@ t_camera init_camera(t_vec3 look_from, t_vec3 look_at, t_vec3 view_up,
   double viewport_height;
   set_viewport_width_height(&viewport_width, &viewport_height, aspect_ratio,
                             hfov);
-  t_vec3 w = normalize_vec3(sub_vec3(look_from, look_at));
-  camera.right_dir = normalize_vec3(cross_vec3(view_up, w));
-  camera.above_dir = normalize_vec3(cross_vec3(w, camera.right_dir));
+  t_vec3 back_dir = normalize_vec3(sub_vec3(look_from, look_at));
+  camera.right_dir = normalize_vec3(cross_vec3(view_up, back_dir));
+  camera.above_dir = normalize_vec3(cross_vec3(back_dir, camera.right_dir));
   camera.horizontal =
       scale_vec3(camera.right_dir, viewport_width * focus_distance);
   camera.vertical =
       scale_vec3(camera.above_dir, viewport_height * focus_distance);
   camera.lower_left_corner = calculate_lower_left_corner(
-      look_from, camera.horizontal, camera.vertical, w, focus_distance);
+      look_from, camera.horizontal, camera.vertical, back_dir, focus_distance);
   camera.lens_radius = aperture / 2;
   return camera;
 }
