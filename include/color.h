@@ -4,6 +4,7 @@
 #include "vec3.h"
 
 t_color init_color(double red, double green, double blue);
-void write_color(int fd, t_color color, int num_samples_per_pixel);
+void gamma_correction(t_color *color);
+uint32_t rgb_to_integer(t_color color);
 
 #endif

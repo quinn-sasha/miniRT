@@ -4,12 +4,6 @@
 #include "ray.h"
 #include "vec3.h"
 
-typedef struct s_screen {
-  int width;
-  int height;
-  double aspect_ratio; // (width / height)
-} t_screen;
-
 typedef struct s_camera {
   t_vec3 origin;
   t_vec3 horizontal;
@@ -20,7 +14,6 @@ typedef struct s_camera {
   double lens_radius;
 } t_camera;
 
-t_screen init_screen(int width, int height);
 t_camera init_camera(t_vec3 look_from, t_vec3 look_at, t_vec3 view_up,
                      double aspect_ratio, double hfov, double aperture,
                      double focus_distance);

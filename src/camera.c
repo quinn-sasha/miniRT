@@ -5,14 +5,6 @@
 #include "vec3.h"
 #include <math.h>
 
-t_screen init_screen(int width, int height) {
-  t_screen screen;
-  screen.width = width;
-  screen.height = height;
-  screen.aspect_ratio = (double)width / height;
-  return screen;
-}
-
 static void set_viewport_width_height(double *width, double *height,
                                       double aspect_ratio, double hfov) {
   double theta = degrees_to_radians(hfov);

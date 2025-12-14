@@ -15,16 +15,14 @@ typedef struct s_scene_object {
   struct s_scene_object *next;
 } t_scence_object;
 
-typedef struct s_object_list {
-  t_scence_object *head;
-} t_object_list;
-
-void init_object_list(t_object_list *list);
+void init_dummy_head(t_scence_object *head);
 void destroy_scene_object(t_scence_object *object);
-void destroy_object_list(t_object_list *list);
+void destroy_object_list(t_scence_object *head);
 t_scence_object *new_scene_object(void *object, e_object_type type);
-void add_sphere(t_object_list *list, t_sphere *sphere);
-bool hits_any_object(t_object_list *list, t_ray ray, double min_t, double max_t,
-                     t_hit_record *record);
+void add_object_generic(t_scence_object *head, void *object,
+                        e_object_type type);
+void add_sphere(t_scence_object *head, t_sphere *sphere);
+bool hits_any_object(t_scence_object *head, t_ray ray, double min_t,
+                     double max_t, t_hit_record *record);
 
 #endif

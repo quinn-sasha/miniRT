@@ -1,7 +1,10 @@
 #include "camera.h"
 #include "color.h"
+#include "error.h"
 #include "hit_record.h"
 #include "material.h"
+#include "minilibx_utils.h"
+#include "mlx.h"
 #include "object_list.h"
 #include "random_number_generator.h"
 #include "ray.h"
@@ -13,12 +16,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static t_object_list generate_random_scene(t_xorshift64_state *state) {
-  t_object_list world;
-  init_object_list(&world);
+static void generate_random_scene(t_scence_object *head,
+                                  t_xorshift64_state *state) {
   t_material ground_material =
       init_lambertian_material(init_color(0.5, 0.5, 0.5));
-  add_sphere(&world, new_sphere(init_vec3(0, -1000, 0), 1000, ground_material));
+  add_sphere(head, new_sphere(init_vec3(0, -1000, 0), 1000, ground_material));
 
   for (int i = -11; i < 11; i++) {
     for (int j = -11; j < 11; j++) {
@@ -32,40 +34,39 @@ static t_object_list generate_random_scene(t_xorshift64_state *state) {
         t_color albedo =
             multiply_vec3(init_random_vec3(state), init_random_vec3(state));
         sphere_material = init_lambertian_material(albedo);
-        add_sphere(&world, new_sphere(center, 0.2, sphere_material));
+        add_sphere(head, new_sphere(center, 0.2, sphere_material));
         continue;
       }
       if (material_decision < 0.95) {
         t_color albedo = init_random_vec3_range(state, 0.5, 1);
         double fuzziness = random_double_range(state, 0, 0.5);
         sphere_material = init_metal_material(albedo, fuzziness);
-        add_sphere(&world, new_sphere(center, 0.2, sphere_material));
+        add_sphere(head, new_sphere(center, 0.2, sphere_material));
         continue;
       }
       sphere_material = init_dielectric_material(1.5); // glass: 1.5
-      add_sphere(&world, new_sphere(center, 0.2, sphere_material));
+      add_sphere(head, new_sphere(center, 0.2, sphere_material));
     }
   }
   t_material material1 = init_dielectric_material(1.5);
-  add_sphere(&world, new_sphere(init_vec3(0, 1, 0), 1.0, material1));
+  add_sphere(head, new_sphere(init_vec3(0, 1, 0), 1.0, material1));
   t_material material2 = init_lambertian_material(init_color(0.4, 0.2, 0.1));
-  add_sphere(&world, new_sphere(init_vec3(-4, 1, 0), 1.0, material2));
+  add_sphere(head, new_sphere(init_vec3(-4, 1, 0), 1.0, material2));
   t_material material3 = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0);
-  add_sphere(&world, new_sphere(init_vec3(4, 1, 0), 1.0, material3));
-  return world;
+  add_sphere(head, new_sphere(init_vec3(4, 1, 0), 1.0, material3));
 }
 
-static t_color calculate_color(t_ray ray, t_object_list *list,
+static t_color calculate_color(t_ray ray, t_scence_object *head,
                                t_xorshift64_state *state, int num_recursions) {
   if (num_recursions <= 0)
     return init_color(0, 0, 0);
 
   t_hit_record record;
   // Set t bigger than 0 to prevent shadow acne
-  if (hits_any_object(list, ray, 0.001, INFINITY, &record)) {
+  if (hits_any_object(head, ray, 0.001, INFINITY, &record)) {
     t_color attenuation = record.material.albedo; // Assume attenuation = albedo
     t_ray scattered;
-    bool return_value;
+    bool return_value = false;
     if (record.material.type == MAT_LAMBERTIAN)
       return_value = lambertian_scatters(record, &scattered, state);
     else if (record.material.type == MAT_METAL)
@@ -74,12 +75,12 @@ static t_color calculate_color(t_ray ray, t_object_list *list,
       return_value =
           dielectric_scatters(ray, record, &scattered, &attenuation, state);
     else
-      exit(EXIT_FAILURE); // TODO: print message to debug
+      error_exit("Unkonw material type");
 
     if (!return_value)
       return init_color(0, 0, 0);
     return multiply_vec3(
-        calculate_color(scattered, list, state, num_recursions - 1),
+        calculate_color(scattered, head, state, num_recursions - 1),
         attenuation);
   }
   t_vec3 unit_direction = normalize_vec3(ray.direction);
@@ -89,39 +90,51 @@ static t_color calculate_color(t_ray ray, t_object_list *list,
                   scale_vec3(init_color(0.5, 0.7, 1.0), t));
 }
 
-int main(void) {
-  t_screen screen = init_screen(384, 216);
+int render(t_program *data) {
+  if (data->window == NULL)
+    return (EXIT_SUCCESS);
   t_vec3 lookfrom = init_vec3(13, 2, 3);
   t_vec3 lookat = init_vec3(0, 0, 0);
   t_vec3 view_up = init_vec3(0, 1, 0);
   double focus_dist = 10.0;
-  t_camera camera = init_camera(lookfrom, lookat, view_up, screen.aspect_ratio,
-                                45, 0.1, focus_dist);
+  t_camera camera = init_camera(lookfrom, lookat, view_up,
+                                (double)WIDTH / HEIGHT, 45, 0.1, focus_dist);
 
   t_xorshift64_state state;
   init_xorshift64_state(&state);
-  t_object_list world = generate_random_scene(&state);
-
-  int fd = STDOUT_FILENO;
-  dprintf(fd, "P3\n");
-  dprintf(fd, "%d %d\n255\n", screen.width, screen.height);
+  generate_random_scene(&data->head, &state);
 
   const int max_recursions = 50;
   const int num_samples_per_pixel = 100;
-  for (int row = screen.height - 1; row >= 0; row--) {
-    for (int col = 0; col < screen.width; col++) {
-      dprintf(STDERR_FILENO, "Scanlines remaining: %d ", row);
+  for (int y = 0; y < HEIGHT; y++) {
+    for (int x = 0; x < WIDTH; x++) {
 
       t_color pixel_color = init_color(0, 0, 0);
       for (int sample = 0; sample < num_samples_per_pixel; sample++) {
-        double x_offset = (col + random_double(&state)) / (screen.width - 1);
-        double y_offset = (row + random_double(&state)) / (screen.height - 1);
+        double x_offset = (x + random_double(&state)) / (WIDTH - 1);
+        double y_offset = (y + random_double(&state)) / (HEIGHT - 1);
         t_ray ray = get_ray(camera, x_offset, y_offset, &state);
-        pixel_color = add_vec3(
-            pixel_color, calculate_color(ray, &world, &state, max_recursions));
+        pixel_color =
+            add_vec3(pixel_color,
+                     calculate_color(ray, &data->head, &state, max_recursions));
       }
-      write_color(fd, pixel_color, num_samples_per_pixel);
+      pixel_color = divide_vec3(pixel_color, num_samples_per_pixel);
+      gamma_correction(&pixel_color);
+      set_pixel_color(x, y, &data->img, rgb_to_integer(pixel_color));
     }
   }
-  dprintf(STDERR_FILENO, "Done\n");
+  mlx_put_image_to_window(data->mlx, data->window, data->img.mlx_img, 0, 0);
+  return EXIT_SUCCESS;
+}
+
+int main(void) {
+  // TODO: read from rt file
+  t_program data;
+  init_dummy_head(&data.head); // TODO
+  init_mlx_resources(&data);
+  set_mlx_hooks(&data);
+  mlx_loop_hook(data.mlx, render, &data);
+  mlx_loop(data.mlx);
+  destroy_mlx_resources_if_allocated(&data);
+  return EXIT_SUCCESS;
 }

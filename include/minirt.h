@@ -1,0 +1,14 @@
+#include "camera.h"
+#include "img.h"
+#include "object_list.h"
+
+#define WIDTH 384
+#define HEIGHT 216
+
+typedef struct s_program {
+  void *mlx;
+  void *window;
+  t_img img;
+  t_scence_object head;
+  t_camera camera;
+} t_program;

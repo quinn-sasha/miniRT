@@ -12,19 +12,19 @@ t_color init_color(double red, double green, double blue) {
   return color;
 }
 
-// 各成分を[0, 255]に変換する
-// 255.999 をかけることで、0.999...をかける場合でも白(255)になるようにする
-void write_color(int fd, t_color color, int num_samples_per_pixel) {
+void gamma_correction(t_color *color) {
+  color->x = sqrt(color->x);
+  color->y = sqrt(color->y);
+  color->z = sqrt(color->z);
+}
+
+uint32_t rgb_to_integer(t_color color) {
   double red = color.x;
   double green = color.y;
   double blue = color.z;
 
-  double scalar = 1.0 / num_samples_per_pixel;
-  red = sqrt(scalar * red);
-  green = sqrt(scalar * green);
-  blue = sqrt(scalar * blue);
   int r = 256 * clamp(red, 0.0, 0.999);
   int g = 256 * clamp(green, 0.0, 0.999);
   int b = 256 * clamp(blue, 0.0, 0.999);
-  dprintf(fd, "%d %d %d\n", r, g, b);
+  return (r << 16 | g << 8 | b);
 }
