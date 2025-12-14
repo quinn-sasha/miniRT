@@ -108,14 +108,14 @@ int main(void) {
 
   const int max_recursions = 50;
   const int num_samples_per_pixel = 100;
-  for (int col = screen.height - 1; col >= 0; col--) {
-    for (int row = 0; row < screen.width; row++) {
-      dprintf(STDERR_FILENO, "Scanlines remaining: %d ", col);
+  for (int row = screen.height - 1; row >= 0; row--) {
+    for (int col = 0; col < screen.width; col++) {
+      dprintf(STDERR_FILENO, "Scanlines remaining: %d ", row);
 
       t_color pixel_color = init_color(0, 0, 0);
       for (int sample = 0; sample < num_samples_per_pixel; sample++) {
-        double x_offset = (row + random_double(&state)) / (screen.width - 1);
-        double y_offset = (col + random_double(&state)) / (screen.height - 1);
+        double x_offset = (col + random_double(&state)) / (screen.width - 1);
+        double y_offset = (row + random_double(&state)) / (screen.height - 1);
         t_ray ray = get_ray(camera, x_offset, y_offset, &state);
         pixel_color = add_vec3(
             pixel_color, calculate_color(ray, &world, &state, max_recursions));
