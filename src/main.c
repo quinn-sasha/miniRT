@@ -98,15 +98,16 @@ int render(t_program *data) {
   t_vec3 view_up = init_vec3(0, 1, 0);
   double focus_dist = 10.0;
   t_camera camera = init_camera(lookfrom, lookat, view_up,
-                                (double)WIDTH / HEIGHT, 45, 0.1, focus_dist);
-
+                                (double)WIDTH / HEIGHT, 20, 0.1, focus_dist);
   t_xorshift64_state state;
   init_xorshift64_state(&state);
   generate_random_scene(&data->head, &state);
 
+  printf("Rendering started\n");
   const int max_recursions = 50;
   const int num_samples_per_pixel = 100;
   for (int y = 0; y < HEIGHT; y++) {
+    printf("Scanlines reamaining: %d\n", HEIGHT - y);
     for (int x = 0; x < WIDTH; x++) {
 
       t_color pixel_color = init_color(0, 0, 0);
@@ -124,16 +125,17 @@ int render(t_program *data) {
     }
   }
   mlx_put_image_to_window(data->mlx, data->window, data->img.mlx_img, 0, 0);
+  printf("Rendering done\n");
   return EXIT_SUCCESS;
 }
 
 int main(void) {
   // TODO: read from rt file
   t_program data;
-  init_dummy_head(&data.head); // TODO
   init_mlx_resources(&data);
   set_mlx_hooks(&data);
-  mlx_loop_hook(data.mlx, render, &data);
+  init_dummy_head(&data.head); // TODO
+  render(&data);
   mlx_loop(data.mlx);
   destroy_mlx_resources_if_allocated(&data);
   return EXIT_SUCCESS;

@@ -49,10 +49,13 @@ void destroy_mlx_resources_if_allocated(t_program *data) {
   free(data->mlx);
 }
 
-static int destroy_window(t_program *data) {
+int destroy_window(t_program *data) {
   mlx_destroy_window(data->mlx, data->window);
   data->window = NULL;
-  return (0);
+#ifdef __APPLE__
+  exit(EXIT_SUCCESS);
+#endif
+  return EXIT_SUCCESS;
 }
 
 static int handle_keypress(int keysymbol, t_program *data) {
