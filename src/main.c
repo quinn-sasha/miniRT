@@ -7,9 +7,10 @@
 #include "math_utils.h"
 
 #define MAX_COLOR_VALUE 255
+#define MAX_SCENE_OBJECTS 10000
 
 t_color ray_color(const t_ray ray, const t_hittable_list *world, t_xorshift64_state *state, int num_recursions);
-void    init_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj);
+size_t    init_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj, t_xorshift64_state *state);
 void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj);
 
 int main(void)
@@ -18,11 +19,11 @@ int main(void)
     t_vec3 lookfrom = init_vec3(13, 2, 3);
     t_vec3 lookat = init_vec3(0, 0, 0);
     t_vec3 view_up = init_vec3(0, 1, 0);
-    double vfov = 45.0;
+    double vfov = 20.0;
     double aperture = 0.1;
-    // double focus_dist = vec3_length(vec3_sub(lookat, lookfrom));
+    double focus_dist = vec3_length(vec3_sub(lookat, lookfrom));
     t_camera camera = init_camera(lookfrom, lookat, view_up, screen.aspect_ratio,
-                                  vfov, aperture, 10.0);
+                                  vfov, aperture, focus_dist);
 
     // PPM ヘッダの出力 (P3 フォーマット)
     // "P3" [幅] [高さ] [最大色値]
@@ -30,17 +31,18 @@ int main(void)
 
     // 物体リストと個々の物体（球）をヒープに確保
     //TODO: 今はマクロで物体の数を定義しているが渡された数だけ確保するようにする
-    const size_t num_objects = NUM_SCENE_OBJECTS;
+    const size_t max_objects = MAX_SCENE_OBJECTS;
     t_hittable_list world_list;
-    t_sphere    *sphere_ptrs[num_objects];
+    t_sphere    *sphere_ptrs[max_objects];
+
 
     //物体リストと個々の物体をヒープに確保
-    init_world(&world_list, sphere_ptrs, num_objects);
+    t_xorshift64_state state;
+    init_xorshift64_state(&state);
+    size_t count_objects = init_world(&world_list, sphere_ptrs, max_objects, &state);
 
     const   int max_recursions = 50;
     const  int num_samples_per_pixel = 100;
-    t_xorshift64_state state;
-    init_xorshift64_state(&state);
     for (int col = screen.height - 1; col >= 0; --col){
         for (int row = 0; row < screen.width; ++row){
             fprintf(stderr, "\rScanlines remaining: %d ", col);
@@ -55,14 +57,14 @@ int main(void)
                 //レイの方向ベクトルを計算
                 t_ray  ray = get_ray(camera, x_offset, y_offset, &state);
                 //レイの色を計算
-                pixel_color = add_color(pixel_color, ray_color(ray, &world_list, &state, max_recursions));
+                pixel_color = vec3_add(pixel_color, ray_color(ray, &world_list, &state, max_recursions));
             }
             //色を出力
             write_color(pixel_color, num_samples_per_pixel);
             // write_color(pixel_color);
         }
     }
-    cleanup_world(&world_list, sphere_ptrs, num_objects);
+    cleanup_world(&world_list, sphere_ptrs, count_objects);
     fprintf(stderr, "\nDone.\n");
     return (0);
 }

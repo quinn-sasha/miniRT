@@ -2,6 +2,7 @@
 # define  VEC3_H
 
 #include <math.h>
+#include <stdbool.h>
 #include "random_number_generator.h"
 
 typedef struct s_vec3
@@ -11,19 +12,8 @@ typedef struct s_vec3
     double z;
 } t_vec3;
 
-typedef struct s_color {
-  double red;
-  double green;
-  double blue;
-} t_color;
-
-typedef union u_vec3_color
-{
-    t_vec3 vec;   // ベクトルとしてアクセス
-    t_color color;  // 色としてアクセス
-} t_vec3_color;
-
 typedef t_vec3 t_point3;
+typedef t_vec3 t_color;
 
 // コンストラクタ / 初期化
 t_vec3 init_vec3(double x, double y, double z);
@@ -37,6 +27,7 @@ t_vec3 vec3_mult(t_vec3 u, t_vec3 v); // 要素ごとの積
 t_vec3 vec3_mult_scalar(t_vec3 v, double t);
 t_vec3 vec3_div_scalar(t_vec3 v, double t);
 t_vec3 vec3_neg(t_vec3 v); // 単項マイナス (-)
+bool vec3_near_zero(t_vec3 v);
 t_vec3 get_random_vec3_in_unit_sphere(t_xorshift64_state *state);
 t_vec3 get_random_unit_vec3(t_xorshift64_state *state);
 t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state);
@@ -52,6 +43,8 @@ double vec3_length(t_vec3 v);
 double vec3_dot(t_vec3 u, t_vec3 v);
 t_vec3 vec3_cross(t_vec3 u, t_vec3 v);
 t_vec3 vec3_unit_vector(t_vec3 v); // 正規化 (長さ1のベクトルを返す)
+t_vec3 init_random_vec3(t_xorshift64_state *state);
+t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min, double max);
 
 // 色
 t_color init_color(double red, double green, double blue);

@@ -165,3 +165,10 @@ t_vec3 refract(t_vec3 incoming, t_vec3 normal, double etai_over_etat)
 
     return vec3_add(refract_parallel, refract_perp);
 }
+
+// ベクトルの長さの二乗が 1e-8 未満の場合に true を返す
+bool vec3_near_zero(t_vec3 v)
+{
+    const double s = 1e-8;
+    return (fabs(v.x) < s && fabs(v.y) < s && fabs(v.z) < s);
+}

@@ -22,16 +22,16 @@ static void set_viewport_width_height(double *width, double *height,
 }
 
 static t_vec3 get_lower_left_corner(t_vec3 origin, t_vec3 horizontal,
-                                    t_vec3 vertical, t_vec3 *w, double focus_distance)
+                                    t_vec3 vertical, t_vec3 w, double focus_distance)
 {
   //ビューポートの左下隅(lower_left_corner)の座標計算
   // LLC = origin - horizontal / 2 - vertical / 2 - (0, 0, focal_length)
-  t_vec3 minus_half_horizontal = vec3_mult_scalar(horizontal, 0.5);
-  t_vec3 minus_half_vertical = vec3_mult_scalar(vertical, 0.5);
-  t_vec3 z_component = vec3_mult_scalar(*w, focus_distance);
+  t_vec3 half_horizontal = vec3_mult_scalar(horizontal, 0.5);
+  t_vec3 half_vertical = vec3_mult_scalar(vertical, 0.5);
+  t_vec3 z_component = vec3_mult_scalar(w, focus_distance);
 
-  t_point3  lower_left_corner = vec3_sub(origin, minus_half_horizontal);
-            lower_left_corner = vec3_sub(lower_left_corner, minus_half_vertical);
+  t_point3  lower_left_corner = vec3_sub(origin, half_horizontal);
+            lower_left_corner = vec3_sub(lower_left_corner, half_vertical);
             lower_left_corner = vec3_sub(lower_left_corner, z_component);
   return (lower_left_corner);
 }
@@ -48,10 +48,10 @@ t_camera init_camera(t_vec3 look_from, t_vec3 look_at, t_vec3 view_up,
   t_vec3 w = vec3_unit_vector(vec3_sub(look_from, look_at));
   camera.right_dir = vec3_unit_vector(vec3_cross(view_up, w));
   camera.above_dir = vec3_unit_vector(vec3_cross(w, camera.right_dir));
-  camera.horizontal = vec3_mult_scalar(camera.right_dir, viewport_width);
-  camera.vertical = vec3_mult_scalar(camera.above_dir, viewport_height);
+  camera.horizontal = vec3_mult_scalar(camera.right_dir, viewport_width * focus_distance);
+  camera.vertical = vec3_mult_scalar(camera.above_dir, viewport_height * focus_distance);
   camera.lower_left_corner = get_lower_left_corner(
-      look_from, camera.horizontal, camera.vertical, &w, focus_distance);
+      look_from, camera.horizontal, camera.vertical, w, focus_distance);
   camera.lens_radius = aperture / 2;
   return camera;
 }

@@ -9,7 +9,8 @@ static uint64_t xorshift64(t_xorshift64_state *state) {
   uint64_t x = state->data;
   x ^= x << 3;
   x ^= x >> 35;
-  x ^= x << 14;
+  // x ^= x << 14;
+  x ^= x << 12;
   state->data = x;
   return x;
 }

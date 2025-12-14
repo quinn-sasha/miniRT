@@ -19,7 +19,6 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world,
 
     t_hit_record rec;
     t_vec3 final_color_vec;
-    t_vec3_color converter;
 
     if (hit_hittable_list(ray, 0.001, INFINITY, &rec, world))
     {
@@ -47,7 +46,7 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world,
         t_color attenuation = rec.material.albedo;
         if (rec.material.scatters(ray, rec, &scattered, state))
         {
-            return dot_color(ray_color(scattered, world, state, num_recursions - 1), attenuation);
+            return vec3_mult(ray_color(scattered, world, state, num_recursions - 1), attenuation);
         }
         return init_color(0, 0, 0);
     }
@@ -66,66 +65,126 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world,
 
         final_color_vec = vec3_add(color_a, color_b);
     }
-    converter.vec = final_color_vec;
-
-    return converter.color;
+    return final_color_vec;
 }
 
-void    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t num_obj)
+size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t num_obj, t_xorshift64_state *state)
 {
-    // リストの初期化 (NUM_SCENE_OBJECTS の数だけメモリを確保)
+    t_sphere    *current_sphere;
+    // t_color     albedo;
+    double      choose_mat;
+    double      fuzz;
+    double      refract_idx_glass = 1.5;
+    size_t         ptr_index = 0; // sphere_ptrsへの格納インデックス
+
+    // リストの初期化
     *world_list = init_hittable_list(num_obj);
-    double fuzz = 0.5;
-    double refract_idx_glass = 1.5;
-    // double R = cos(M_PI / 4);
-    // 1. 中央の球
-    t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5, init_lambertian_material(init_color(0.1, 0.2, 0.5), fuzz, refract_idx_glass));
-    t_hittable hittable1 = init_hittable(sphere1, hit_object); //なぜ球とその関数を一緒にするんだっけ
-    hittable_list_add(world_list, hittable1);
-    sphere_ptrs[0] = sphere1; //開放用にポインタを保存
 
-    // 2. 地面の球
-    t_sphere *sphere2 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere2 = init_sphere(init_vec3(0, -100.5, -1), 100.0, init_lambertian_material(init_color(0.8, 0.8, 0.0), fuzz, refract_idx_glass));
-    t_hittable hittable2 = init_hittable(sphere2, hit_object); //なぜ球とその関数を一緒にするんだっけ
-    hittable_list_add(world_list, hittable2);
-    sphere_ptrs[1] = sphere2;
+    // ----------------------------------------------------
+    // A. 大きな地面の球 (地面)
+    // ----------------------------------------------------
+    if (ptr_index < num_obj)
+    {
+        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
+        if (!current_sphere) return 0;
 
-     // 3. 右の球
-    t_sphere *sphere3 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere3 = init_sphere(init_vec3(1, 0, -1), 0.5, init_metal_material(init_color(0.8, 0.6, 0.2), fuzz, refract_idx_glass));
-    t_hittable hittable3 = init_hittable(sphere3, hit_object); //なぜ球とその関数を一緒にするんだっけ
-    hittable_list_add(world_list, hittable3);
-    sphere_ptrs[2] = sphere3;
+        // C++: auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+        t_material ground_mat = init_lambertian_material(init_color(0.5, 0.5, 0.5), 0, 0);
+        *current_sphere = init_sphere(init_vec3(0, -1000, 0), 1000.0, ground_mat);
 
-     // 4. 左の球
-    t_sphere *sphere4 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere4 = init_sphere(init_vec3(-1, 0, -1), 0.5, init_dielectric_material(init_color(1.0, 1.0, 1.0), fuzz, refract_idx_glass));
-    t_hittable hittable4 = init_hittable(sphere4, hit_object); //なぜ球とその関数を一緒にするんだっけ
-    hittable_list_add(world_list, hittable4);
-    sphere_ptrs[3] = sphere4;
+        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
+        sphere_ptrs[ptr_index++] = current_sphere;
+    }
 
-    // 5. 中空のガラス球　負の半径　法線を反転させる　光線が内側から出ることになる
-    t_sphere *sphere5 = (t_sphere *)malloc(sizeof(t_sphere));
-    *sphere5 = init_sphere(init_vec3(-1, 0, -1), -0.45, init_dielectric_material(init_color(1.0, 1.0, 1.0), fuzz, refract_idx_glass));
-    t_hittable hittable5 = init_hittable(sphere5, hit_object); //なぜ球とその関数を一緒にするんだっけ
-    hittable_list_add(world_list, hittable5);
-    sphere_ptrs[4] = sphere5;
 
-    //     // 1. 左の青の球
+    // ----------------------------------------------------
+    // B. ランダムな小さな球のグリッド (for ループ)
+    // ----------------------------------------------------
+    for (int a = -11; a < 11; a++)
+    {
+        for (int b = -11; b < 11; b++)
+        {
+            if (ptr_index >= num_obj - 3) // 後の3つの大きな球のためにスペースを確保
+                goto ADD_LARGE_SPHERES;
+
+            choose_mat = random_double(state);
+            // C++: point3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
+            t_vec3 center = init_vec3(a + 0.9 * random_double(state),
+                                      0.2,
+                                      b + 0.9 * random_double(state));
+
+            // C++: if ((center - vec3(4, 0.2, 0)).length() > 0.9)
+            if (vec3_length(vec3_sub(center, init_vec3(4, 0.2, 0))) > 0.9)
+            {
+                current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
+                if (!current_sphere) goto ADD_LARGE_SPHERES; // メモリ不足で次のセクションへスキップ
+
+                t_material sphere_material;
+
+                if (choose_mat < 0.8) {
+                    // 拡散 (Lambertian)
+                    t_color albedo = vec3_mult(init_random_vec3(state), init_random_vec3(state));
+                    // t_color albedo = init_color(0.8, 0.8, 0.8);
+                    sphere_material = init_lambertian_material(albedo, 0, 0);
+                } else if (choose_mat < 0.95) {
+                    // 金属 (Metal)
+                    t_color albedo = init_random_vec3_range(state, 0.5, 1);
+                    fuzz = random_double_range(state, 0, 0.5);
+                    sphere_material = init_metal_material(albedo, fuzz, 0);
+                } else {
+                    // 誘電体 (Glass)
+                    sphere_material = init_dielectric_material(init_color(1.0, 1.0, 1.0), 0, refract_idx_glass);
+                }
+
+                *current_sphere = init_sphere(center, 0.2, sphere_material);
+                hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
+                sphere_ptrs[ptr_index++] = current_sphere;
+            }
+        }
+    }
+
+    // ----------------------------------------------------
+    // C. 大きな3つの球 (C++版の最後の3つの球)
+    // ----------------------------------------------------
+    ADD_LARGE_SPHERES:; // goto のターゲット
+
+    // 1. (0, 1, 0) - ガラス
+    if (ptr_index < num_obj) {
+        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
+        if (!current_sphere) return 0;
+        t_material mat = init_dielectric_material(init_color(1.0, 1.0, 1.0), 0, refract_idx_glass);
+        *current_sphere = init_sphere(init_vec3(0, 1, 0), 1.0, mat);
+        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
+        sphere_ptrs[ptr_index++] = current_sphere;
+    }
+
+    // 2. (-4, 1, 0) - 拡散
+    if (ptr_index < num_obj) {
+        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
+        if (!current_sphere) return 0;
+        t_material mat = init_lambertian_material(init_color(0.4, 0.2, 0.1), 0, 0);
+        *current_sphere = init_sphere(init_vec3(-4, 1, 0), 1.0, mat);
+        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
+        sphere_ptrs[ptr_index++] = current_sphere;
+    }
+
+    // 3. (4, 1, 0) - 金属
+    if (ptr_index < num_obj) {
+        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
+        if (!current_sphere) return 0;
+        t_material mat = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0, 0);
+        *current_sphere = init_sphere(init_vec3(4, 1, 0), 1.0, mat);
+        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
+        sphere_ptrs[ptr_index++] = current_sphere;
+    }
+    // // 1. 中央の球
     // t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
-    // *sphere1 = init_sphere(init_vec3(-R, 0, -1), R, init_lambertian_material(init_color(0.0, 0.20, 1.0), fuzz, ref_idx_glass));
+    // *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5, init_lambertian_material(init_color(0.1, 0.2, 0.5), fuzz, refract_idx_glass));
     // t_hittable hittable1 = init_hittable(sphere1, hit_object); //なぜ球とその関数を一緒にするんだっけ
     // hittable_list_add(world_list, hittable1);
     // sphere_ptrs[0] = sphere1; //開放用にポインタを保存
 
-    // // 2. 右の赤の球
-    // t_sphere *sphere2 = (t_sphere *)malloc(sizeof(t_sphere));
-    // *sphere2 = init_sphere(init_vec3(R, 0, -1), R, init_lambertian_material(init_color(1.0, 0.0, 0.0), fuzz, ref_idx_glass));
-    // t_hittable hittable2 = init_hittable(sphere2, hit_object); //なぜ球とその関数を一緒にするんだっけ
-    // hittable_list_add(world_list, hittable2);
-    // sphere_ptrs[1] = sphere2;
+    return (ptr_index);
 }
 
 void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj)
