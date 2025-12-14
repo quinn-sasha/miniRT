@@ -11,66 +11,57 @@ t_vec3 init_vec3(double x, double y, double z)
     v.z = z;
     return (v);
 }
-//ゼロベクトル生成
-t_vec3 vec3_zero(void)
-{
-    t_vec3 v;
-    v.x = 0.0;
-    v.y = 0.0;
-    v.z = 0.0;
-    return (v);
-}
 
-t_vec3 vec3_add(t_vec3 u, t_vec3 v)
+t_vec3 add_vec3(t_vec3 u, t_vec3 v)
 {
     return init_vec3(u.x + v.x, u.y + v.y, u.z + v.z);
 }
 
-t_vec3 vec3_add_triple(t_vec3 a, t_vec3 b, t_vec3 c) {
-  return vec3_add(a, vec3_add(b, c));
+t_vec3 add_triple_vec3(t_vec3 a, t_vec3 b, t_vec3 c) {
+  return add_vec3(a, add_vec3(b, c));
 }
 
-t_vec3 vec3_sub(t_vec3 u, t_vec3 v)
+t_vec3 sub_vec3(t_vec3 u, t_vec3 v)
 {
     return init_vec3(u.x - v.x, u.y - v.y, u.z - v.z);
 }
 //乗算
-t_vec3 vec3_mult(t_vec3 u, t_vec3 v)
+t_vec3 mult_vec3(t_vec3 u, t_vec3 v)
 {
     return init_vec3(u.x * v.x, u.y * v.y, u.z * v.z);
 }
 //ベクトルの長さを変える　乗算
-t_vec3 vec3_mult_scalar(t_vec3 v, double t)
+t_vec3 mult_scalar_vec3(t_vec3 v, double t)
 {
     return init_vec3(v.x * t, v.y * t, v.z * t);
 }
 
-t_vec3 vec3_div_scalar(t_vec3 v, double t)
+t_vec3 div_scalar_vec3(t_vec3 v, double t)
 {
-    return vec3_mult_scalar(v, 1.0 / t);
+    return mult_scalar_vec3(v, 1.0 / t);
 }
 //符号反転（負ベクトル）
-t_vec3 vec3_neg(t_vec3 v)
+t_vec3 negative_vec3(t_vec3 v)
 {
     return init_vec3(-v.x, -v.y, -v.z);
 }
 //長さの二乗
-double vec3_length_squared(t_vec3 v)
+double length_squared_vec3(t_vec3 v)
 {
     return v.x * v.x + v.y * v.y + v.z * v.z;
 }
 //長さ
-double vec3_length(t_vec3 v)
+double length_vec3(t_vec3 v)
 {
-    return sqrt(vec3_length_squared(v));
+    return sqrt(length_squared_vec3(v));
 }
 //内積
-double vec3_dot(t_vec3 u, t_vec3 v)
+double dot_vec3(t_vec3 u, t_vec3 v)
 {
     return u.x * v.x + u.y * v.y + u.z * v.z;
 }
 //外積
-t_vec3 vec3_cross(t_vec3 u, t_vec3 v)
+t_vec3 cross_vec3(t_vec3 u, t_vec3 v)
 {
     return init_vec3(u.y * v.z - u.z * v.y,
                     u.z * v.x - u.x * v.z,
@@ -78,9 +69,9 @@ t_vec3 vec3_cross(t_vec3 u, t_vec3 v)
 }
 
 //単位ベクトル
-t_vec3 vec3_unit_vector(t_vec3 v)
+t_vec3 normalize_vec3(t_vec3 v)
 {
-    return vec3_div_scalar(v, vec3_length(v));
+    return div_scalar_vec3(v, length_vec3(v));
 }
 
 t_vec3 init_random_vec3(t_xorshift64_state *state)
@@ -104,7 +95,7 @@ t_vec3 get_random_vec3_in_unit_sphere(t_xorshift64_state *state)
     while (true)
     {
         t_vec3 result = init_random_vec3_range(state, -1, 1);
-        if (vec3_length_squared(result) >= 1)
+        if (length_squared_vec3(result) >= 1)
             continue; //ループの最初の処理に戻る
         return (result);
     }
@@ -121,10 +112,10 @@ t_vec3 get_random_unit_vec3(t_xorshift64_state *state)
 t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state)
 {
     t_vec3 in_unit_sphere = get_random_vec3_in_unit_sphere(state);
-    if (vec3_dot(in_unit_sphere, normal) > 0.0)
+    if (dot_vec3(in_unit_sphere, normal) > 0.0)
         return (in_unit_sphere);
     else
-        return vec3_neg(in_unit_sphere);
+        return negative_vec3(in_unit_sphere);
 }
 
 t_vec3 get_random_vec3_in_unit_circle(t_xorshift64_state *state)
@@ -134,7 +125,7 @@ t_vec3 get_random_vec3_in_unit_circle(t_xorshift64_state *state)
         double x = random_double_range(state, -1, 1);
         double y = random_double_range(state, -1, 1);
         t_vec3 result = init_vec3(x, y, 0);
-        if (vec3_length_squared(result) >= 1)
+        if (length_squared_vec3(result) >= 1)
             continue; //x^2 + y^2 = < 1.0 を満たす
         return (result);
     }
@@ -142,33 +133,26 @@ t_vec3 get_random_vec3_in_unit_circle(t_xorshift64_state *state)
 
 t_vec3 reflect(t_vec3 incoming, t_vec3 normal)
 {
-    double temp = vec3_dot(incoming, normal);
-    return vec3_add(incoming, vec3_mult_scalar(normal, -2 * temp));
+    double temp = dot_vec3(incoming, normal);
+    return add_vec3(incoming, mult_scalar_vec3(normal, -2 * temp));
 }
 
 t_vec3 refract(t_vec3 incoming, t_vec3 normal, double etai_over_etat)
 {
-    double cos_theta = vec3_dot(vec3_neg(incoming), normal);
+    double cos_theta = dot_vec3(negative_vec3(incoming), normal);
 
     double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
     if (etai_over_etat * sin_theta > 1.0)
         return init_vec3(0, 0, 0);
 
     //屈折レイの並行成分の計算
-    t_vec3 temp = vec3_add(incoming, vec3_mult_scalar(normal, cos_theta));
-    t_vec3 refract_parallel = vec3_mult_scalar(temp ,etai_over_etat);
+    t_vec3 temp = add_vec3(incoming, mult_scalar_vec3(normal, cos_theta));
+    t_vec3 refract_parallel = mult_scalar_vec3(temp ,etai_over_etat);
 
     //屈折レイの垂直成分の計算
     //  vec3 r_out_perp = -sqrt(1.0 - r_out_parallel.length_squared()) * n;
-    double refract_parallel_squared = vec3_length_squared(refract_parallel);
-    t_vec3 refract_perp = vec3_mult_scalar(normal ,-sqrt(1.0 - refract_parallel_squared));
+    double refract_parallel_squared = length_squared_vec3(refract_parallel);
+    t_vec3 refract_perp = mult_scalar_vec3(normal ,-sqrt(1.0 - refract_parallel_squared));
 
-    return vec3_add(refract_parallel, refract_perp);
-}
-
-// ベクトルの長さの二乗が 1e-8 未満の場合に true を返す
-bool vec3_near_zero(t_vec3 v)
-{
-    const double s = 1e-8;
-    return (fabs(v.x) < s && fabs(v.y) < s && fabs(v.z) < s);
+    return add_vec3(refract_parallel, refract_perp);
 }

@@ -1,6 +1,7 @@
 #include "ray.h"
 #include "hittable_list.h"
 #include "vec3.h"
+#include "color.h"
 #include "sphere.h"
 #include "random_number_generator.h"
 #include <stdbool.h>
@@ -22,48 +23,48 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world,
 
     if (hit_hittable_list(ray, 0.001, INFINITY, &rec, world))
     {
-        // t_vec3 normal_added = vec3_add(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
-        // final_color_vec = vec3_mult_scalar(normal_added, 0.5);
+        // t_vec3 normal_added = add_vec3(rec.normal_vector, init_vec3(1.0, 1.0, 1.0));
+        // final_color_vec = mult_scalar_vec3(normal_added, 0.5);
 
         // t_vec3_color tmp_converter;
         // //散乱レイの目標点を決定
-        // // t_point3 target = vec3_add(rec.intersection, rec.normal_vector);
-        // // target = vec3_add(target ,get_random_unit_vec3(state));
+        // // t_point3 target = add_vec3(rec.intersection, rec.normal_vector);
+        // // target = add_vec3(target ,get_random_unit_vec3(state));
 
-        // t_point3 target = vec3_add(rec.intersection, random_in_hemisphere(rec.normal_vector, state));
+        // t_point3 target = add_vec3(rec.intersection, random_in_hemisphere(rec.normal_vector, state));
 
         // //散乱方向の計算
-        // t_vec3 scattered_direction = vec3_sub(target, rec.intersection);
+        // t_vec3 scattered_direction = sub_vec3(target, rec.intersection);
 
         // //散乱レイを生成
         // t_ray scattered_ray = init_ray(rec.intersection, scattered_direction);
 
         // tmp_converter.color = ray_color(scattered_ray, world, state, num_recursions - 1);
         // t_vec3 incoming_color_vec = tmp_converter.vec;
-        // final_color_vec = vec3_mult_scalar(incoming_color_vec, 0.5);
+        // final_color_vec = mult_scalar_vec3(incoming_color_vec, 0.5);
 
         t_ray scattered;
         t_color attenuation = rec.material.albedo;
         if (rec.material.scatters(ray, rec, &scattered, state))
         {
-            return vec3_mult(ray_color(scattered, world, state, num_recursions - 1), attenuation);
+            return mult_vec3(ray_color(scattered, world, state, num_recursions - 1), attenuation);
         }
         return init_color(0, 0, 0);
     }
     else
     {
         //レイの方向ベクトルを単位ベクトルに正規化　背景の色にベクトルの長さは関係ない
-        t_vec3 unit_direction = vec3_unit_vector(ray.direction);
+        t_vec3 unit_direction = normalize_vec3(ray.direction);
         //垂直成分を[-1, 1]から[0, 1]の範囲にマップ (グラデーション係数t)
         double t = 0.5 * (unit_direction.y + 1.0);
         //線形補間(lerp):color = (1-t) * start_color + t * end_color
         t_vec3 white = init_vec3(1.0, 1.0, 1.0);
         t_vec3 sky_blue = init_vec3(0.5, 0.7, 1.0);
         //(1.0 - t) * color_a
-        t_vec3 color_a = vec3_mult_scalar(white, 1.0 - t);
-        t_vec3 color_b = vec3_mult_scalar(sky_blue, t);
+        t_vec3 color_a = mult_scalar_vec3(white, 1.0 - t);
+        t_vec3 color_b = mult_scalar_vec3(sky_blue, t);
 
-        final_color_vec = vec3_add(color_a, color_b);
+        final_color_vec = add_vec3(color_a, color_b);
     }
     return final_color_vec;
 }
@@ -114,7 +115,7 @@ size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t
                                       b + 0.9 * random_double(state));
 
             // C++: if ((center - vec3(4, 0.2, 0)).length() > 0.9)
-            if (vec3_length(vec3_sub(center, init_vec3(4, 0.2, 0))) > 0.9)
+            if (length_vec3(sub_vec3(center, init_vec3(4, 0.2, 0))) > 0.9)
             {
                 current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
                 if (!current_sphere) goto ADD_LARGE_SPHERES; // メモリ不足で次のセクションへスキップ
@@ -123,7 +124,7 @@ size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t
 
                 if (choose_mat < 0.8) {
                     // 拡散 (Lambertian)
-                    t_color albedo = vec3_mult(init_random_vec3(state), init_random_vec3(state));
+                    t_color albedo = mult_vec3(init_random_vec3(state), init_random_vec3(state));
                     // t_color albedo = init_color(0.8, 0.8, 0.8);
                     sphere_material = init_lambertian_material(albedo, 0, 0);
                 } else if (choose_mat < 0.95) {
@@ -213,7 +214,7 @@ void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num
 //         t_vec3 N = hit_rec.normal_vector;
 
 //         t_color normal_color = vec3_new(N.x + 1.0, N.y + 1.0, N.z + 1.0);
-//         return (vec3_mult_scalar(normal_color, 0.5));
+//         return (mult_scalar_vec3(normal_color, 0.5));
 //     }
 
 //     // 2.背景色の計算 (交差しなかった場合)
@@ -226,15 +227,15 @@ void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num
 //     t_color temp_color_b;
 
 //     //レイの方向ベクトルを単位ベクトルに正規化　背景の色にベクトルの長さは関係ない
-//     unit_direction = vec3_unit_vector(ray.direction);
+//     unit_direction = normalize_vec3(ray.direction);
 //     //垂直成分を[-1, 1]から[0, 1]の範囲にマップ (グラデーション係数t)
 //     t = 0.5 * (unit_direction.y + 1.0);
 //     //線形補間(lerp):color = (1-t) * start_color + t * end_color
 //     color_a = vec3_new(1.0, 1.0, 1.0);
 //     color_b = vec3_new(0.5, 0.7, 1.0);
 //     //(1.0 - t) * color_a
-//     temp_color_a = vec3_mult_scalar(color_a, 1.0 - t);
-//     temp_color_b = vec3_mult_scalar(color_b, t);
+//     temp_color_a = mult_scalar_vec3(color_a, 1.0 - t);
+//     temp_color_b = mult_scalar_vec3(color_b, t);
 
-//     return (vec3_add(temp_color_a, temp_color_b));
+//     return (add_vec3(temp_color_a, temp_color_b));
 // }

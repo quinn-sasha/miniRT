@@ -34,9 +34,7 @@ bool lambertian_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
                         t_xorshift64_state *state)
 {
     (void)ray;
-    t_vec3 scatter_direction = vec3_add(record.normal_vector, get_random_unit_vec3(state));
-    if (vec3_near_zero(scatter_direction))
-        scatter_direction = record.normal_vector;
+    t_vec3 scatter_direction = add_vec3(record.normal_vector, get_random_unit_vec3(state));
     *scattered = init_ray(record.intersection, scatter_direction);
     return true;
 }
@@ -44,11 +42,11 @@ bool lambertian_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
 bool metal_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
                     t_xorshift64_state *state)
 {
-    t_vec3 reflected = reflect(vec3_unit_vector(ray.direction), record.normal_vector);
-    t_vec3 direction = vec3_add(reflected, vec3_mult_scalar(get_random_vec3_in_unit_sphere(state),
+    t_vec3 reflected = reflect(normalize_vec3(ray.direction), record.normal_vector);
+    t_vec3 direction = add_vec3(reflected, mult_scalar_vec3(get_random_vec3_in_unit_sphere(state),
                                 record.material.fuzziness));
     *scattered = init_ray(record.intersection, direction);
-    return (vec3_dot(scattered->direction, record.normal_vector) > 0);
+    return (dot_vec3(scattered->direction, record.normal_vector) > 0);
 }
 
 bool dielectric_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
@@ -64,12 +62,12 @@ bool dielectric_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
     else
         etai_over_etat = refract_idx; //内側は外部の屈折率を1.0としている
 
-    t_vec3 unit_direciton = vec3_unit_vector(ray.direction);
+    t_vec3 unit_direciton = normalize_vec3(ray.direction);
     t_vec3 normal = record.normal_vector;
-    double cos_theta = vec3_dot(vec3_neg(unit_direciton), normal);
+    double cos_theta = dot_vec3(negative_vec3(unit_direciton), normal);
     t_vec3 refracted = refract(unit_direciton, record.normal_vector, etai_over_etat); //レイの単位ベクトルを渡す
     //全反射
-    if (vec3_length_squared(refracted) == 0.0)
+    if (length_squared_vec3(refracted) == 0.0)
     {
         t_vec3 reflected = reflect(unit_direciton, record.normal_vector);
         *scattered = init_ray(record.intersection, reflected);

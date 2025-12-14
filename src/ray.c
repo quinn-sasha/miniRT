@@ -16,7 +16,7 @@ t_point3 ray_at(t_ray r, double t)
     t_vec3 scaled_dir;
 
     //t * dir
-    scaled_dir = vec3_mult_scalar(r.direction, t);
+    scaled_dir = mult_scalar_vec3(r.direction, t);
     //origin + (t * dir)
-    return (vec3_add(r.origin, scaled_dir));
+    return (add_vec3(r.origin, scaled_dir));
 }

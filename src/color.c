@@ -35,16 +35,29 @@ t_color init_color(double red, double green, double blue) {
 //   return new_color;
 // }
 
-void  write_color(t_color color, const int num_samples_per_pixel)
+t_color average_samples(t_color pixel_color, const int num_samles)
+{
+  double scale = 1.0 / num_samles;
+  pixel_color.x *= scale;
+  pixel_color.y *= scale;
+  pixel_color.z *= scale;
+  return pixel_color;
+}
+
+t_color gamma_correct(t_color pixel_color)
+{
+  pixel_color.x = sqrt(pixel_color.x);
+  pixel_color.y = sqrt(pixel_color.y);
+  pixel_color.z = sqrt(pixel_color.z);
+
+  return pixel_color;
+}
+
+void  write_color(t_color color)
 {
   double red = color.x;
   double green = color.y;
   double blue = color.z;
-
-  double scale = 1.0 / num_samples_per_pixel;
-  red = sqrt(red * scale);
-  green = sqrt(green * scale);
-  blue = sqrt(blue * scale);
 
   int r = 256 * clamp(red, 0.0, 0.999);
   int g = 256 * clamp(green, 0.0, 0.999);

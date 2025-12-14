@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 11:20:08 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/02 14:33:10 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/14 20:06:31 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,10 @@ typedef struct s_world
 
 //vecor_utils.c
 // t_vector3	vec3_init(double x, double y, double z);
-// t_vector3	vec3_add(t_vector3 v1, t_vector3 v2);
-// t_vector3	vec3_sub(t_vector3 v1, t_vector3 v2);
-// t_vector3	vec3_dot(t_vector3 v1, t_vector3 v2);
-// t_vector3	vec3_length(t_vector3 v);
+// t_vector3	add_vec3(t_vector3 v1, t_vector3 v2);
+// t_vector3	sub_vec3(t_vector3 v1, t_vector3 v2);
+// t_vector3	dot_vec3(t_vector3 v1, t_vector3 v2);
+// t_vector3	length_vec3(t_vector3 v);
 // t_vector3	vec3_normalize(t_vector3 v);
 
 /* --------------------------- COLOR ------------------------------*/

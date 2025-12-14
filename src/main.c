@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "vec3.h"
+#include "color.h"
 #include "ray.h"
 #include "hittable_list.h"
 #include "sphere.h"
@@ -21,7 +22,7 @@ int main(void)
     t_vec3 view_up = init_vec3(0, 1, 0);
     double vfov = 20.0;
     double aperture = 0.1;
-    double focus_dist = vec3_length(vec3_sub(lookat, lookfrom));
+    double focus_dist = length_vec3(sub_vec3(lookat, lookfrom));
     t_camera camera = init_camera(lookfrom, lookat, view_up, screen.aspect_ratio,
                                   vfov, aperture, focus_dist);
 
@@ -57,11 +58,12 @@ int main(void)
                 //レイの方向ベクトルを計算
                 t_ray  ray = get_ray(camera, x_offset, y_offset, &state);
                 //レイの色を計算
-                pixel_color = vec3_add(pixel_color, ray_color(ray, &world_list, &state, max_recursions));
+                pixel_color = add_vec3(pixel_color, ray_color(ray, &world_list, &state, max_recursions));
             }
             //色を出力
-            write_color(pixel_color, num_samples_per_pixel);
-            // write_color(pixel_color);
+            t_color averaged_color = average_samples(pixel_color, num_samples_per_pixel);
+            t_color gamma_corrected_color = gamma_correct(averaged_color);
+            write_color(gamma_corrected_color);
         }
     }
     cleanup_world(&world_list, sphere_ptrs, count_objects);
