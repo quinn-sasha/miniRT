@@ -1,5 +1,6 @@
 #include "sphere.h"
 #include "vec3.h"
+#include "object.h"
 #include <math.h>
 
 //--初期化関数--
@@ -13,7 +14,7 @@ t_sphere init_sphere(t_point3 center, double radius, t_material material)
 	return (sphere);
 }
 
-bool hit_sphere_impl(
+bool hit_sphere(
 	const t_ray ray,
 	double min_t,
 	double max_t,
@@ -65,20 +66,4 @@ bool hit_sphere_impl(
 		hit_rec->material = sphere->material;
 
 		return (true);
-}
-
-// ★ 2. ラッパー関数: リストから呼ばれるための窓口　ここはすべての球に対応するようにする
-bool hit_object(
-    const t_ray ray,
-    double min_t,
-    double max_t,
-    t_hit_record *hit_rec,
-    void *object_ptr // void * を受け取る
-)
-{
-    // void * を t_sphere * にキャスト
-    const t_sphere *sphere_ptr = (const t_sphere *)object_ptr;
-
-    // 実装関数に処理を委譲
-    return hit_sphere_impl(ray, min_t, max_t, hit_rec, sphere_ptr);
 }

@@ -3,6 +3,7 @@
 #include "color.h"
 #include "ray.h"
 #include "hittable_list.h"
+#include "object.h"
 #include "sphere.h"
 #include "camera.h"
 #include "math_utils.h"
@@ -11,8 +12,8 @@
 #define MAX_SCENE_OBJECTS 10000
 
 t_color ray_color(const t_ray ray, const t_hittable_list *world, t_xorshift64_state *state, int num_recursions);
-size_t    init_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj, t_xorshift64_state *state);
-void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj);
+size_t    init_world(t_hittable_list *world, t_object **object_ptrs, size_t num_obj, t_xorshift64_state *state);
+void    cleanup_world(t_hittable_list *world, t_object **obj_ptrs, size_t num_obj);
 
 int main(void)
 {
@@ -34,13 +35,13 @@ int main(void)
     //TODO: 今はマクロで物体の数を定義しているが渡された数だけ確保するようにする
     const size_t max_objects = MAX_SCENE_OBJECTS;
     t_hittable_list world_list;
-    t_sphere    *sphere_ptrs[max_objects];
+    t_object    *obj_ptrs[max_objects];
 
 
     //物体リストと個々の物体をヒープに確保
     t_xorshift64_state state;
     init_xorshift64_state(&state);
-    size_t count_objects = init_world(&world_list, sphere_ptrs, max_objects, &state);
+    size_t count_objects = init_world(&world_list, obj_ptrs, max_objects, &state);
 
     const   int max_recursions = 50;
     const  int num_samples_per_pixel = 100;
@@ -66,7 +67,7 @@ int main(void)
             write_color(gamma_corrected_color);
         }
     }
-    cleanup_world(&world_list, sphere_ptrs, count_objects);
+    cleanup_world(&world_list, obj_ptrs, count_objects);
     fprintf(stderr, "\nDone.\n");
     return (0);
 }

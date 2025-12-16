@@ -21,7 +21,7 @@ bool hit_object(
 	void	*object_ptr //sphereだけでないのも受け取る？
 );
 
-bool hit_sphere_impl(
+bool hit_sphere(
 	const t_ray ray,
 	double min_t,
 	double max_t,

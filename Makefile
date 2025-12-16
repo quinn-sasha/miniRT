@@ -45,7 +45,9 @@ SRCS := $(SRC_DIR)/camera.c \
         $(SRC_DIR)/random_number_generator.c \
         $(SRC_DIR)/math_utils.c \
         $(SRC_DIR)/utils.c \
-        $(SRC_DIR)/sphere.c
+        $(SRC_DIR)/sphere.c \
+        $(SRC_DIR)/plane.c \
+        $(SRC_DIR)/hit_object.c
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

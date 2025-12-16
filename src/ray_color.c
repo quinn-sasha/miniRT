@@ -4,6 +4,7 @@
 #include "color.h"
 #include "sphere.h"
 #include "random_number_generator.h"
+#include "object.h"
 #include <stdbool.h>
 #include <math.h>
 
@@ -69,14 +70,31 @@ t_color ray_color(const t_ray ray, const t_hittable_list *world,
     return final_color_vec;
 }
 
-size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t num_obj, t_xorshift64_state *state)
+static void add_to_world(t_hittable_list *world, t_object **obj_ptrs, size_t *idx,
+                        void *actual_obj, t_type type)
+{
+    t_object *new_obj = (t_object *)malloc(sizeof(t_object));
+    if (!new_obj) return ;
+    new_obj->type = type;
+    new_obj->object_ptr = actual_obj;
+
+    hittable_list_add(world, init_hittable(new_obj, hit_object));
+    obj_ptrs[(*idx)++] = new_obj;
+}
+
+size_t    init_world(
+    t_hittable_list *world_list,
+    t_object **object_ptrs,
+    size_t num_obj
+    // t_xorshift64_state *state
+)
 {
     t_sphere    *current_sphere;
     // t_color     albedo;
-    double      choose_mat;
-    double      fuzz;
+    // double      choose_mat;
+    // double      fuzz;
     double      refract_idx_glass = 1.5;
-    size_t         ptr_index = 0; // sphere_ptrsへの格納インデックス
+    size_t         ptr_index = 0; // obj_ptrsへの格納インデックス
 
     // リストの初期化
     *world_list = init_hittable_list(num_obj);
@@ -86,68 +104,67 @@ size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t
     // ----------------------------------------------------
     if (ptr_index < num_obj)
     {
-        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
-        if (!current_sphere) return 0;
+        t_plane *ground = (t_plane *)malloc(sizeof(t_plane));
+        // if (!current_sphere) return 0;
 
         // C++: auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
         t_material ground_mat = init_lambertian_material(init_color(0.5, 0.5, 0.5), 0, 0);
-        *current_sphere = init_sphere(init_vec3(0, -1000, 0), 1000.0, ground_mat);
+        *ground = init_plane(init_vec3(0, 0, 0), init_vec3(0, 1, 0), ground_mat);
 
-        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
-        sphere_ptrs[ptr_index++] = current_sphere;
+        add_to_world(world_list, object_ptrs, &ptr_index, ground, PLANE);
     }
 
 
     // ----------------------------------------------------
     // B. ランダムな小さな球のグリッド (for ループ)
     // ----------------------------------------------------
-    for (int a = -11; a < 11; a++)
-    {
-        for (int b = -11; b < 11; b++)
-        {
-            if (ptr_index >= num_obj - 3) // 後の3つの大きな球のためにスペースを確保
-                goto ADD_LARGE_SPHERES;
+    // for (int a = -11; a < 11; a++)
+    // {
+    //     for (int b = -11; b < 11; b++)
+    //     {
+    //         if (ptr_index >= num_obj - 3) // 後の3つの大きな球のためにスペースを確保
+    //             goto ADD_LARGE_SPHERES;
 
-            choose_mat = random_double(state);
-            // C++: point3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
-            t_vec3 center = init_vec3(a + 0.9 * random_double(state),
-                                      0.2,
-                                      b + 0.9 * random_double(state));
+    //         choose_mat = random_double(state);
+    //         // C++: point3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
+    //         t_vec3 center = init_vec3(a + 0.9 * random_double(state),
+    //                                   0.2,
+    //                                   b + 0.9 * random_double(state));
 
-            // C++: if ((center - vec3(4, 0.2, 0)).length() > 0.9)
-            if (length_vec3(sub_vec3(center, init_vec3(4, 0.2, 0))) > 0.9)
-            {
-                current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
-                if (!current_sphere) goto ADD_LARGE_SPHERES; // メモリ不足で次のセクションへスキップ
+    //         // C++: if ((center - vec3(4, 0.2, 0)).length() > 0.9)
+    //         if (length_vec3(sub_vec3(center, init_vec3(4, 0.2, 0))) > 0.9)
+    //         {
+    //             current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
+    //             if (!current_sphere) goto ADD_LARGE_SPHERES; // メモリ不足で次のセクションへスキップ
 
-                t_material sphere_material;
+    //             t_material sphere_material;
 
-                if (choose_mat < 0.8) {
-                    // 拡散 (Lambertian)
-                    t_color albedo = mult_vec3(init_random_vec3(state), init_random_vec3(state));
-                    // t_color albedo = init_color(0.8, 0.8, 0.8);
-                    sphere_material = init_lambertian_material(albedo, 0, 0);
-                } else if (choose_mat < 0.95) {
-                    // 金属 (Metal)
-                    t_color albedo = init_random_vec3_range(state, 0.5, 1);
-                    fuzz = random_double_range(state, 0, 0.5);
-                    sphere_material = init_metal_material(albedo, fuzz, 0);
-                } else {
-                    // 誘電体 (Glass)
-                    sphere_material = init_dielectric_material(init_color(1.0, 1.0, 1.0), 0, refract_idx_glass);
-                }
+    //             if (choose_mat < 0.8) {
+    //                 // 拡散 (Lambertian)
+    //                 t_color albedo = mult_vec3(init_random_vec3(state), init_random_vec3(state));
+    //                 // t_color albedo = init_color(0.8, 0.8, 0.8);
+    //                 sphere_material = init_lambertian_material(albedo, 0, 0);
+    //             } else if (choose_mat < 0.95) {
+    //                 // 金属 (Metal)
+    //                 t_color albedo = init_random_vec3_range(state, 0.5, 1);
+    //                 fuzz = random_double_range(state, 0, 0.5);
+    //                 sphere_material = init_metal_material(albedo, fuzz, 0);
+    //             } else {
+    //                 // 誘電体 (Glass)
+    //                 sphere_material = init_dielectric_material(init_color(1.0, 1.0, 1.0), 0, refract_idx_glass);
+    //             }
 
-                *current_sphere = init_sphere(center, 0.2, sphere_material);
-                hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
-                sphere_ptrs[ptr_index++] = current_sphere;
-            }
-        }
-    }
+    //             *current_sphere = init_sphere(center, 0.2, sphere_material);
+    //             hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
+    //             object_ptrs[ptr_index++] = current_sphere;
+    //         }
+    //     }
+    // }
 
     // ----------------------------------------------------
     // C. 大きな3つの球 (C++版の最後の3つの球)
     // ----------------------------------------------------
-    ADD_LARGE_SPHERES:; // goto のターゲット
+    // ADD_LARGE_SPHERES:; // goto のターゲット
 
     // 1. (0, 1, 0) - ガラス
     if (ptr_index < num_obj) {
@@ -155,8 +172,7 @@ size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t
         if (!current_sphere) return 0;
         t_material mat = init_dielectric_material(init_color(1.0, 1.0, 1.0), 0, refract_idx_glass);
         *current_sphere = init_sphere(init_vec3(0, 1, 0), 1.0, mat);
-        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
-        sphere_ptrs[ptr_index++] = current_sphere;
+        add_to_world(world_list, object_ptrs, &ptr_index, current_sphere, SPHERE);
     }
 
     // 2. (-4, 1, 0) - 拡散
@@ -165,8 +181,7 @@ size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t
         if (!current_sphere) return 0;
         t_material mat = init_lambertian_material(init_color(0.4, 0.2, 0.1), 0, 0);
         *current_sphere = init_sphere(init_vec3(-4, 1, 0), 1.0, mat);
-        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
-        sphere_ptrs[ptr_index++] = current_sphere;
+         add_to_world(world_list, object_ptrs, &ptr_index, current_sphere, SPHERE);
     }
 
     // 3. (4, 1, 0) - 金属
@@ -175,9 +190,8 @@ size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t
         if (!current_sphere) return 0;
         t_material mat = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0, 0);
         *current_sphere = init_sphere(init_vec3(4, 1, 0), 1.0, mat);
-        hittable_list_add(world_list, init_hittable(current_sphere, hit_object));
-        sphere_ptrs[ptr_index++] = current_sphere;
-    }
+         add_to_world(world_list, object_ptrs, &ptr_index, current_sphere, SPHERE);
+   }
     // // 1. 中央の球
     // t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
     // *sphere1 = init_sphere(init_vec3(0, 0, -1), 0.5, init_lambertian_material(init_color(0.1, 0.2, 0.5), fuzz, refract_idx_glass));
@@ -188,12 +202,15 @@ size_t    init_world(t_hittable_list *world_list, t_sphere **sphere_ptrs, size_t
     return (ptr_index);
 }
 
-void    cleanup_world(t_hittable_list *world, t_sphere **sphere_ptrs, size_t num_obj)
+void    cleanup_world(t_hittable_list *world, t_object **obj_ptrs, size_t num_obj)
 {
     for (size_t i = 0; i < num_obj; i++)
     {
-        if (sphere_ptrs[i])
-            free(sphere_ptrs[i]);
+        if (obj_ptrs[i])
+        {
+            free(obj_ptrs[i]->object_ptr);
+            free(obj_ptrs[i]);
+        }
     }
     hittable_list_clear(world);
 }
