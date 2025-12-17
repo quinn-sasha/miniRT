@@ -89,7 +89,7 @@ size_t    init_world(
     // t_xorshift64_state *state
 )
 {
-    t_sphere    *current_sphere;
+    // t_sphere    *current_sphere;
     // t_color     albedo;
     // double      choose_mat;
     // double      fuzz;
@@ -168,29 +168,29 @@ size_t    init_world(
 
     // 1. (0, 1, 0) - ガラス
     if (ptr_index < num_obj) {
-        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
-        if (!current_sphere) return 0;
+        t_cylinder *cyl = (t_cylinder *)malloc(sizeof(t_cylinder));
+        if (!cyl) return 0;
         t_material mat = init_dielectric_material(init_color(1.0, 1.0, 1.0), 0, refract_idx_glass);
-        *current_sphere = init_sphere(init_vec3(0, 1, 0), 1.0, mat);
-        add_to_world(world_list, object_ptrs, &ptr_index, current_sphere, SPHERE);
+        *cyl = init_cylinder(init_vec3(0, 1, 0), init_vec3(1, 0, 0), 0.5, 2.0, mat);
+        add_to_world(world_list, object_ptrs, &ptr_index, cyl, CYLINDER);
     }
 
     // 2. (-4, 1, 0) - 拡散
     if (ptr_index < num_obj) {
-        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
-        if (!current_sphere) return 0;
+        t_cylinder *cyl = (t_cylinder *)malloc(sizeof(t_cylinder));
+        if (!cyl) return 0;
         t_material mat = init_lambertian_material(init_color(0.4, 0.2, 0.1), 0, 0);
-        *current_sphere = init_sphere(init_vec3(-4, 1, 0), 1.0, mat);
-         add_to_world(world_list, object_ptrs, &ptr_index, current_sphere, SPHERE);
+        *cyl = init_cylinder(init_vec3(-4, 1, 0), init_vec3(0, 1, 0), 1.0, 2.0, mat);
+         add_to_world(world_list, object_ptrs, &ptr_index, cyl, CYLINDER);
     }
 
     // 3. (4, 1, 0) - 金属
     if (ptr_index < num_obj) {
-        current_sphere = (t_sphere *)malloc(sizeof(t_sphere));
-        if (!current_sphere) return 0;
+        t_cylinder *cyl = (t_cylinder *)malloc(sizeof(t_cylinder));
+        if (!cyl) return 0;
         t_material mat = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0, 0);
-        *current_sphere = init_sphere(init_vec3(4, 1, 0), 1.0, mat);
-         add_to_world(world_list, object_ptrs, &ptr_index, current_sphere, SPHERE);
+        *cyl = init_cylinder(init_vec3(4, 1, 0), init_vec3(0, 0, 1), 0.7, 1.5, mat);
+         add_to_world(world_list, object_ptrs, &ptr_index, cyl, CYLINDER);
    }
     // // 1. 中央の球
     // t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));

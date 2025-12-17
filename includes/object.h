@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "sphere.h"
 #include "plane.h"
+#include "cylinder.h"
 
 typedef enum e_type{
 	SPHERE,
