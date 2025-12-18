@@ -108,6 +108,33 @@ static bool hit_cylinder_cap(
 	return true;
 }
 
+static void record_hit(bool *hit_anything, double *closest_so_far, t_hit_record *hit_rec)
+{
+	*hit_anything = true;
+	*closest_so_far = hit_rec->t;
+}
+
+static t_ray world_to_local_ray(t_ray ray, t_vec3 center, t_vec3 ex, t_vec3 ey, t_vec3 ez)
+{
+	//ワールド空間のレイをローカル空間に変換
+	t_vec3 origin_diff = sub_vec3(ray.origin, center);
+	t_ray 	local_ray;
+
+	//平行移動後の座標と各基底ベクトルとの内積をとる
+	local_ray.origin = init_vec3(
+		dot_vec3(origin_diff, ex), //円柱の中心から見たレイの始点がex軸にどれだけ進んでいるか
+		dot_vec3(origin_diff, ey),
+		dot_vec3(origin_diff, ez)
+	);
+
+	local_ray.direction = init_vec3(
+    dot_vec3(ray.direction, ex),
+    dot_vec3(ray.direction, ey),
+    dot_vec3(ray.direction, ez)
+  );
+	return local_ray;
+}
+
 bool hit_cylinder(
 	const t_ray ray,
 	double min_t,
@@ -129,44 +156,19 @@ bool hit_cylinder(
 	t_vec3 ex = normalize_vec3(cross_vec3(tmp, ey));
 	t_vec3 ez = cross_vec3(ex, ey);
 
-	//ワールド空間のレイをローカル空間に変換
-	t_vec3 origin_diff = sub_vec3(ray.origin, cyl->center);
-	t_ray 	local_ray;
-
-	//平行移動後の座標と各基底ベクトルとの内積をとる
-	local_ray.origin = init_vec3(
-		dot_vec3(origin_diff, ex), //円柱の中心から見たレイの始点がex軸にどれだけ進んでいるか
-		dot_vec3(origin_diff, ey),
-		dot_vec3(origin_diff, ez)
-	);
-
-	local_ray.direction = init_vec3(
-    dot_vec3(ray.direction, ex),
-    dot_vec3(ray.direction, ey),
-    dot_vec3(ray.direction, ez)
-  );
+	t_ray local_ray = world_to_local_ray(ray, cyl->center, ex, ey, ez);
 
 	t_cylinder local_cyl = *cyl;
 	local_cyl.center = init_vec3(0, 0, 0);
 
-	//側面の判定
 	if (hit_cylinder_side(local_ray, min_t, closest_so_far, hit_rec, &local_cyl))
-	{
-		hit_anything = true;
-		closest_so_far = hit_rec->t;
-	}
+		record_hit(&hit_anything, &closest_so_far, hit_rec);
 	//底面の判定
 	if (hit_cylinder_cap(local_ray, min_t, closest_so_far, hit_rec, &local_cyl, - cyl->height / 2.0))
-	{
-		hit_anything = true;
-		closest_so_far = hit_rec->t;
-	}
+		record_hit(&hit_anything, &closest_so_far, hit_rec);
 	//上面の判定
 	if (hit_cylinder_cap(local_ray, min_t, closest_so_far, hit_rec, &local_cyl, cyl->height / 2.0))
-	{
-		hit_anything = true;
-		closest_so_far = hit_rec->t;
-	}
+		record_hit(&hit_anything, &closest_so_far, hit_rec);
 	//結果をワールド空間に戻す
 	if (hit_anything){
 		t_vec3 local_n = hit_rec->normal_vector;
