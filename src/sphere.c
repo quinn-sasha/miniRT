@@ -34,26 +34,7 @@ bool hit_sphere(
     // c = OC・OC - r^2
     double c = length_squared_vec3(oc) - sphere->radius * sphere->radius;
 
-    // 判別式: discriminant = b^2 - 4ac
-    double discriminant = half_b * half_b - a * c;
-
-    if (discriminant < 0.0)
-        return (false);
-
-		//解の計算
-		double root = sqrt(discriminant);
-
-		//カメラに近い方の交点
-		double smaller_t = (-half_b - root) / a;
-		double	bigger_t = (-half_b + root) / a;
-		double t;
-
-		if (smaller_t < max_t && smaller_t > min_t)
-			t = smaller_t;
-		else if (bigger_t > min_t && bigger_t < max_t)
-			t = bigger_t;
-		else
-			return (false);
+		double t = solve_quadratic_t(a, half_b, c, min_t, max_t);
 		hit_rec->t = t;
 		//交点のベクトル
 		hit_rec->intersection = ray_at(ray, t);
