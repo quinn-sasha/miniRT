@@ -22,7 +22,8 @@ double solve_quadratic_t(
 	double half_b,
 	double c,
 	double min_t,
-	double max_t)
+	double max_t
+)
 {
 	double discriminant = half_b * half_b - a * c;
 	if (discriminant < 0.0)
@@ -61,15 +62,17 @@ static bool hit_cylinder_side(
   double c = oc.x * oc.x + oc.z * oc.z - cyl->radius * cyl->radius;
   // 判別式: discriminant = b^2 - 4ac
 	double t = solve_quadratic_t(a, half_b, c, min_t, max_t);
+	if (t == false)
+		return false;
 	// 高さの判定　Cy - h /2 <= Py <= Cy + h / 2
-	double y = ray.origin.y + t * ray.direction.y;
+	t_point3 intersection = ray_at(ray, t);
 	double half_h = cyl->height / 2.0;
-	if (y < cyl->center.y - half_h || y > cyl->center.y + half_h)
+	if (intersection.y < - half_h || intersection.y > half_h)
 		return false;
 
 	//交点のベクトル
 	hit_rec->t = t;
-	hit_rec->intersection = ray_at(ray, t);
+	hit_rec->intersection = intersection;
 	//法線の計算　ｙ成分０
 	t_vec3 outward_normal = init_vec3(
 		(hit_rec->intersection.x - cyl->center.x) / cyl->radius,
@@ -114,10 +117,11 @@ static bool hit_cylinder_cap(
 	return true;
 }
 
-static void record_hit(bool *hit_anything, double *closest_so_far, t_hit_record *hit_rec)
+static bool record_hit(bool *hit_anything, double *closest_so_far, t_hit_record *hit_rec)
 {
 	*hit_anything = true;
 	*closest_so_far = hit_rec->t;
+	return true;
 }
 
 static t_ray world_to_local_ray(t_ray ray, t_vec3 center, t_vec3 ex, t_vec3 ey, t_vec3 ez)
@@ -141,26 +145,28 @@ static t_ray world_to_local_ray(t_ray ray, t_vec3 center, t_vec3 ex, t_vec3 ey, 
 	return local_ray;
 }
 
-static void hit_cylinder_side_cap(
+static bool hit_cylinder_side_cap(
 	t_ray local_ray,
 	double min_t,
-	double closest_so_far,
+	double max_t,
 	t_hit_record *hit_rec,
 	const t_cylinder *cyl
 )
 {
 	bool hit_anything = false;
+	double  closest_so_far = max_t;
 	t_cylinder local_cyl = *cyl;
 	local_cyl.center = init_vec3(0, 0, 0);
 
 	if (hit_cylinder_side(local_ray, min_t, closest_so_far, hit_rec, &local_cyl))
-		record_hit(&hit_anything, &closest_so_far, hit_rec);
+		hit_anything = record_hit(&hit_anything, &closest_so_far, hit_rec);
 	//底面の判定
 	if (hit_cylinder_cap(local_ray, min_t, closest_so_far, hit_rec, &local_cyl, - cyl->height / 2.0))
-		record_hit(&hit_anything, &closest_so_far, hit_rec);
+		hit_anything = record_hit(&hit_anything, &closest_so_far, hit_rec);
 	//上面の判定
 	if (hit_cylinder_cap(local_ray, min_t, closest_so_far, hit_rec, &local_cyl, cyl->height / 2.0))
-		record_hit(&hit_anything, &closest_so_far, hit_rec);
+		hit_anything = record_hit(&hit_anything, &closest_so_far, hit_rec);
+	return hit_anything;
 }
 
 bool hit_cylinder(
@@ -171,9 +177,6 @@ bool hit_cylinder(
 	const t_cylinder *cyl
 )
 {
-	bool hit_anything = false;
-	double closest_so_far = max_t;
-
 	//ローカル基底ベクトルの作成
 	t_vec3 ey = normalize_vec3(cyl->axis);
 	t_vec3 tmp = init_vec3(0, 0, 0);
@@ -186,21 +189,19 @@ bool hit_cylinder(
 
 	t_ray local_ray = world_to_local_ray(ray, cyl->center, ex, ey, ez);
 
-	hit_cylinder_side_cap(local_ray, min_t, closest_so_far, hit_rec, cyl);
+	if (!hit_cylinder_side_cap(local_ray, min_t, max_t, hit_rec, cyl))
+		return false;
 	//結果をワールド空間に戻す
-	if (hit_anything){
-		t_vec3 local_n = hit_rec->normal_vector;
-		hit_rec->normal_vector = add_triple_vec3(
-			mult_scalar_vec3(ex, local_n.x),
-			mult_scalar_vec3(ey, local_n.y),
-			mult_scalar_vec3(ez, local_n.z)
-		);
-		hit_rec->intersection = ray_at(ray, hit_rec->t);
-		set_face_normal(ray, hit_rec->normal_vector, hit_rec);
-	}
-	return hit_anything;
+	t_vec3 local_n = hit_rec->normal_vector;
+	hit_rec->normal_vector = add_triple_vec3(
+		mult_scalar_vec3(ex, local_n.x),
+		mult_scalar_vec3(ey, local_n.y),
+		mult_scalar_vec3(ez, local_n.z)
+	);
+	hit_rec->intersection = ray_at(ray, hit_rec->t);
+	set_face_normal(ray, hit_rec->normal_vector, hit_rec);
+	return true;
 }
-
 // 平面の交差判定を円柱の半径ｒ以内の範囲に限定して行い、側面と蓋の衝突のうち
 // 最も距離ｔが近いものを採用する
 //　円柱を回転させるのではなくレイを逆方向に回転させる　その座標系で計算するのはもとの座標系でも同じ

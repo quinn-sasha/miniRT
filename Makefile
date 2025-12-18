@@ -49,6 +49,7 @@ SRCS := $(SRC_DIR)/camera.c \
         $(SRC_DIR)/plane.c \
         $(SRC_DIR)/hit_object.c \
         $(SRC_DIR)/cylinder.c \
+        $(SRC_DIR)/light.c \
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

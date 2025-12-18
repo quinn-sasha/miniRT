@@ -28,4 +28,12 @@ bool hit_cylinder(
 	const t_cylinder *cyl
 );
 
+double solve_quadratic_t(
+	double a,
+	double half_b,
+	double c,
+	double min_t,
+	double max_t
+);
+
 #endif

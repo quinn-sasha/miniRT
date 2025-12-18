@@ -2,6 +2,7 @@
 #include "vec3.h"
 #include "object.h"
 #include <math.h>
+#include "cylinder.h"
 
 //--初期化関数--
 
