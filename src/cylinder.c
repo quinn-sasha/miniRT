@@ -86,12 +86,12 @@ static bool hit_cylinder_cap(
 		return false;
 	record->t = t;
 	record->intersection = intersection;
-	t_vec3 normal = init_vec3(0, 0, 0);
+	t_vec3 outward_normal_vector = init_vec3(0, 0, 0);
 	if (cap_height > cyl->center.y)
-		normal = init_vec3(0, 1.0, 0);
+		outward_normal_vector = init_vec3(0, 1.0, 0);
 	else
-		normal = init_vec3(0, -1.0, 0);
-	set_fronts_face_and_normal_vector(record, ray, record->normal_vector);
+		outward_normal_vector = init_vec3(0, -1.0, 0);
+	set_fronts_face_and_normal_vector(record, ray, outward_normal_vector);
 	record->material = cyl->material;
 	return true;
 }
