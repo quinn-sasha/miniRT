@@ -2,6 +2,7 @@
 #include "hit_record.h"
 #include "vec3.h"
 #include "cylinder.h"
+#include "math_utils.h"
 #include <math.h>
 #include <stdlib.h>
 
