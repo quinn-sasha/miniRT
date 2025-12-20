@@ -1,4 +1,6 @@
 #include "object_list.h"
+#include "axis_aligned_bounding_boxes.h"
+#include "bvh.h"
 #include "hit_record.h"
 #include "sphere.h"
 #include <stdio.h>

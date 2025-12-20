@@ -9,6 +9,6 @@ typedef struct s_program {
   void *mlx;
   void *window;
   t_img img;
-  t_scene_object head;
+  t_scence_object head;
   t_camera camera;
 } t_program;
