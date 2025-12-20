@@ -1,7 +1,7 @@
 #include "plane.h"
 #include "hit_record.h"
 
-t_plane init_plane(t_point3 point, t_vec3 normal, t_material material)
+t_plane init_plane(t_vec3 point, t_vec3 normal, t_material material)
 {
 	t_plane plane;
 	plane.point = point;
