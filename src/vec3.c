@@ -20,8 +20,6 @@ t_vec3 divide_vec3(t_vec3 v, double scalar) {
   return scale_vec3(v, 1 / scalar);
 }
 
-t_vec3 inverse_vec3(t_vec3 v) { return scale_vec3(v, -1); }
-
 t_vec3 add_vec3(t_vec3 a, t_vec3 b) {
   return init_vec3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
@@ -73,7 +71,7 @@ t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min,
   return init_vec3(x, y, z);
 }
 
-t_vec3 init_random_vec3_in_unit_shpere(t_xorshift64_state *state) {
+t_vec3 init_random_vec3_in_unit_sphere(t_xorshift64_state *state) {
   while (true) {
     t_vec3 result = init_random_vec3_range(state, -1, 1);
     if (length_squared_vec3(result) >= 1)
@@ -112,4 +110,19 @@ t_vec3 refract(t_vec3 incoming, t_vec3 n, double eta_in_over_etat) {
   double scalar = -sqrt(1.0 - length_squared_vec3(parallel));
   t_vec3 perpendicular = scale_vec3(n, scalar);
   return add_vec3(parallel, perpendicular);
+}
+
+//符号反転（負ベクトル）
+t_vec3 negative_vec3(t_vec3 v)
+{
+    return init_vec3(-v.x, -v.y, -v.z);
+}
+
+t_vec3  random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state)
+{
+    t_vec3 in_unit_sphere = init_random_vec3_in_unit_sphere(state);
+    if (dot_vec3(in_unit_sphere, normal) > 0.0)
+        return (in_unit_sphere);
+    else
+        return negative_vec3(in_unit_sphere);
 }

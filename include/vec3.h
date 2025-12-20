@@ -23,11 +23,13 @@ double length_vec3(t_vec3 v);
 double dot_vec3(t_vec3 a, t_vec3 b);
 t_vec3 multiply_vec3(t_vec3 a, t_vec3 b);
 t_vec3 normalize_vec3(t_vec3 v);
+t_vec3 negative_vec3(t_vec3 v);
 t_vec3 cross_vec3(t_vec3 a, t_vec3 b);
 t_vec3 init_random_vec3(t_xorshift64_state *state);
 t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min,
                               double max);
 t_vec3 init_random_vec3_in_unit_shpere(t_xorshift64_state *state);
+t_vec3 random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state);
 t_vec3 init_random_vec3_in_unit_circle(t_xorshift64_state *state);
 t_vec3 init_random_unit_vec3(t_xorshift64_state *state);
 t_vec3 reflect(t_vec3 incoming, t_vec3 normal);

@@ -34,6 +34,7 @@ t_camera init_camera(t_vec3 look_from, t_vec3 look_at, t_vec3 view_up,
 
   double viewport_width;
   double viewport_height;
+
   set_viewport_width_height(&viewport_width, &viewport_height, aspect_ratio,
                             hfov);
   t_vec3 back_dir = normalize_vec3(sub_vec3(look_from, look_at));

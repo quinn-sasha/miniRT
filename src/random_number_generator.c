@@ -14,6 +14,8 @@ static uint64_t xorshift64(t_xorshift64_state *state) {
   return x;
 }
 
+//下位１１ビットを捨てて、[0, 1)の範囲に収める
+//INVERSE_TWO_POW_53は1/2^53の値
 double random_double(t_xorshift64_state *state) {
   uint64_t result = xorshift64(state);
   return (result >> 11) * INVERSE_TWO_POW_53;

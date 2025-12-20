@@ -74,7 +74,7 @@ bool dielectric_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
 
   t_vec3 incoming = normalize_vec3(ray.direction);
   double cos_theta =
-      min_double(dot_vec3(inverse_vec3(incoming), record.normal_vector), 1.0);
+      min_double(dot_vec3(negative_vec3(incoming), record.normal_vector), 1.0);
   double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
   if (eta_in_over_etat * sin_theta > 1.0) {
     t_vec3 reflected = reflect(incoming, record.normal_vector);
