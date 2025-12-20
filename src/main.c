@@ -1,6 +1,6 @@
 #include "camera.h"
 #include "color.h"
-#include "error.h"
+#include "error_utils.h"
 #include "hit_record.h"
 #include "material.h"
 #include "minilibx_utils.h"
