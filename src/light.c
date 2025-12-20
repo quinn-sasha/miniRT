@@ -9,11 +9,11 @@ t_ambient init_ambient_light(double ratio, double r, double g, double b)
 	return ambient;
 }
 
-t_vec3 calculate_shading(t_ambient ambient, t_hit_record rec)
+t_vec3 calculate_shading(t_ambient ambient, t_hit_record record)
 {
-	t_vec3 ambient_light = mult_scalar_vec3(ambient.color, ambient.ratio);
+	t_vec3 ambient_light = scale_vec3(ambient.color, ambient.ratio);
 
-	t_vec3 final_color = mult_vec3(rec.material.albedo, ambient_light);
+	t_vec3 final_color = multiply_vec3(record.material.albedo, ambient_light);
 
 	return final_color;
 }

@@ -49,7 +49,7 @@ bool metal_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
   t_vec3 reflected =
       reflect(normalize_vec3(ray.direction), record.normal_vector);
   t_vec3 direction =
-      add_vec3(reflected, scale_vec3(init_random_vec3_in_unit_shpere(state),
+      add_vec3(reflected, scale_vec3(init_random_vec3_in_unit_sphere(state),
                                      record.material.data.fuzziness));
   *scattered = init_ray(record.intersection, direction);
   return (dot_vec3(reflected, record.normal_vector) > 0);

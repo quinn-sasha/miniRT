@@ -12,6 +12,6 @@ typedef struct s_ambient
 
 //ambient_color = A_ratio * A_color * Material_albedo
 t_ambient init_ambient_light(double ratio, double r, double g, double b);
-t_vec3 calculate_shading(t_ambient ambient, t_hit_record rec);
+t_vec3 calculate_shading(t_ambient ambient, t_hit_record record);
 
 #endif

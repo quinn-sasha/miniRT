@@ -14,6 +14,6 @@ typedef struct s_sphere {
 
 t_sphere *new_sphere(t_vec3 center, double radius, t_material material);
 bool hits_sphere(t_ray ray, double min_t, double max_t,
-                 t_hit_record *hit_record, t_sphere sphere);
+                 t_hit_record *record, t_sphere sphere);
 
 #endif // !SPHERE_H
