@@ -1,5 +1,5 @@
 #include "minilibx_utils.h"
-#include "error.h"
+#include "error_utils.h"
 #include "mlx.h"
 #include <stdio.h>
 #include <stdlib.h>

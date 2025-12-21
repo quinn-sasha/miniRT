@@ -11,7 +11,7 @@ CFLAGS := -Wall -Wextra -Werror
 RM := rm -f
 RMDIR := rm -rf
 
-# --- OS Detection & Configuration ---
+# -- Platform compatibility -----------
 UNAME := $(shell uname -s)
 
 ifeq ($(UNAME), Linux)
@@ -35,7 +35,7 @@ INCLUDES := -I$(INCLUDE_DIR) -I$(LIBFT_DIR) -I$(MLX_DIR)
 
 SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/color.c \
-				$(SRC_DIR)/error.c \
+				$(SRC_DIR)/error_utils.c \
 				$(SRC_DIR)/hit_record.c \
 				$(SRC_DIR)/main.c \
 				$(SRC_DIR)/material.c \
@@ -46,9 +46,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/ray.c \
 				$(SRC_DIR)/sphere.c \
 				$(SRC_DIR)/utilities.c \
-				$(SRC_DIR)/vec3.c \
-				$(SRC_DIR)/cylinder.c \
-				$(SRC_DIR)/plane.c \
+				$(SRC_DIR)/vec3.c
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -71,7 +69,7 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 clean:
 	$(RMDIR) $(OBJ_DIR)
 	$(MAKE) -C $(LIBFT_DIR) fclean
-	$(MAKE) -C $(MLX_DIR) clean
+	$(MAKE) -C $(MLX_DIR) clean 
 
 fclean: clean
 	$(RM) $(NAME)

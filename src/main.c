@@ -1,6 +1,6 @@
 #include "camera.h"
 #include "color.h"
-#include "error.h"
+#include "error_utils.h"
 #include "hit_record.h"
 #include "material.h"
 #include "minilibx_utils.h"
@@ -78,7 +78,7 @@ static t_color calculate_color(t_ray ray, t_scene_object *head,
       return_value =
           dielectric_scatters(ray, record, &scattered, &attenuation, state);
     else
-      error_exit("Unknown material type");
+      error_exit("Unkonw material type");
 
     if (!return_value)
       return init_color(0, 0, 0);
