@@ -24,6 +24,9 @@ bool hits_sphere(t_ray ray, double min_t, double max_t,
 
   record->t = solve_quadratic_t(a, half_b, c, min_t, max_t);
 
+  if (record->t == false)
+    return false;
+
   record->intersection = ray_at(ray, record->t);
   t_vec3 outward_normal_vector = divide_vec3(
       sub_vec3(record->intersection, sphere.center), sphere.radius);
