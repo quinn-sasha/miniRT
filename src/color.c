@@ -28,3 +28,13 @@ uint32_t rgb_to_integer(t_color color) {
   int b = 256 * clamp(blue, 0.0, 0.999);
   return (r << 16 | g << 8 | b);
 }
+
+t_color clamp_color(t_color color)
+{
+  t_color res;
+
+  res.x = clamp(color.x, 0.0, 1.0);
+  res.y = clamp(color.y, 0.0, 1.0);
+  res.z = clamp(color.z, 0.0, 1.0);
+  return res;
+}
