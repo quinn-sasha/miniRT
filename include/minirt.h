@@ -2,8 +2,8 @@
 #include "img.h"
 #include "object_list.h"
 
-#define WIDTH 384
-#define HEIGHT 216
+#define WIDTH 1920
+#define HEIGHT 1080
 
 typedef struct s_program {
   void *mlx;
