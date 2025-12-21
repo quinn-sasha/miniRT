@@ -35,7 +35,7 @@ INCLUDES := -I$(INCLUDE_DIR) -I$(LIBFT_DIR) -I$(MLX_DIR)
 
 SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/color.c \
-				$(SRC_DIR)/error.c \
+				$(SRC_DIR)/error_utils.c \
 				$(SRC_DIR)/hit_record.c \
 				$(SRC_DIR)/main.c \
 				$(SRC_DIR)/material.c \
