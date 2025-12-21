@@ -1,5 +1,5 @@
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef ERROR_UTILS_H
+#define ERROR_UTILS_H
 
 #define MLX_ERROR "Minilibx library failed"
 
