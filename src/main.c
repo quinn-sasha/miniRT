@@ -76,11 +76,20 @@ static t_color calculate_direct_lighting(t_hit_record *record, t_scene_object *h
   if (hits_any_object(head, shadow_ray, 0.001, distance_to_light, &shadow_rec))
       return init_color(0, 0, 0); //影生成
 
-  //拡散反射の計算
+  //TODO: calculate_diffuse()関数をつくる。拡散反射の計算   
   double dot_nl = dot_vec3(record->normal_vector, normalized_light_dir_vec);
   if (dot_nl < 0) dot_nl = 0; //この条件に入るときは光が裏側から入るので０にする
   //反射光 = 光源の色 * 輝度比 * cosθ
-  t_color diffuse = scale_vec3(light->color, light->brightness_ratio * dot_nl);
+  t_color diffuse = scale_vec3(light->color, light->brightness_ratio * dot_nl);）
+  t_color specular = init_color(0, 0, 0);
+
+  if (record->material.type == MAT_METAL)
+  {
+    // TODO: calculate_specular() 金属の場合は鏡面反射（ハイライト）も計算する
+    specular = calculate_specular(record, light, ray_in);
+  }
+  // 最終的に足して返す
+  return add_vec3(diffuse, specular);
   return multiply_vec3(record->material.albedo, diffuse);
 }
 
