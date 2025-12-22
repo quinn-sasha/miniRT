@@ -3,7 +3,7 @@ NAME := miniRT
 SRC_DIR := src
 OBJ_DIR := objs
 LIBFT_DIR := libft
-MLX_DIR := minilibx-linux
+MLX_DIR := minilibx
 INCLUDE_DIR := include
 
 CC := cc
