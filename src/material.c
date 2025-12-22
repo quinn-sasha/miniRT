@@ -47,7 +47,7 @@ bool lambertian_scatters(t_hit_record record, t_ray *scattered,
 bool metal_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
                     t_xorshift64_state *state) {
   t_vec3 reflected =
-      reflect(normalize_vec3(ray.direction), record.normal_vector);
+      reflect(unit_vec3(ray.direction), record.normal_vector);
   t_vec3 direction =
       add_vec3(reflected, scale_vec3(init_random_vec3_in_unit_sphere(state),
                                      record.material.data.fuzziness));
@@ -72,7 +72,7 @@ bool dielectric_scatters(t_ray ray, t_hit_record record, t_ray *scattered,
     eta_in_over_etat = refractive_index;
   }
 
-  t_vec3 incoming = normalize_vec3(ray.direction);
+  t_vec3 incoming = unit_vec3(ray.direction);
   double cos_theta =
       min_double(dot_vec3(negative_vec3(incoming), record.normal_vector), 1.0);
   double sin_theta = sqrt(1.0 - cos_theta * cos_theta);

@@ -48,7 +48,7 @@ t_vec3 multiply_vec3(t_vec3 a, t_vec3 b) {
   return init_vec3(a.x * b.x, a.y * b.y, a.z * b.z);
 }
 
-t_vec3 normalize_vec3(t_vec3 v) {
+t_vec3 unit_vec3(t_vec3 v) {
   double length = length_vec3(v);
   return scale_vec3(v, 1 / length);
 }

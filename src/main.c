@@ -65,7 +65,7 @@ static t_color calculate_direct_lighting(t_hit_record *record, t_scene_object *h
 
   t_vec3 light_dir_vec = sub_vec3(light->pos, record->intersection);
   double distance_to_light = length_vec3(light_dir_vec);
-  t_vec3 normalize_light_dir_vec = normalize_vec3(light_dir_vec);
+  t_vec3 normalize_light_dir_vec = unit_vec3(light_dir_vec);
 
   t_ray shadow_ray;
   //シャドウアクネの回避をするために法線方向に少し浮かす
@@ -120,7 +120,7 @@ static t_color calculate_color(t_ray ray, t_program *data,
     t_color final_ambient = multiply_vec3(record.material.albedo, ambient_effect);
     return (clamp_color(add_triple_vec3(direct_light, indirect_light, final_ambient)));
   }
-  t_vec3 unit_direction = normalize_vec3(ray.direction);
+  t_vec3 unit_direction = unit_vec3(ray.direction);
   double t = 0.5 * (unit_direction.y + 1.0);
   t_color white = init_color(1.0, 1.0, 1.0);
   return add_vec3(scale_vec3(white, (1.0 - t)),
