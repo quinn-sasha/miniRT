@@ -103,14 +103,14 @@ static t_color calculate_color(t_ray ray, t_program *data,
     //内部で影ができるかのチェックとDiffuse / Specular計算を行う。
   }
    //間接光の計算
-    bool can_scatters = false;
+    bool can_scatter = false;
     if (record.material.type == MAT_LAMBERTIAN)
-      can_scatters = lambertian_scatters(record, &scattered, state);
+      can_scatter = lambertian_scatters(record, &scattered, state);
     else if (record.material.type == MAT_METAL)
-      can_scatters = metal_scatters(ray, record, &scattered, state);
+      can_scatter = metal_scatters(ray, record, &scattered, state);
     else if (record.material.type == MAT_DIELECTRIC)
-      can_scatters = dielectric_scatters(ray, record, &scattered, &attenuation, state);
-    if (can_scatters){
+      can_scatter = dielectric_scatters(ray, record, &scattered, &attenuation, state);
+    if (can_scatter){
       t_color recursive_color = calculate_color(scattered, data, state, num_recursions - 1);
       indirect_light = multiply_vec3(recursive_color, attenuation);
     }
