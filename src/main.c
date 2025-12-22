@@ -69,7 +69,7 @@ static t_color calculate_direct_lighting(t_hit_record *record, t_scene_object *h
 
   t_ray shadow_ray;
 
-  t_ray shadow_ray = init_ray(record->intersection, normalize_light_dir_vec); 
+  t_ray shadow_ray = init_ray(record->intersection, normalized_light_dir_vec); 
  
   t_hit_record shadow_rec;
 
@@ -77,7 +77,7 @@ static t_color calculate_direct_lighting(t_hit_record *record, t_scene_object *h
       return init_color(0, 0, 0); //影生成
 
   //拡散反射の計算
-  double dot_nl = dot_vec3(record->normal_vector, normalize_light_dir_vec);
+  double dot_nl = dot_vec3(record->normal_vector, normalized_light_dir_vec);
   if (dot_nl < 0) dot_nl = 0; //この条件に入るときは光が裏側から入るので０にする
   //反射光 = 光源の色 * 輝度比 * cosθ
   t_color diffuse = scale_vec3(light->color, light->brightness_ratio * dot_nl);
