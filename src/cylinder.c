@@ -169,13 +169,13 @@ bool hit_cylinder(
 )
 {
 	//ローカル基底ベクトルの作成
-	t_vec3 ey = unit_vec3(cyl->axis);
+	t_vec3 ey = normalize_vec3(cyl->axis);
 	t_vec3 tmp = init_vec3(0, 0, 0);
 	if(fabs(ey.y) < 0.9) //ey と tmpのなす角が十分に離れていることを保証するため
 		tmp =	init_vec3(0, 1, 0);
 	else
 		tmp = init_vec3(1, 0, 0);
-	t_vec3 ex = unit_vec3(cross_vec3(tmp, ey));
+	t_vec3 ex = normalize_vec3(cross_vec3(tmp, ey));
 	t_vec3 ez = cross_vec3(ex, ey);
 
 	t_ray local_ray = world_to_local_ray(ray, cyl->center, ex, ey, ez);

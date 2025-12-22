@@ -6,7 +6,7 @@
 t_plane *new_plane(t_vec3 point, t_vec3 normal, t_material material){
 	t_plane *new_plane = malloc(sizeof(t_plane));
 	new_plane->point = point;
-	new_plane->normal = unit_vec3(normal);
+	new_plane->normal = normalize_vec3(normal);
 	new_plane->material = material;
 	return (new_plane);
 }

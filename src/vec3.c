@@ -48,7 +48,7 @@ t_vec3 multiply_vec3(t_vec3 a, t_vec3 b) {
   return init_vec3(a.x * b.x, a.y * b.y, a.z * b.z);
 }
 
-t_vec3 unit_vec3(t_vec3 v) {
+t_vec3 normalize_vec3(t_vec3 v) {
   double length = length_vec3(v);
   return scale_vec3(v, 1 / length);
 }
@@ -82,7 +82,7 @@ t_vec3 init_random_vec3_in_unit_sphere(t_xorshift64_state *state) {
   }
 }
 
-t_vec3 init_random_unit_vec3(t_xorshift64_state *state) {
+t_vec3 init_random_normalize_vec3(t_xorshift64_state *state) {
   double a = random_double_range(state, 0, 2 * M_PI);
   double z = random_double_range(state, -1, 1);
   double small_r = sqrt(1 - z * z);
