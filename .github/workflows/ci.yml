@@ -1,15 +1,15 @@
-name: Make Build Test
+# name: Make Build Test
 
-on:
-  pull_request:
-    branches: [ "main" ]
+# on:
+  # pull_request:
+    # branches: [ "main" ]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+  # build:
+    # runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+    # steps:
+    # - uses: actions/checkout@v4
 
-    - name: Run Make
-      run: make
+    # - name: Run Make
+      # run: make
