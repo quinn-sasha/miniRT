@@ -20,8 +20,7 @@
 // ccalulate runtime
 #include <time.h>
 
-static void generate_random_scene(t_scene_object *head,
-                                  t_xorshift64_state *state) {
+static void generate_random_scene(t_scene_object *head, t_xorshift64_state *state) {
   t_material ground_material =
       init_lambertian_material(init_color(0.5, 0.5, 0.5));
   add_sphere(head, new_sphere(init_vec3(0, -1000, 0), 1000, ground_material));
@@ -60,37 +59,52 @@ static void generate_random_scene(t_scene_object *head,
   add_sphere(head, new_sphere(init_vec3(4, 1, 0), 1.0, material3));
 }
 
+static t_vec3 calculate_diffuse(t_light *light, t_hit_record *record, t_vec3 normalized_light_dir_vec)
+{
+  double dot_nl = dot_vec3(record->normal_vector, normalized_light_dir_vec);
+  if (dot_nl < 0) dot_nl = 0;
+  t_color diffuse_light = scale_vec3(light->color, light->brightness_ratio * dot_nl);
+	t_color	diffuse = multiply_vec3(diffuse_light, record->material.albedo);
+
+	return diffuse;
+}
+
+static t_vec3 calculate_specular(t_hit_record *record, t_light *light,
+                          t_ray ray, t_vec3 normalized_light_dir_vec){
+  t_vec3  reflected = reflect(negative_vec3(normalized_light_dir_vec), record->normal_vector);
+  t_vec3  negative_ray_dir = negative_vec3(normalize_vec3(ray.direction));
+  double dot_rn = dot_vec3(reflected, negative_ray_dir);
+  if (dot_rn < 0)
+	  return init_color(0, 0, 0);
+
+	double shininess = 32;
+	t_color spec_color = multiply_vec3(light->color, record->material.albedo);
+	double spec_factor = pow(dot_rn, shininess);
+
+	return scale_vec3(spec_color, light->brightness_ratio * spec_factor);
+}
+
 static t_color calculate_direct_lighting(t_hit_record *record, t_scene_object *head,
-                                         t_light *light){
+                                         t_light *light, t_ray ray){
 
   t_vec3 light_dir_vec = sub_vec3(light->pos, record->intersection);
   double distance_to_light = length_vec3(light_dir_vec);
   t_vec3 normalized_light_dir_vec = normalize_vec3(light_dir_vec);
 
-  t_ray shadow_ray;
+  t_ray shadow_ray = init_ray(record->intersection, normalized_light_dir_vec);
 
-  t_ray shadow_ray = init_ray(record->intersection, normalized_light_dir_vec); 
- 
   t_hit_record shadow_rec;
 
   if (hits_any_object(head, shadow_ray, 0.001, distance_to_light, &shadow_rec))
-      return init_color(0, 0, 0); //影生成
+      return init_color(0, 0, 0);
 
-  //TODO: calculate_diffuse()関数をつくる。拡散反射の計算   
-  double dot_nl = dot_vec3(record->normal_vector, normalized_light_dir_vec);
-  if (dot_nl < 0) dot_nl = 0; //この条件に入るときは光が裏側から入るので０にする
-  //反射光 = 光源の色 * 輝度比 * cosθ
-  t_color diffuse = scale_vec3(light->color, light->brightness_ratio * dot_nl);）
-  t_color specular = init_color(0, 0, 0);
+  t_color diffuse = calculate_diffuse(light, record, normalized_light_dir_vec);
+
+	t_color specular = init_color(0, 0, 0);
 
   if (record->material.type == MAT_METAL)
-  {
-    // TODO: calculate_specular() 金属の場合は鏡面反射（ハイライト）も計算する
-    specular = calculate_specular(record, light, ray_in);
-  }
-  // 最終的に足して返す
+    specular = calculate_specular(record, light, ray, normalized_light_dir_vec);
   return add_vec3(diffuse, specular);
-  return multiply_vec3(record->material.albedo, diffuse);
 }
 
 static t_color calculate_color(t_ray ray, t_program *data,
@@ -105,29 +119,26 @@ static t_color calculate_color(t_ray ray, t_program *data,
     t_color attenuation = record.material.albedo;
     t_ray scattered;
 
-    //直接光の計算
   if (record.material.type == MAT_LAMBERTIAN || record.material.type == MAT_METAL){
-    //TODO: ここでscene内の全高原をループする処理を呼ぶ
-    direct_light = calculate_direct_lighting(&record, &data->head, &data->light);
-    //内部で影ができるかのチェックとDiffuse / Specular計算を行う。
+    direct_light = calculate_direct_lighting(&record, &data->head, &data->light, ray);
   }
-   //間接光の計算
-    bool can_scatter = false;
-    if (record.material.type == MAT_LAMBERTIAN)
-      can_scatter = lambertian_scatters(record, &scattered, state);
-    else if (record.material.type == MAT_METAL)
-      can_scatter = metal_scatters(ray, record, &scattered, state);
-    else if (record.material.type == MAT_DIELECTRIC)
-      can_scatter = dielectric_scatters(ray, record, &scattered, &attenuation, state);
-    if (can_scatter){
-      t_color recursive_color = calculate_color(scattered, data, state, num_recursions - 1);
-      indirect_light = multiply_vec3(recursive_color, attenuation);
-    }
-    //環境光を考慮する
-    t_color ambient_effect = scale_vec3(data->ambient.color, data->ambient.ratio);
-    t_color final_ambient = multiply_vec3(record.material.albedo, ambient_effect);
-    return (clamp_color(add_triple_vec3(direct_light, indirect_light, final_ambient)));
-  }
+  //間接光の計算
+  	bool can_scatter = false;
+  	if (record.material.type == MAT_LAMBERTIAN)
+    	can_scatter = lambertian_scatters(record, &scattered, state);
+  	else if (record.material.type == MAT_METAL)
+    can_scatter = metal_scatters(ray, record, &scattered, state);
+  	else if (record.material.type == MAT_DIELECTRIC)
+    	can_scatter = dielectric_scatters(ray, record, &scattered, &attenuation, state);
+  	if (can_scatter){
+    	t_color recursive_color = calculate_color(scattered, data, state, num_recursions - 1);
+    	indirect_light = multiply_vec3(recursive_color, attenuation);
+  	}
+  	//環境光を考慮する
+  	t_color ambient_effect = scale_vec3(data->ambient.color, data->ambient.ratio);
+  	t_color final_ambient = multiply_vec3(record.material.albedo, ambient_effect);
+  	return (clamp_color(add_triple_vec3(direct_light, indirect_light, final_ambient)));
+	}
   t_vec3 normalized_direction = normalize_vec3(ray.direction);
   double t = 0.5 * (normalized_direction.y + 1.0);
   t_color white = init_color(1.0, 1.0, 1.0);
@@ -141,7 +152,7 @@ static void set_up_camera(t_program *data) {
   t_vec3 view_up = init_vec3(0, 1, 0);
   double focus_dist = 10.0;
   t_camera camera = init_camera(lookfrom, lookat, view_up,
-                                (double)WIDTH / HEIGHT, 20, 0.1, focus_dist);
+                                (double)WIDTH / HEIGHT, 45, 0.1, focus_dist);
   data->camera = camera;
 }
 

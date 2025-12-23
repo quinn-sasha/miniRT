@@ -4,7 +4,7 @@
 
 void init_light(t_light *light)
 {
-	light->pos = init_vec3(0.0, 0.0, 0.0);
+	light->pos = init_vec3(0.0, 100.0, 0.0);
 	light->brightness_ratio = 0.7;
 	light->color = init_color(1.0, 1.0, 1.0);
 }
