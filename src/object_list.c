@@ -92,7 +92,6 @@ bool hits_object(t_ray ray, double min_t, double max_t, t_hit_record *record,
   return false;
 }
 
-// TODO: 球以外のオブジェクトに対応する
 bool hits_any_object(t_scene_object *head, t_ray ray, double min_t,
                      double max_t, t_hit_record *record) {
   t_hit_record temp_record;
