@@ -6,6 +6,7 @@
 #include "minilibx_utils.h"
 #include "mlx.h"
 #include "object_list.h"
+#include "parse.h"
 #include "random_number_generator.h"
 #include "ray.h"
 #include "sphere.h"
@@ -131,12 +132,11 @@ int render(t_program *data) {
   return EXIT_SUCCESS;
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
   t_program data;
-  // parse()
+  parse(argc, argv, &data);
   init_mlx_resources(&data);
   set_mlx_hooks(&data);
-  init_dummy_head(&data.head); // TODO
   render(&data);
   mlx_loop(data.mlx);
   destroy_mlx_resources_if_allocated(&data);

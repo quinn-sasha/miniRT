@@ -1,7 +1,6 @@
 #include "parse.h"
 #include "error_utils.h"
 #include "libft.h"
-#include "minirt.h"
 #include "object_list.h"
 #include "parse_line.h"
 #include <fcntl.h>
@@ -9,21 +8,21 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-bool is_rt_extension(const char *filename) {
+static bool is_rt_extension(const char *filename) {
   int len = ft_strlen(filename);
   if (len < 3)
     return false;
   return (ft_strcmp(filename + len - 3, ".rt") == 0);
 }
 
-void validate_arguments(int argc, char *argv[]) {
+static void validate_arguments(int argc, char *argv[]) {
   if (argc != 2)
     error_exit("Usage: ./miniRT <scene.rt>");
   if (!is_rt_extension(argv[1]))
     error_exit("The file extension must be .rt");
 }
 
-bool is_valid_setting(t_elements_count count) {
+static bool is_valid_setting(t_elements_count count) {
   if (count.num_ambient != 1) {
     print_error("Ambient lighting (A) must be declared exactly once.");
     return false;
@@ -40,7 +39,7 @@ bool is_valid_setting(t_elements_count count) {
   return true;
 }
 
-void read_from_rt_file(int fd, t_program *data) {
+static void read_from_rt_file(int fd, t_program *data) {
   t_elements_count elements_count;
   ft_memset(&elements_count, 0, sizeof(elements_count));
   while (true) {
