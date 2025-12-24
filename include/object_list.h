@@ -1,16 +1,22 @@
 #ifndef OBJECT_LIST_H
 #define OBJECT_LIST_H
 
+#include "cylinder.h"
+#include "plane.h"
 #include "sphere.h"
 
 typedef enum {
   OBJ_SPHERE,
+  OBJ_PLANE,
+  OBJ_CYLINDER,
 } e_object_type;
 
 typedef struct s_scene_object {
   e_object_type type;
   union u_data {
     t_sphere *sphere;
+    t_plane *plane;
+    t_cylinder *cylinder;
   } data;
   struct s_scene_object *next;
 } t_scene_object;
