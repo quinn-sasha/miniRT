@@ -1,6 +1,6 @@
-#ifndef FT_ATOF_H
-#define FT_ATOF_H
+#ifndef PARSE_FLOATING_POINT_H
+#define PARSE_FLOATING_POINT_H
 
 double ft_atof(const char *nptr);
 
-#endif // !FT_ATOF_H
+#endif // !PARSE_FLOATING_POINT_H

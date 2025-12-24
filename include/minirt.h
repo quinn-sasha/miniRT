@@ -1,5 +1,9 @@
+#ifndef MINIRT_H
+#define MINIRT_H
+
 #include "camera.h"
 #include "img.h"
+#include "light.h"
 #include "object_list.h"
 
 #define WIDTH 384
@@ -11,4 +15,8 @@ typedef struct s_program {
   t_img img;
   t_scene_object head;
   t_camera camera;
+  t_ambient ambient;
+  t_light light;
 } t_program;
+
+#endif // !MINIRT_H

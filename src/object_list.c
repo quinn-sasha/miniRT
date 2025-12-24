@@ -77,8 +77,8 @@ void add_cylinder(t_scene_object *head, t_cylinder *cylinder) {
   add_object_generic(head, cylinder, OBJ_CYLINDER);
 }
 
-bool hits_object(t_ray ray, double min_t, double max_t, t_hit_record *record,
-                 t_scene_object *object) {
+static bool hits_object(t_ray ray, double min_t, double max_t,
+                        t_hit_record *record, t_scene_object *object) {
   if (object->type == OBJ_SPHERE) {
     return hits_sphere(ray, min_t, max_t, record, *object->data.sphere);
   }

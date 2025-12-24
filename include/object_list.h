@@ -27,6 +27,8 @@ void destroy_object_list(t_scene_object *head);
 t_scene_object *new_scene_object(void *object, e_object_type type);
 void add_object_generic(t_scene_object *head, void *object, e_object_type type);
 void add_sphere(t_scene_object *head, t_sphere *sphere);
+void add_plane(t_scene_object *head, t_plane *plane);
+void add_cylinder(t_scene_object *head, t_cylinder *cylinder);
 bool hits_any_object(t_scene_object *head, t_ray ray, double min_t,
                      double max_t, t_hit_record *record);
 int count_objects(t_scene_object *head);

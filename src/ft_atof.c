@@ -1,4 +1,5 @@
 #include "libft.h"
+#include <stdbool.h>
 
 int ft_isspace(int c) {
   if (c == ' ')
