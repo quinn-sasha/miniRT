@@ -94,12 +94,14 @@ static t_color calculate_color(t_ray ray, t_scene_object *head,
 }
 
 static void set_up_camera(t_program *data) {
-  t_vec3 lookfrom = init_vec3(13, 2, 3);
-  t_vec3 lookat = init_vec3(0, 0, 0);
-  t_vec3 view_up = init_vec3(0, 1, 0);
-  double focus_dist = 10.0;
+  t_vec3 lookfrom = init_vec3(13, 2, 3); // TODO: read from rt file
+  t_vec3 lookat = init_vec3(0, 0, 0);    // TODO: read from rt file
+  double hfov = 20;                      // TODO: read from rt file
+  // default setting
+  const t_vec3 view_up = init_vec3(0, 1, 0);
+  const double focal_length = 1.0;
   t_camera camera = init_camera(lookfrom, lookat, view_up,
-                                (double)WIDTH / HEIGHT, 20, 0.1, focus_dist);
+                                (double)WIDTH / HEIGHT, hfov, focal_length);
   data->camera = camera;
 }
 
@@ -123,7 +125,7 @@ int render(t_program *data) {
       for (int sample = 0; sample < num_samples_per_pixel; sample++) {
         double x_offset = (x + random_double(&state)) / (WIDTH - 1);
         double y_offset = (y + random_double(&state)) / (HEIGHT - 1);
-        t_ray ray = get_ray(data->camera, x_offset, y_offset, &state);
+        t_ray ray = get_ray(data->camera, x_offset, y_offset);
         pixel_color =
             add_vec3(pixel_color,
                      calculate_color(ray, &data->head, &state, max_recursions));
@@ -142,8 +144,8 @@ int render(t_program *data) {
 }
 
 int main(void) {
-  // TODO: read from rt file
   t_program data;
+  // parse()
   init_mlx_resources(&data);
   set_mlx_hooks(&data);
   init_dummy_head(&data.head); // TODO
