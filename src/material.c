@@ -39,7 +39,7 @@ t_material init_dielectric_material(double refractive_index) {
 bool lambertian_scatters(t_hit_record record, t_ray *scattered,
                          t_xorshift64_state *state) {
   t_vec3 scatter_direction =
-      add_vec3(record.normal_vector, init_random_unit_vec3(state));
+      add_vec3(record.normal_vector, init_random_normalize_vec3(state));
   *scattered = init_ray(record.intersection, scatter_direction);
   return true;
 }
