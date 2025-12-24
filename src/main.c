@@ -93,18 +93,6 @@ static t_color calculate_color(t_ray ray, t_scene_object *head,
                   scale_vec3(init_color(0.5, 0.7, 1.0), t));
 }
 
-static void set_up_camera(t_program *data) {
-  t_vec3 lookfrom = init_vec3(13, 2, 3); // TODO: read from rt file
-  t_vec3 lookat = init_vec3(0, 0, 0);    // TODO: read from rt file
-  double hfov = 20;                      // TODO: read from rt file
-  // default setting
-  const t_vec3 view_up = init_vec3(0, 1, 0);
-  const double focal_length = 1.0;
-  t_camera camera = init_camera(lookfrom, lookat, view_up,
-                                (double)WIDTH / HEIGHT, hfov, focal_length);
-  data->camera = camera;
-}
-
 int render(t_program *data) {
   if (data->window == NULL)
     return (EXIT_SUCCESS);
@@ -149,7 +137,6 @@ int main(void) {
   init_mlx_resources(&data);
   set_mlx_hooks(&data);
   init_dummy_head(&data.head); // TODO
-  set_up_camera(&data);
   render(&data);
   mlx_loop(data.mlx);
   destroy_mlx_resources_if_allocated(&data);
