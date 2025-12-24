@@ -1,3 +1,6 @@
+#ifndef MINIRT_H
+# define MINIRT_H
+
 #include "camera.h"
 #include "img.h"
 #include "object_list.h"
@@ -15,3 +18,5 @@ typedef struct s_program {
   t_light light;
   t_ambient ambient;
 } t_program;
+
+#endif
