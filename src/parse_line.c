@@ -10,6 +10,7 @@
 #include "parse_utils.h"
 #include "utilities.h"
 #include "vec3.h"
+#include <math.h>
 
 // Return PARSE_SUCCESS if succeed, otherwise PARSE_FAILED
 int parse_ambient_helper(const char *line, t_elements_count *counts,
@@ -19,9 +20,8 @@ int parse_ambient_helper(const char *line, t_elements_count *counts,
   if (count_strings(params) != 3)
     return handle_parse_error(params);
   double brightness;
-  if (parse_floating_point(params[1], &brightness) == PARSE_FAILED)
+  if (parse_clamped_double(params[1], &brightness, 0.0, 1.0) == PARSE_FAILED)
     return handle_parse_error(params);
-  brightness = clamp(brightness, 0.0, 1.0);
   t_color albedo;
   if (parse_color(params[2], &albedo) == PARSE_FAILED)
     return handle_parse_error(params);
@@ -48,13 +48,11 @@ int parse_camera_helper(const char *line, t_elements_count *counts,
   if (parse_vector(params[1], &lookfrom) == PARSE_FAILED)
     return handle_parse_error(params);
   t_vec3 direction;
-  if (parse_vector(params[2], &direction) == PARSE_FAILED)
+  if (parse_unit_vector(params[2], &direction) == PARSE_FAILED)
     return handle_parse_error(params);
-  direction = normalize_vec3(direction); // Assume direction is not zero vector
   double hfov;
-  if (parse_floating_point(params[3], &hfov) == PARSE_FAILED)
+  if (parse_double_range(params[3], &hfov, 0, 180) == PARSE_FAILED)
     return handle_parse_error(params);
-  hfov = clamp(hfov, 0, 180);
   setup_camera(lookfrom, direction, hfov, data);
   free_strings(params);
   return PARSE_SUCCESS;
@@ -77,7 +75,7 @@ int parse_light_helper(const char *line, t_elements_count *counts,
   if (parse_vector(params[1], &pos) == PARSE_FAILED)
     return handle_parse_error(params);
   double brightness;
-  if (parse_floating_point(params[2], &brightness) == PARSE_FAILED)
+  if (parse_clamped_double(params[2], &brightness, 0.0, 1.0) == PARSE_FAILED)
     return handle_parse_error(params);
   t_color color;
   if (parse_color(params[3], &color) == PARSE_FAILED)
@@ -103,7 +101,7 @@ int parse_sphere_helper(const char *line, t_program *data) {
   if (parse_vector(params[1], &center) == PARSE_FAILED)
     return handle_parse_error(params);
   double diameter;
-  if (parse_floating_point(params[2], &diameter) == PARSE_FAILED)
+  if (parse_double_range(params[2], &diameter, 0, INFINITY) == PARSE_FAILED)
     return handle_parse_error(params);
   t_color albedo;
   if (parse_color(params[3], &albedo) == PARSE_FAILED)
@@ -129,7 +127,7 @@ int parse_plane_helper(const char *line, t_program *data) {
   if (parse_vector(params[1], &point) == PARSE_FAILED)
     return handle_parse_error(params);
   t_vec3 normal;
-  if (parse_vector(params[2], &normal) == PARSE_FAILED)
+  if (parse_unit_vector(params[2], &normal) == PARSE_FAILED)
     return handle_parse_error(params);
   t_color albedo;
   if (parse_color(params[3], &albedo) == PARSE_FAILED)
@@ -156,14 +154,13 @@ int parse_cylinder_helper(const char *line, t_program *data) {
   if (parse_vector(params[1], &center) == PARSE_FAILED)
     return handle_parse_error(params);
   t_vec3 axis;
-  if (parse_vector(params[2], &axis) == PARSE_FAILED)
+  if (parse_unit_vector(params[2], &axis) == PARSE_FAILED)
     return handle_parse_error(params);
-  axis = normalize_vec3(axis);
   double diameter;
-  if (parse_floating_point(params[3], &diameter) == PARSE_FAILED)
+  if (parse_double_range(params[3], &diameter, 0, INFINITY) == PARSE_FAILED)
     return handle_parse_error(params);
   double height;
-  if (parse_floating_point(params[4], &height) == PARSE_FAILED)
+  if (parse_double_range(params[4], &height, 0, INFINITY) == PARSE_FAILED)
     return handle_parse_error(params);
   t_color albedo;
   if (parse_color(params[5], &albedo) == PARSE_FAILED)
