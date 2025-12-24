@@ -5,6 +5,7 @@
 #include "img.h"
 #include "light.h"
 #include "object_list.h"
+#include "light.h"
 
 #define WIDTH 384
 #define HEIGHT 216

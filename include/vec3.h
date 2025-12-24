@@ -29,7 +29,7 @@ t_vec3 init_random_vec3_range(t_xorshift64_state *state, double min,
                               double max);
 t_vec3 init_random_vec3_in_unit_sphere(t_xorshift64_state *state);
 t_vec3 init_random_vec3_in_unit_circle(t_xorshift64_state *state);
-t_vec3 init_random_unit_vec3(t_xorshift64_state *state);
+t_vec3 init_random_normalize_vec3(t_xorshift64_state *state);
 t_vec3 reflect(t_vec3 incoming, t_vec3 normal);
 t_vec3 refract(t_vec3 incoming, t_vec3 n, double eta_in_over_etat);
 

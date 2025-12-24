@@ -40,9 +40,21 @@ static bool hit_cylinder_side(
   // c = OC・OC - r^2
   double c = oc.x * oc.x + oc.z * oc.z - cyl->radius * cyl->radius;
   // 判別式: discriminant = b^2 - 4ac
-	double t = solve_quadratic_t(a, half_b, c, min_t, max_t);
-	if (t == false)
-		return false;
+	// double t = solve_quadratic_t(a, half_b, c, min_t, max_t);
+		// if (t == false)
+		// return false;
+	double discriminant = half_b * half_b - a * c;
+  if (discriminant < 0)
+    return false;
+  double smaller_t = (-half_b - sqrt(discriminant)) / a;
+  double bigger_t = (-half_b + sqrt(discriminant)) / a;
+	double t;
+  if (smaller_t > min_t && smaller_t < max_t)
+    t = smaller_t;
+  else if (bigger_t > min_t && bigger_t < max_t)
+    t = bigger_t;
+  else
+    return false;
 	// 高さの判定　Cy - h /2 <= Py <= Cy + h / 2
 	t_vec3 intersection = ray_at(ray, t);
 	double half_h = cyl->height / 2.0;
