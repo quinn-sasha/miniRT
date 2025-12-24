@@ -15,6 +15,7 @@ int parse_double(const char *str, double *result) {
   return PARSE_SUCCESS;
 }
 
+// Return PARSE_SUCCESS if success, otherwise PARSE_FAILED
 int parse_double_range(const char *str, double *result, double min,
                        double max) {
   if (parse_double(str, result) == PARSE_FAILED)
@@ -24,6 +25,7 @@ int parse_double_range(const char *str, double *result, double min,
   return PARSE_SUCCESS;
 }
 
+// Return PARSE_SUCCESS if success, otherwise PARSE_FAILED
 int parse_clamped_double(const char *str, double *result, double min,
                          double max) {
   if (parse_double(str, result) == PARSE_FAILED)

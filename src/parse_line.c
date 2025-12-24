@@ -145,7 +145,6 @@ int parse_plane(const char *line, t_program *data) {
 }
 
 // Return PARSE_SUCCESS if succeed, otherwise PARSE_FAILED
-// TODO: 長さ = 0などの無効な入力を弾いていない
 int parse_cylinder_helper(const char *line, t_program *data) {
   char **params = ft_split(line, ' ');
   if (count_strings(params) != 7)
