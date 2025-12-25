@@ -6,6 +6,7 @@
 #include "minilibx_utils.h"
 #include "mlx.h"
 #include "object_list.h"
+#include "parse.h"
 #include "random_number_generator.h"
 #include "ray.h"
 #include "sphere.h"
@@ -146,16 +147,6 @@ static t_color calculate_color(t_ray ray, t_program *data,
                   scale_vec3(init_color(0.5, 0.7, 1.0), t));
 }
 
-static void set_up_camera(t_program *data) {
-  t_vec3 lookfrom = init_vec3(13, 2, 3);
-  t_vec3 lookat = init_vec3(0, 0, 0);
-  t_vec3 view_up = init_vec3(0, 1, 0);
-  double focus_dist = 10.0;
-  t_camera camera = init_camera(lookfrom, lookat, view_up,
-                                (double)WIDTH / HEIGHT, 45, 0.1, focus_dist);
-  data->camera = camera;
-}
-
 int render(t_program *data) {
   if (data->window == NULL)
     return (EXIT_SUCCESS);
@@ -179,7 +170,7 @@ int render(t_program *data) {
       for (int sample = 0; sample < num_samples_per_pixel; sample++) {
         double x_offset = (x + random_double(&state)) / (WIDTH - 1);
         double y_offset = (y + random_double(&state)) / (HEIGHT - 1);
-        t_ray ray = get_ray(data->camera, x_offset, y_offset, &state);
+        t_ray ray = get_ray(data->camera, x_offset, y_offset);
         pixel_color =
             add_vec3(pixel_color,
                      calculate_color(ray, data, &state, max_recursions));
@@ -197,13 +188,11 @@ int render(t_program *data) {
   return EXIT_SUCCESS;
 }
 
-int main(void) {
-  // TODO: read from rt file
+int main(int argc, char *argv[]) {
   t_program data;
+  parse(argc, argv, &data);
   init_mlx_resources(&data);
   set_mlx_hooks(&data);
-  init_dummy_head(&data.head); // TODO
-  set_up_camera(&data);
   render(&data);
   mlx_loop(data.mlx);
   destroy_mlx_resources_if_allocated(&data);

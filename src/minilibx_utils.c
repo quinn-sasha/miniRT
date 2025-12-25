@@ -15,6 +15,7 @@ void set_pixel_color(int x, int y, t_img *img, uint32_t color) {
   *(uint32_t *)pixel_addr = color;
 }
 
+// parse で動的に確保したものはfree()を呼び出さずに終了する
 void init_mlx_resources(t_program *data) {
   t_img *image;
 
@@ -26,10 +27,10 @@ void init_mlx_resources(t_program *data) {
     error_exit(MLX_ERROR);
   data->window = mlx_new_window(data->mlx, WIDTH, HEIGHT, "miniRT");
   if (!data->window)
-    error_exit(MLX_ERROR);
+    handle_mlx_error(data);
   data->img.mlx_img = mlx_new_image(data->mlx, WIDTH, HEIGHT);
   if (!data->img.mlx_img)
-    error_exit(MLX_ERROR);
+    handle_mlx_error(data);
   image = &data->img;
   image->address = mlx_get_data_addr(image->mlx_img, &image->bits_per_pixel,
                                      &image->row_size, &image->endian);
