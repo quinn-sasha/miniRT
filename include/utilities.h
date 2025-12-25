@@ -10,5 +10,7 @@ size_t count_strings(char **strings);
 void free_strings(char **strings);
 bool is_unsigned_int(char *str);
 bool is_floating_point(const char *str);
+double ft_fabs(double x);
+int ft_isspace(int c);
 
 #endif // !UTILITIES_H

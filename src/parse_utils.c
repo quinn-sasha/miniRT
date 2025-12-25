@@ -7,6 +7,8 @@
 #include "utilities.h"
 #include "vec3.h"
 
+#define EPSILON 1e-6
+
 // Return PARSE_SUCCESS if success, otherwise PARSE_FAILED
 int parse_double(const char *str, double *result) {
   if (!is_floating_point(str))
@@ -86,7 +88,7 @@ int parse_vector(const char *str, t_vec3 *output) {
 int parse_unit_vector(const char *str, t_vec3 *output) {
   if (parse_vector(str, output) == PARSE_FAILED)
     return PARSE_FAILED;
-  if (length_squared_vec3(*output) != 1.0)
+  if (ft_fabs(length_squared_vec3(*output) - 1.0) > EPSILON)
     return PARSE_FAILED;
   return PARSE_SUCCESS;
 }
