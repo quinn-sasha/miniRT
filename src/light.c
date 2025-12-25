@@ -1,15 +1,16 @@
-#include "color.h"
-#include "minirt.h"
 #include "light.h"
 
-void init_light(t_light *light)
-{
-	light->pos = init_vec3(0.0, 100.0, 0.0);
-	light->brightness_ratio = 0.7;
-	light->color = init_color(1.0, 1.0, 1.0);
+t_light init_light(t_vec3 pos, double brightness_ratio, t_color color) {
+  t_light light;
+  light.pos = pos;
+  light.brightness_ratio = brightness_ratio;
+  light.color = color;
+  return light;
 }
 
-void init_ambient(t_ambient *ambient){
-	ambient->color = init_vec3(1.0, 1.0, 1.0);
-	ambient->ratio = 0.2;
+t_ambient init_ambient(double brightness_ratio, t_color color) {
+  t_ambient ambient;
+  ambient.ratio = brightness_ratio;
+  ambient.color = color;
+  return ambient;
 }
