@@ -48,7 +48,11 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/plane.c \
 				$(SRC_DIR)/cylinder.c \
 				$(SRC_DIR)/utilities.c \
-				$(SRC_DIR)/vec3.c \
+				$(SRC_DIR)/vec3_basic.c \
+				$(SRC_DIR)/vec3_basic2.c \
+				$(SRC_DIR)/vec3_random.c \
+				$(SRC_DIR)/vec3_physics.c \
+				$(SRC_DIR)/vec3_utils.c \
 				$(SRC_DIR)/light.c \
 				$(SRC_DIR)/calculate_color.c \
 				$(SRC_DIR)/ft_atof.c \
