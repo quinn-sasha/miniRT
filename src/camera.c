@@ -58,7 +58,7 @@ t_ray get_ray(t_camera camera, double x_offset, double y_offset) {
   t_vec3 offset_from_top_left = add_triple_vec3(
       camera.top_left_corner, scale_vec3(camera.horizontal, x_offset),
       scale_vec3(camera.vertical, y_offset));
-  t_ray ray =
-      init_ray(camera.origin, sub_vec3(offset_from_top_left, camera.origin));
+  t_vec3 direction = sub_vec3(offset_from_top_left, camera.origin);
+  t_ray ray = init_ray(camera.origin, normalize_vec3(direction));
   return ray;
 }
