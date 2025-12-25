@@ -6,7 +6,7 @@
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 01:06:51 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 01:08:00 by squinn           ###   ########.fr       */
+/*   Updated: 2025/12/26 01:15:46 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_material
 {
 	t_material_type			type;
 	t_color					albedo;
-	union					u_data
+	union					u_content
 	{
 		double				fuzziness;
 		double				refractive_index;
