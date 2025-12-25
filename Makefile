@@ -58,7 +58,8 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/ft_atof.c \
 				$(SRC_DIR)/parse.c \
 				$(SRC_DIR)/parse_line.c \
-				$(SRC_DIR)/parse_utils.c
+				$(SRC_DIR)/parse_utils.c \
+				$(SRC_DIR)/xmalloc.c \
 
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
