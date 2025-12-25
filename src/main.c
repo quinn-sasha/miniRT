@@ -21,50 +21,6 @@
 // ccalulate runtime
 #include <time.h>
 
-static void generate_random_scene(t_scene_object *head,
-                                  t_xorshift64_state *state) {
-  t_material ground_material;
-  t_material material1;
-  t_material material2;
-  t_material material3;
-
-  ground_material = init_lambertian_material(init_color(0.5, 0.5, 0.5));
-  add_sphere(head, new_sphere(init_vec3(0, -1000, 0), 1000, ground_material));
-  // (void)state;
-  for (int i = -11; i < 11; i++) {
-    for (int j = -11; j < 11; j++) {
-      t_vec3 center = init_vec3(i + 0.9 * random_double(state), 0.2,
-                                j + 0.9 * random_double(state));
-      if (length_vec3(sub_vec3(center, init_vec3(4, 0.2, 0))) <= 0.9)
-        continue;
-      double material_decision = random_double(state);
-      t_material sphere_material;
-      if (material_decision < 0.8) {
-        t_color albedo =
-            multiply_vec3(init_random_vec3(state), init_random_vec3(state));
-        sphere_material = init_lambertian_material(albedo);
-        add_sphere(head, new_sphere(center, 0.2, sphere_material));
-        continue;
-      }
-      if (material_decision < 0.95) {
-        t_color albedo = init_random_vec3_range(state, 0.5, 1);
-        double fuzziness = random_double_range(state, 0, 0.5);
-        sphere_material = init_metal_material(albedo, fuzziness);
-        add_sphere(head, new_sphere(center, 0.2, sphere_material));
-        continue;
-      }
-      sphere_material = init_dielectric_material(1.5); // glass: 1.5
-      add_sphere(head, new_sphere(center, 0.2, sphere_material));
-    }
-  }
-  material1 = init_dielectric_material(1.5);
-  add_sphere(head, new_sphere(init_vec3(0, 1, 0), 1.0, material1));
-  material2 = init_lambertian_material(init_color(0.4, 0.2, 0.1));
-  add_sphere(head, new_sphere(init_vec3(-4, 1, 0), 1.0, material2));
-  material3 = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0);
-  add_sphere(head, new_sphere(init_vec3(4, 1, 0), 1.0, material3));
-}
-
 t_color calculate_color(t_ray ray, t_program *data, t_xorshift64_state *state,
                         int num_recursions) {
   t_hit_record record;
