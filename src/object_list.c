@@ -100,7 +100,7 @@ bool hits_any_object(t_scene_object *head, t_ray ray, double min_t,
 
   t_scene_object *object = head->next;
   while (object) {
-    if (hits_object(ray, min_t, closest_so_far, record, object)) {
+    if (hits_object(ray, min_t, closest_so_far, &temp_record, object)) {
       hits_anything = true;
       closest_so_far = temp_record.t;
       *record = temp_record;
