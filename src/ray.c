@@ -3,7 +3,7 @@
 t_ray init_ray(t_vec3 origin, t_vec3 direction) {
   t_ray new_ray;
   new_ray.origin = origin;
-  new_ray.direction = direction;
+  new_ray.direction = normalize_vec3(direction);
   return new_ray;
 }
 
