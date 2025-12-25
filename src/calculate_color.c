@@ -30,19 +30,19 @@ static t_vec3	calculate_specular(t_hit_record *record, t_light *light,
 	t_vec3	negative_ray_dir;
 	double	dot_rn;
 	double	shininess;
-	t_color	spec_color;
-	double	spec_factor;
+	t_color	specular_color;
+	double	specular_factor;
 
 	reflected = reflect(negative_vec3(normalized_light_dir_vec),
 			record->normal_vector);
-	negative_ray_dir = negative_vec3(normalize_vec3(ray.direction));
+	negative_ray_dir = negative_vec3(ray.direction);
 	dot_rn = dot_vec3(reflected, negative_ray_dir);
 	if (dot_rn < 0)
 		return (init_color(0, 0, 0));
 	shininess = 32;
-	spec_color = multiply_vec3(light->color, record->material.albedo);
-	spec_factor = pow(dot_rn, shininess);
-	return (scale_vec3(spec_color, light->brightness_ratio * spec_factor));
+	specular_color = multiply_vec3(light->color, record->material.albedo);
+	specular_factor = pow(dot_rn, shininess);
+	return (scale_vec3(specular_color, light->brightness_ratio * specular_factor));
 }
 
 t_color	calculate_direct_lighting(t_hit_record *record,
@@ -102,12 +102,10 @@ t_color	calculate_indirect_lighting(t_hit_record record,
 
 t_color calculate_background_color(t_ray ray)
 {
-  t_vec3 normalized_direction;
   double t;
   t_color white;
 
-	normalized_direction = normalize_vec3(ray.direction);
-	t = 0.5 * (normalized_direction.y + 1.0);
+	t = 0.5 * (ray.direction.y + 1.0);
 	white = init_color(1.0, 1.0, 1.0);
 	return (add_vec3(scale_vec3(white, (1.0 - t)), scale_vec3(init_color(0.5,
 					0.7, 1.0), t)));
