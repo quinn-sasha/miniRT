@@ -1,6 +1,6 @@
+#include "calculate_color.h"
 #include "camera.h"
 #include "color.h"
-#include "error_utils.h"
 #include "hit_record.h"
 #include "light.h"
 #include "material.h"
@@ -12,7 +12,6 @@
 #include "ray.h"
 #include "sphere.h"
 #include "vec3.h"
-#include "calculate_color.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -22,77 +21,73 @@
 // ccalulate runtime
 #include <time.h>
 
-static void	generate_random_scene(t_scene_object *head,
-		t_xorshift64_state *state)
-{
-	t_material	ground_material;
-	t_material	material1;
-	t_material	material2;
-	t_material	material3;
+static void generate_random_scene(t_scene_object *head,
+                                  t_xorshift64_state *state) {
+  t_material ground_material;
+  t_material material1;
+  t_material material2;
+  t_material material3;
 
-	ground_material = init_lambertian_material(init_color(0.5, 0.5, 0.5));
-	add_sphere(head, new_sphere(init_vec3(0, -1000, 0), 1000, ground_material));
-	// (void)state;
-	for (int i = -11; i < 11; i++) {
-	  for (int j = -11; j < 11; j++) {
-	    t_vec3 center = init_vec3(i + 0.9 * random_double(state), 0.2,
-	                              j + 0.9 * random_double(state));
-	    if (length_vec3(sub_vec3(center, init_vec3(4, 0.2, 0))) <= 0.9)
-	      continue ;
-	    double material_decision = random_double(state);
-	    t_material sphere_material;
-	    if (material_decision < 0.8) {
-	      t_color albedo =
-	          multiply_vec3(init_random_vec3(state),
-		init_random_vec3(state));
-		      sphere_material = init_lambertian_material(albedo);
-		      add_sphere(head, new_sphere(center, 0.2, sphere_material));
-		      continue ;
-		    }
-		    if (material_decision < 0.95) {
-		      t_color albedo = init_random_vec3_range(state, 0.5, 1);
-		      double fuzziness = random_double_range(state, 0, 0.5);
-		      sphere_material = init_metal_material(albedo, fuzziness);
-		      add_sphere(head, new_sphere(center, 0.2, sphere_material));
-		      continue ;
-		    }
-		    sphere_material = init_dielectric_material(1.5); // glass: 1.5
-		    add_sphere(head, new_sphere(center, 0.2, sphere_material));
-		  }
-		}
-		material1 = init_dielectric_material(1.5);
-		add_sphere(head, new_sphere(init_vec3(0, 1, 0), 1.0, material1));
-		material2 = init_lambertian_material(init_color(0.4, 0.2, 0.1));
-		add_sphere(head, new_sphere(init_vec3(-4, 1, 0), 1.0, material2));
-		material3 = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0);
-		add_sphere(head, new_sphere(init_vec3(4, 1, 0), 1.0, material3));
+  ground_material = init_lambertian_material(init_color(0.5, 0.5, 0.5));
+  add_sphere(head, new_sphere(init_vec3(0, -1000, 0), 1000, ground_material));
+  // (void)state;
+  for (int i = -11; i < 11; i++) {
+    for (int j = -11; j < 11; j++) {
+      t_vec3 center = init_vec3(i + 0.9 * random_double(state), 0.2,
+                                j + 0.9 * random_double(state));
+      if (length_vec3(sub_vec3(center, init_vec3(4, 0.2, 0))) <= 0.9)
+        continue;
+      double material_decision = random_double(state);
+      t_material sphere_material;
+      if (material_decision < 0.8) {
+        t_color albedo =
+            multiply_vec3(init_random_vec3(state), init_random_vec3(state));
+        sphere_material = init_lambertian_material(albedo);
+        add_sphere(head, new_sphere(center, 0.2, sphere_material));
+        continue;
+      }
+      if (material_decision < 0.95) {
+        t_color albedo = init_random_vec3_range(state, 0.5, 1);
+        double fuzziness = random_double_range(state, 0, 0.5);
+        sphere_material = init_metal_material(albedo, fuzziness);
+        add_sphere(head, new_sphere(center, 0.2, sphere_material));
+        continue;
+      }
+      sphere_material = init_dielectric_material(1.5); // glass: 1.5
+      add_sphere(head, new_sphere(center, 0.2, sphere_material));
+    }
+  }
+  material1 = init_dielectric_material(1.5);
+  add_sphere(head, new_sphere(init_vec3(0, 1, 0), 1.0, material1));
+  material2 = init_lambertian_material(init_color(0.4, 0.2, 0.1));
+  add_sphere(head, new_sphere(init_vec3(-4, 1, 0), 1.0, material2));
+  material3 = init_metal_material(init_color(0.7, 0.6, 0.5), 0.0);
+  add_sphere(head, new_sphere(init_vec3(4, 1, 0), 1.0, material3));
 }
 
-t_color	calculate_color(t_ray ray, t_program *data,
-		t_xorshift64_state *state, int num_recursions)
-{
-	t_hit_record	record;
-	t_color			direct_light;
-	t_color			indirect_light;
-	t_color			ambient_effect;
-	t_color			final_ambient;
+t_color calculate_color(t_ray ray, t_program *data, t_xorshift64_state *state,
+                        int num_recursions) {
+  t_hit_record record;
+  t_color direct_light;
+  t_color indirect_light;
+  t_color ambient_effect;
+  t_color final_ambient;
 
-	if (num_recursions <= 0)
-		return (init_color(0, 0, 0));
-	if (hits_any_object(&data->head, ray, 0.001, INFINITY, &record))
-	{
-		direct_light = init_color(0, 0, 0);
-		if (record.material.type == MAT_LAMBERTIAN
-			|| record.material.type == MAT_METAL)
-			direct_light = calculate_direct_lighting(&record, &data->head,
-					&data->light, ray);
-		indirect_light = calculate_indirect_lighting(record, state, ray,
-				num_recursions, data);
-		ambient_effect = scale_vec3(data->ambient.color, data->ambient.ratio);
-		final_ambient = multiply_vec3(record.material.albedo, ambient_effect);
-		return (clamp_color(add_triple_vec3(direct_light, indirect_light,
-					final_ambient)));
-	}
+  if (num_recursions <= 0)
+    return (init_color(0, 0, 0));
+  if (hits_any_object(&data->head, ray, 0.001, INFINITY, &record)) {
+    direct_light = init_color(0, 0, 0);
+    if (record.material.type == MAT_LAMBERTIAN ||
+        record.material.type == MAT_METAL)
+      direct_light =
+          calculate_direct_lighting(&record, &data->head, &data->light, ray);
+    indirect_light =
+        calculate_indirect_lighting(record, state, ray, num_recursions, data);
+    ambient_effect = scale_vec3(data->ambient.color, data->ambient.ratio);
+    final_ambient = multiply_vec3(record.material.albedo, ambient_effect);
+    return (clamp_color(
+        add_triple_vec3(direct_light, indirect_light, final_ambient)));
+  }
   return (calculate_background_color(ray));
 }
 
@@ -103,9 +98,6 @@ int render(t_program *data) {
   t_xorshift64_state state;
   init_xorshift64_state(&state);
   generate_random_scene(&data->head, &state);
-
-  init_light(&data->light);
-  init_ambient(&data->ambient);
 
   printf("Rendering started\n");
   clock_t begin = clock();
@@ -120,9 +112,8 @@ int render(t_program *data) {
         double x_offset = (x + random_double(&state)) / (WIDTH - 1);
         double y_offset = (y + random_double(&state)) / (HEIGHT - 1);
         t_ray ray = get_ray(data->camera, x_offset, y_offset);
-        pixel_color =
-            add_vec3(pixel_color,
-                     calculate_color(ray, data, &state, max_recursions));
+        pixel_color = add_vec3(
+            pixel_color, calculate_color(ray, data, &state, max_recursions));
       }
       pixel_color = divide_vec3(pixel_color, num_samples_per_pixel);
       gamma_correction(&pixel_color);

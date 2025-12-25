@@ -51,6 +51,11 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/vec3.c \
 				$(SRC_DIR)/light.c \
 				$(SRC_DIR)/calculate_color.c \
+				$(SRC_DIR)/ft_atof.c \
+				$(SRC_DIR)/parse.c \
+				$(SRC_DIR)/parse_line.c \
+				$(SRC_DIR)/parse_utils.c
+
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
