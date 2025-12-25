@@ -89,7 +89,5 @@ int main(int argc, char *argv[]) {
   set_mlx_hooks(&data);
   render(&data);
   mlx_loop(data.mlx);
-  destroy_mlx_resources_if_allocated(&data);
-  destroy_object_list(&data.head);
   return EXIT_SUCCESS;
 }
