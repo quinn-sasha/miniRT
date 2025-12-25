@@ -36,8 +36,8 @@ t_camera init_camera(t_vec3 look_from, t_vec3 direction, t_vec3 view_up,
   set_viewport_width_height(&viewport_width, &viewport_height, aspect_ratio,
                             hfov);
   t_vec3 back_dir = negative_vec3(direction);
-  camera.right_dir = normalize_vec3(cross_vec3(view_up, back_dir));
-  camera.down_dir = normalize_vec3(cross_vec3(camera.right_dir, back_dir));
+  camera.right_dir = normalize_vec3(cross_vec3(back_dir, view_up));
+  camera.down_dir = normalize_vec3(cross_vec3(back_dir, camera.right_dir));
   camera.horizontal = scale_vec3(camera.right_dir, viewport_width);
   camera.vertical = scale_vec3(camera.down_dir, viewport_height);
   camera.top_left_corner = calculate_top_left_corner(
