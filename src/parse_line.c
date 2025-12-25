@@ -179,7 +179,7 @@ int parse_cylinder(const char *line, t_program *data) {
 
 // Return PARSE_SUCCESS if succeed, otherwise PARSE_FAILED
 int parse_line(const char *line, t_elements_count *counts, t_program *data) {
-  if (*line == '\0' || *line == '\n')
+  if (*line == '\0' || *line == '\n' || *line == '#')
     return PARSE_SUCCESS;
   if (ft_strncmp(line, "A ", 2) == 0)
     return parse_ambient(line, counts, data);
