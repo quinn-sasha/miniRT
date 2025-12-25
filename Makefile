@@ -38,6 +38,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/error_utils.c \
 				$(SRC_DIR)/hit_record.c \
 				$(SRC_DIR)/main.c \
+				$(SRC_DIR)/init_material.c \
 				$(SRC_DIR)/material.c \
 				$(SRC_DIR)/math_utils.c \
 				$(SRC_DIR)/minilibx_utils.c \
