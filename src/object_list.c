@@ -4,6 +4,7 @@
 #include "hit_record.h"
 #include "plane.h"
 #include "sphere.h"
+#include "xmalloc.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,7 +30,6 @@ void destroy_scene_object(t_scene_object *object) {
 }
 
 // head は静的に割り当てられている
-// TODO: Error handling when tries to delete empty object
 void destroy_object_list(t_scene_object *head) {
   if (head->next == NULL)
     return;
@@ -42,7 +42,7 @@ void destroy_object_list(t_scene_object *head) {
 }
 
 t_scene_object *new_scene_object(void *object, e_object_type type) {
-  t_scene_object *new_object = malloc(sizeof(t_scene_object));
+  t_scene_object *new_object = xmalloc(sizeof(t_scene_object));
   new_object->type = type;
   new_object->next = NULL;
   if (type == OBJ_SPHERE)

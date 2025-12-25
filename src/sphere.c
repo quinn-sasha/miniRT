@@ -1,12 +1,12 @@
 #include "sphere.h"
 #include "hit_record.h"
 #include "vec3.h"
+#include "xmalloc.h"
 #include <math.h>
 #include <stdlib.h>
 
-// TODO: malloc error handling
 t_sphere *new_sphere(t_vec3 center, double radius, t_material material) {
-  t_sphere *new_sphere = malloc(sizeof(t_sphere));
+  t_sphere *new_sphere = xmalloc(sizeof(t_sphere));
   new_sphere->center = center;
   new_sphere->radius = radius;
   new_sphere->material = material;

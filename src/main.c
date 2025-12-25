@@ -10,7 +10,6 @@
 #include "parse.h"
 #include "random_number_generator.h"
 #include "ray.h"
-#include "sphere.h"
 #include "vec3.h"
 #include <math.h>
 #include <stdbool.h>
