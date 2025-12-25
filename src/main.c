@@ -53,7 +53,6 @@ int render(t_program *data) {
 
   t_xorshift64_state state;
   init_xorshift64_state(&state);
-  generate_random_scene(&data->head, &state);
 
   printf("Rendering started\n");
   clock_t begin = clock();
