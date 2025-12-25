@@ -1,5 +1,5 @@
 #ifndef MINIRT_H
-#define MINIRT_H
+# define MINIRT_H
 
 #include "camera.h"
 #include "img.h"
@@ -20,4 +20,4 @@ typedef struct s_program {
   t_light light;
 } t_program;
 
-#endif // !MINIRT_H
+#endif
