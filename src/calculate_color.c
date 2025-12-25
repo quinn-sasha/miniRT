@@ -4,8 +4,9 @@
 #include "light.h"
 #include "object_list.h"
 #include "minirt.h"
+#include <math.h>
 
-static t_color	calculate_color(t_ray ray, t_program *data,
+t_color	calculate_color(t_ray ray, t_program *data,
 					t_xorshift64_state *state, int num_recursions);
 
 static t_vec3	calculate_diffuse(t_light *light, t_hit_record *record,
