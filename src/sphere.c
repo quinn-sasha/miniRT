@@ -13,6 +13,7 @@ t_sphere *new_sphere(t_vec3 center, double radius, t_material material) {
   return new_sphere;
 }
 
+// TODO: 他の衝突判定関数に合わせて、t_sphere型からt_sphere *型にする
 bool hits_sphere(t_ray ray, double min_t, double max_t, t_hit_record *record,
                  t_sphere sphere) {
   t_vec3 sphere2camera = sub_vec3(ray.origin, sphere.center);

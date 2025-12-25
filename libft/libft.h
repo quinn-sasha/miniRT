@@ -3,119 +3,107 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikota <ikota@student.42.fr>                +#+  +:+       +#+        */
+/*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/27 14:59:01 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/09/21 14:47:30 by ikota            ###   ########.fr       */
+/*   Created: 2025/06/27 13:54:19 by squinn            #+#    #+#             */
+/*   Updated: 2025/09/12 17:42:23 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
-# define LIBFT_H
+#define LIBFT_H
+#include <stdarg.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-# include <stddef.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdarg.h>
-# include <stdint.h>
-# include <limits.h>
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 4096
+#endif
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
-# endif
+#define TRUE 1
+#define FALSE 0
+#define NOT_FOUND -1
 
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}		t_list;
+#define STDOUT 1
+#define MAX_ADDRESS_LENGTH 16
+#define SINGLE_PERCENT_ERROR 1
+#define LETTER 2
+#define STRING 3
+#define POINTER 4
+#define INTEGER 5
+#define UNSIGNED_INTEGER 6
+#define LOWER_HEX 7
+#define UPPER_HEX 8
+#define PERCENT 9
+#define UNKNOWN_CONVERSION_TYPE 10
 
-/*
-Character check functions
-*/
-int		ft_isalnum(int c);
-int		ft_isalpha(int c);
-int		ft_isascii(int c);
-int		ft_isdigit(int c);
-int		ft_isprint(int c);
-int		ft_tolower(int c);
-int		ft_toupper(int c);
+void *ft_memset(void *s, int c, size_t n);
+void ft_bzero(void *s, size_t n);
+void *ft_memcpy(void *dst, const void *src, size_t n);
+void *ft_memccpy(void *dst, const void *src, int c, size_t n);
+void *ft_memmove(void *dest, const void *src, size_t n);
+void *ft_memchr(const void *s, int c, size_t n);
+int ft_memcmp(const void *s1, const void *s2, size_t n);
 
-/*
-Memory manipulation functions
-*/
-void	ft_bzero(void *s, size_t n);
-void	*ft_calloc(size_t nmemb, size_t size);
-void	*ft_memchr(const void *s, int c, size_t n);
-int		ft_memcmp(const void *s1, const void *s2, size_t n);
-void	*ft_memcpy(void *dest, const void *src, size_t n);
-void	*ft_memmove(void *dest, const void *src, size_t n);
-void	*ft_memset(void *s, int c, size_t n);
+size_t ft_strlen(const char *s);
+size_t ft_strlcpy(char *dst, const char *src, size_t dstsize);
+size_t ft_strlcat(char *dst, const char *src, size_t dstsize);
+int ft_strchr(const char *s, int c);
+char *ft_strrchr(const char *s, int c);
+char *ft_strnstr(const char *str, const char *find, size_t len);
+int ft_strncmp(const char *s1, const char *s2, size_t n);
+int ft_strcmp(const char *s1, const char *s2);
+int ft_atoi(const char *str);
+int ft_atoi_base(char *str, const char *base_numbers);
 
-/*
-String functions
-*/
-char	*ft_substr(char const *s, unsigned int start, size_t len);
-char	*ft_strchr(const char *s, int c);
-char	*ft_strdup(const char *s);
-size_t	ft_strlcat(char *dst, const char *src, size_t size);
-size_t	ft_strlcpy(char *dst, const char *src, size_t size);
-size_t	ft_strlen(const char *s);
-int		ft_strncmp(const char *s1, const char *s2, size_t n);
-char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_strnstr(const char *big, const char *little, size_t len);
-char	*ft_strrchr(const char *s, int c);
-char	*ft_strtrim(char const *s1, char const *set);
-char	**ft_split(char const *s, char c);
-char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
-void	ft_striteri(char *s, void (*f)(unsigned int, char*));
+int ft_isalpha(int c);
+int ft_isdigit(int c);
+int ft_isalnum(int c);
+int ft_isascii(int c);
+int ft_isprint(int c);
+int ft_toupper(int c);
+int ft_tolower(int c);
 
-/*
-Conversion functions
-*/
-int		ft_atoi(const char *nptr);
-char	*ft_itoa(int n);
+void *ft_calloc(size_t nmeb, size_t size);
+char *ft_strdup(const char *s);
 
-/*
-Output functions:
-*/
-void	ft_putchar_fd(char c, int fd);
-void	ft_putstr_fd(char *s, int fd);
-void	ft_putendl_fd(char *s, int fd);
-void	ft_putnbr_fd(int n, int fd);
+char *ft_substr(char const *s, int start, int last);
+char *ft_strjoin(char const *s1, char const *s2);
+char *ft_strtrim(char const *s1, char const *set);
+char **ft_split(char const *s, char c);
+void *free_words(char **words);
+char *ft_itoa(int n);
+char *ft_strmapi(char const *s, char (*f)(unsigned int, char));
+void ft_striteri(char *s, void (*f)(unsigned int, char *));
+int ft_putchar_fd(char c, int fd);
+int ft_putstr_fd(const char *str, int fd);
+void ft_putendl_fd(char *s, int fd);
+int ft_putnbr_fd(int num, int fd);
 
-/*
-List functions:
-*/
-t_list	*ft_lstnew(void *content);
-void	ft_lstadd_front(t_list **lst, t_list *new);
-int		ft_lstsize(t_list *lst);
-t_list	*ft_lstlast(t_list *lst);
-void	ft_lstadd_back(t_list **lst, t_list *new);
-void	ft_lstdelone(t_list *lst, void (*del)(void*));
-void	ft_lstclear(t_list **lst, void (*del)(void*));
-void	ft_lstiter(t_list *lst, void (*f)(void *));
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+// get_next_line
+char *get_next_line(int fd);
 
-/*
-Get Next Line functions:
-*/
-char	*get_next_line(int fd);
-size_t	ft_strlen_gnl(char *str);
-char	*ft_strjoin_gnl(char	*s1, char	*s2);
-char	*ft_strchr_gnl(const	char *s, char c);
-void	*ft_memcpy_gnl(void	*dest, const void	*src, size_t n);
-
-/*
-Printf functions:
-*/
-int		ft_printf(const char *format, ...);
-int		ft_handle_pointer(uintptr_t ptr);
-int		ft_handle_decimal(int n);
-int		ft_handle_unsigned(unsigned int n);
-int		ft_handle_hex(unsigned int n, char format);
-int		ft_putchar(char c);
-int		ft_putstr(char *str);
-char	*ft_itoa_unsigned(unsigned int n);
+// ft_printf
+int ft_printf(const char *format, ...);
+int ft_vprintf(const char *format, va_list args);
+int print_by_conversion_type(int type, va_list args, char specifier);
+int determine_conversion_type(char letter);
+int ft_putchar(char c);
+int print_specifier(char specifier);
+int ft_putstr(const char *str);
+int print_address(const void *address);
+char *unsigned_itoa(unsigned long long num, unsigned int base);
+int ft_putnbr(int num);
+int print_unsigned_decimal(unsigned int n);
+int print_hexadecimal(unsigned int n, int is_upper);
+// ft_dprintf_utils.c
+int print_address_fd(int fd, const void *address);
+int print_unsigned_decimal_fd(int fd, unsigned int n);
+int print_hexadecimal_fd(int fd, unsigned int n, int is_upper);
+// ft_dprintf.c
+int print_specifier_fd(int fd, char specifier);
+int print_by_conversion_type_fd(int fd, int type, va_list args, char specifier);
+int ft_vdprintf(int fd, const char *format, va_list args);
+int ft_dprintf(int fd, const char *format, ...);
 
 #endif

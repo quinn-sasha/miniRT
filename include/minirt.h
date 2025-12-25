@@ -3,6 +3,7 @@
 
 #include "camera.h"
 #include "img.h"
+#include "light.h"
 #include "object_list.h"
 #include "light.h"
 
@@ -15,8 +16,8 @@ typedef struct s_program {
   t_img img;
   t_scene_object head;
   t_camera camera;
-  t_light light;
   t_ambient ambient;
+  t_light light;
 } t_program;
 
 #endif

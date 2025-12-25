@@ -1,96 +1,89 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/07/04 13:06:03 by squinn            #+#    #+#              #
+#    Updated: 2025/09/12 17:46:00 by squinn           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = libft.a
+AR = ar
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+RM = rm -f
+RM_DIR = rm -rf
 
-# Directories
-SRCS_DIR = src
-INCLUDES_DIR = .
+NORMAL_SRCS = ft_isalpha.c \
+		ft_isdigit.c \
+		ft_isalnum.c \
+		ft_isascii.c \
+		ft_isprint.c \
+		ft_strlen.c \
+		ft_memset.c \
+		ft_bzero.c \
+		ft_memcpy.c \
+		ft_memmove.c \
+		ft_strlcpy.c \
+		ft_strlcat.c \
+		ft_toupper.c \
+		ft_tolower.c \
+		ft_strchr.c \
+		ft_strrchr.c \
+		ft_strcmp.c \
+		ft_strncmp.c \
+		ft_memchr.c \
+		ft_memcmp.c \
+		ft_strnstr.c \
+		ft_atoi.c \
+		ft_atoi_base.c \
+		ft_calloc.c \
+		ft_strdup.c \
+		ft_substr.c \
+		ft_strjoin.c \
+		ft_strtrim.c \
+		ft_split.c \
+		ft_itoa.c \
+		ft_strmapi.c \
+		ft_striteri.c \
+		ft_putchar_fd.c \
+		ft_putstr_fd.c \
+		ft_putendl_fd.c \
+		ft_putnbr_fd.c \
+		get_next_line.c
 
-# Source files by category
-CHAR_SRCS = $(SRCS_DIR)/char/ft_isalnum.c \
-			$(SRCS_DIR)/char/ft_isalpha.c \
-			$(SRCS_DIR)/char/ft_isascii.c \
-			$(SRCS_DIR)/char/ft_isdigit.c \
-			$(SRCS_DIR)/char/ft_isprint.c \
-			$(SRCS_DIR)/char/ft_tolower.c \
-			$(SRCS_DIR)/char/ft_toupper.c
+PRINTF_SRCS = ft_printf/ft_printf.c \
+							ft_printf/print_address.c \
+							ft_printf/print_hexadecimal.c \
+							ft_printf/printf_utils.c \
+							ft_printf/unsigned_itoa.c \
+							ft_printf/ft_dprintf_utils.c \
+							ft_printf/ft_dprintf.c
 
-CONV_SRCS = $(SRCS_DIR)/conv/ft_atoi.c \
-			$(SRCS_DIR)/conv/ft_itoa.c
+SRCS = $(NORMAL_SRCS) $(PRINTF_SRCS)
+OBJ_DIR = obj
+OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o)
 
-GNL_SRCS = $(SRCS_DIR)/gnl/get_next_line.c \
-				$(SRCS_DIR)/gnl/get_next_line_utils.c \
-
-IO_SRCS = $(SRCS_DIR)/io/ft_putchar_fd.c \
-		  $(SRCS_DIR)/io/ft_putendl_fd.c \
-		  $(SRCS_DIR)/io/ft_putnbr_fd.c \
-		  $(SRCS_DIR)/io/ft_putstr_fd.c
-
-LST_SRCS = $(SRCS_DIR)/lst/ft_lstadd_back.c \
-		   $(SRCS_DIR)/lst/ft_lstadd_front.c \
-		   $(SRCS_DIR)/lst/ft_lstclear.c \
-		   $(SRCS_DIR)/lst/ft_lstdelone.c \
-		   $(SRCS_DIR)/lst/ft_lstiter.c \
-		   $(SRCS_DIR)/lst/ft_lstlast.c \
-		   $(SRCS_DIR)/lst/ft_lstmap.c \
-		   $(SRCS_DIR)/lst/ft_lstnew.c \
-		   $(SRCS_DIR)/lst/ft_lstsize.c
-
-MEM_SRCS = $(SRCS_DIR)/mem/ft_bzero.c \
-		   $(SRCS_DIR)/mem/ft_calloc.c \
-		   $(SRCS_DIR)/mem/ft_memchr.c \
-		   $(SRCS_DIR)/mem/ft_memcmp.c \
-		   $(SRCS_DIR)/mem/ft_memcpy.c \
-		   $(SRCS_DIR)/mem/ft_memmove.c \
-		   $(SRCS_DIR)/mem/ft_memset.c
-
-PRINTF_SRCS = $(SRCS_DIR)/printf/ft_printf.c \
-			  $(SRCS_DIR)/printf/ft_printf_handle.c \
-			  $(SRCS_DIR)/printf/ft_printf_itoa_u.c \
-			  $(SRCS_DIR)/printf/ft_printf_put.c
-
-STR_SRCS = $(SRCS_DIR)/str/ft_split.c \
-		   $(SRCS_DIR)/str/ft_strchr.c \
-		   $(SRCS_DIR)/str/ft_strdup.c \
-		   $(SRCS_DIR)/str/ft_striteri.c \
-		   $(SRCS_DIR)/str/ft_strjoin.c \
-		   $(SRCS_DIR)/str/ft_strlcat.c \
-		   $(SRCS_DIR)/str/ft_strlcpy.c \
-		   $(SRCS_DIR)/str/ft_strlen.c \
-		   $(SRCS_DIR)/str/ft_strmapi.c \
-		   $(SRCS_DIR)/str/ft_strncmp.c \
-		   $(SRCS_DIR)/str/ft_strnstr.c \
-		   $(SRCS_DIR)/str/ft_strrchr.c \
-		   $(SRCS_DIR)/str/ft_strtrim.c \
-		   $(SRCS_DIR)/str/ft_substr.c
-
-# All source files
-SRCS = $(CHAR_SRCS) $(CONV_SRCS) $(GNL_SRCS) $(IO_SRCS) $(LST_SRCS) $(MEM_SRCS) $(PRINTF_SRCS) $(STR_SRCS)
-
-# Object files
-OBJS = $(SRCS:.c=.o)
-
-# Default target
 all: $(NAME)
 
-# Build the library
 $(NAME): $(OBJS)
-	ar rcs $(NAME) $(OBJS)
+	$(AR) rcs $(NAME) $(OBJS)
 
-# Compile source files to object files
-%.o: %.c
-	$(CC) $(CFLAGS) -I$(INCLUDES_DIR) -c $< -o $@
+# $(@D): directory name in target
+$(OBJ_DIR)/%.o: %.c
+	mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Clean object files
 clean:
-	rm -f $(OBJS)
+	$(RM_DIR) $(OBJ_DIR)
+	$(RM) $(OBJS)
 
-# Clean everything
 fclean: clean
-	rm -f $(NAME)
+	$(RM) $(NAME)
 
-# Rebuild everything
 re: fclean all
 
-# Phony targets
 .PHONY: all clean fclean re
