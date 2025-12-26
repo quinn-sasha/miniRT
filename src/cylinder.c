@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:28:16 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 14:54:15 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/26 17:03:43 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,18 @@ static bool	hit_cylinder_side(const t_ray ray, t_range range,
 		t_hit_record *record, const t_cylinder *cyl)
 {
 	t_quadratic	quadratic;
-	double	t;
 	t_vec3	intersection;
 	double	half_h;
 	t_vec3	outward_normal_vector;
 
 	quadratic = prepare_quadratic_cylinder(ray, cyl);
-	t = solve_quadratic_t(quadratic, range);
-	if (t == false)
+	record->t = solve_quadratic_t(quadratic, range);
+	if (record->t == false)
 		return false;
-	intersection = ray_at(ray, t);
+	intersection = ray_at(ray, record->t);
 	half_h = cyl->height / 2.0;
 	if (intersection.y < -half_h || intersection.y > half_h)
 		return (false);
-	record->t = t;
 	record->intersection = intersection;
 	outward_normal_vector = init_vec3((record->intersection.x - cyl->center.x)
 			/ cyl->radius, 0, (record->intersection.z - cyl->center.z)

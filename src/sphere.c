@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 15:10:07 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 15:10:08 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/26 16:19:40 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,11 @@ bool	hits_sphere(t_ray ray, t_range range, t_hit_record *record,
 		t_sphere sphere)
 {
 	t_quadratic	quadratic;
-	double		t;
 	t_vec3		outward_normal_vector;
 
 	quadratic = prepare_quadratic_sphere(ray, sphere);
-	t = solve_quadratic_t(quadratic, range);
-	if (t == false)
+	record->t = solve_quadratic_t(quadratic, range);
+	if (record->t == false)
 		return (false);
 	record->intersection = ray_at(ray, record->t);
 	outward_normal_vector = divide_vec3(sub_vec3(record->intersection,
