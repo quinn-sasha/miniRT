@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 15:08:57 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 15:08:59 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/26 17:09:29 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,11 @@ t_quadratic	prepare_quadratic_sphere(t_ray ray, t_sphere sphere)
 t_quadratic	prepare_quadratic_cylinder(t_ray ray, const t_cylinder *cyl)
 {
 	t_quadratic	q;
-	t_vec3		cylinder2camera;
 
-	cylinder2camera = sub_vec3(ray.origin, cyl->center);
-	q.a = length_squared_vec3(ray.direction);
-	q.half_b = dot_vec3(cylinder2camera, ray.direction);
-	q.c = length_squared_vec3(cylinder2camera) - cyl->radius * cyl->radius;
+	q.a = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z;
+	q.half_b = ray.origin.x * ray.direction.x + ray.origin.z * ray.direction.z;
+	q.c = (ray.origin.x * ray.origin.x + ray.origin.z * ray.origin.z)
+		- (cyl->radius * cyl->radius);
 	q.discriminant = q.half_b * q.half_b - q.a * q.c;
 	return (q);
 }
