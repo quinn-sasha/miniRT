@@ -45,27 +45,29 @@ static t_vec3 calculate_specular(t_hit_record *record, t_light *light,
       scale_vec3(specular_color, light->brightness_ratio * specular_factor));
 }
 
-t_color calculate_direct_lighting(t_hit_record *record, t_scene_object *head,
-                                  t_light *light, t_ray ray) {
-  t_vec3 light_dir_vec;
-  double distance_to_light;
-  t_vec3 normalized_light_dir_vec;
-  t_ray shadow_ray;
-  t_hit_record shadow_rec;
-  t_color diffuse;
-  t_color specular;
+t_color	calculate_direct_lighting(t_hit_record *record,
+		t_scene_object *head, t_light *light, t_ray ray, t_range range)
+{
+	t_vec3			light_dir_vec;
+	t_vec3			normalized_light_dir_vec;
+	t_ray			shadow_ray;
+	t_hit_record	shadow_rec;
+	t_color			diffuse;
+	t_color			specular;
 
-  light_dir_vec = sub_vec3(light->pos, record->intersection);
-  distance_to_light = length_vec3(light_dir_vec);
-  normalized_light_dir_vec = normalize_vec3(light_dir_vec);
-  shadow_ray = init_ray(record->intersection, normalized_light_dir_vec);
-  if (hits_any_object(head, shadow_ray, 0.001, distance_to_light, &shadow_rec))
-    return (init_color(0, 0, 0));
-  diffuse = calculate_diffuse(light, record, normalized_light_dir_vec);
-  specular = init_color(0, 0, 0);
-  if (record->material.type == MAT_METAL)
-    specular = calculate_specular(record, light, ray, normalized_light_dir_vec);
-  return (add_vec3(diffuse, specular));
+	light_dir_vec = sub_vec3(light->pos, record->intersection);
+	range.max_t = length_vec3(light_dir_vec);
+	normalized_light_dir_vec = normalize_vec3(light_dir_vec);
+	shadow_ray = init_ray(record->intersection, normalized_light_dir_vec);
+	if (hits_any_object(head, shadow_ray, range,
+			&shadow_rec))
+		return (init_color(0, 0, 0));
+	diffuse = calculate_diffuse(light, record, normalized_light_dir_vec);
+	specular = init_color(0, 0, 0);
+	if (record->material.type == MAT_METAL)
+		specular = calculate_specular(record, light, ray,
+				normalized_light_dir_vec);
+	return (add_vec3(diffuse, specular));
 }
 
 t_color calculate_indirect_lighting(t_hit_record record,
