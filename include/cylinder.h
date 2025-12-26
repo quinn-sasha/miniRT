@@ -26,8 +26,8 @@ typedef struct s_cylinder {
   t_material material;
 } t_cylinder;
 
-t_cylinder *new_cylinder(t_vec3 center, t_vec3 axis, double radius,
-                         double height, t_material material);
+t_cylinder *new_cylinder(t_vec3 *vectors, double *dimensions,
+                         t_material material);
 
 bool hit_cylinder(const t_ray ray, t_range range, t_hit_record *hit_rec,
                   const t_cylinder *cyl);

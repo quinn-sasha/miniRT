@@ -18,15 +18,14 @@
 #include <math.h>
 #include <stdlib.h>
 
-t_cylinder *new_cylinder(t_vec3 center, t_vec3 axis, double radius,
-                         double height, t_material material) {
+t_cylinder *new_cylinder(t_vec3 *vectors, double *dimensions,
+                         t_material material) {
   t_cylinder *new_cylinder;
-
   new_cylinder = xmalloc(sizeof(t_cylinder));
-  new_cylinder->center = center;
-  new_cylinder->axis = axis;
-  new_cylinder->radius = radius;
-  new_cylinder->height = height;
+  new_cylinder->center = vectors[0];
+  new_cylinder->axis = vectors[1];
+  new_cylinder->radius = dimensions[0];
+  new_cylinder->height = dimensions[1];
   new_cylinder->material = material;
   return (new_cylinder);
 }
