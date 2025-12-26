@@ -42,6 +42,8 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/math_utils.c \
 				$(SRC_DIR)/minilibx_utils.c \
 				$(SRC_DIR)/object_list.c \
+				$(SRC_DIR)/object_list_add.c \
+				$(SRC_DIR)/object_list_destroy.c \
 				$(SRC_DIR)/random_number_generator.c \
 				$(SRC_DIR)/ray.c \
 				$(SRC_DIR)/sphere.c \
