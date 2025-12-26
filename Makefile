@@ -36,21 +36,21 @@ INCLUDES := -I$(INCLUDE_DIR) -I$(LIBFT_DIR) -I$(MLX_DIR)
 SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/color.c \
 				$(SRC_DIR)/error_utils.c \
-				$(SRC_DIR)/hit_record.c \
 				$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init_material.c \
 				$(SRC_DIR)/material.c \
 				$(SRC_DIR)/math_utils.c \
 				$(SRC_DIR)/image_utils.c \
 				$(SRC_DIR)/minilibx_utils.c \
-				$(SRC_DIR)/object_list.c \
-				$(SRC_DIR)/object_list_add.c \
-				$(SRC_DIR)/object_list_destroy.c \
+				$(SRC_DIR)/object/hit_record.c \
+				$(SRC_DIR)/object/object_list.c \
+				$(SRC_DIR)/object/object_list_add.c \
+				$(SRC_DIR)/object/object_list_destroy.c \
+				$(SRC_DIR)/object/sphere.c \
+				$(SRC_DIR)/object/plane.c \
+				$(SRC_DIR)/object/cylinder.c \
 				$(SRC_DIR)/random_number_generator.c \
 				$(SRC_DIR)/ray.c \
-				$(SRC_DIR)/sphere.c \
-				$(SRC_DIR)/plane.c \
-				$(SRC_DIR)/cylinder.c \
 				$(SRC_DIR)/utils/string_utils.c \
 				$(SRC_DIR)/utils/utilities1.c \
 				$(SRC_DIR)/utils/utilities2.c \
