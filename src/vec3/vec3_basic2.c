@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   vec3_basic2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/26 00:17:52 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 00:17:53 by squinn           ###   ########.fr       */
+/*   Created: 2025/12/26 15:02:14 by squinn            #+#    #+#             */
+/*   Updated: 2025/12/26 15:02:15 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#include "vec3.h"
 
-# include "vec3.h"
+t_vec3	scale_vec3(t_vec3 v, double scalar)
+{
+	return (init_vec3(v.x * scalar, v.y * scalar, v.z * scalar));
+}
 
-t_color		init_color(double red, double green, double blue);
-void		gamma_correction(t_color *color);
-uint32_t	rgb_to_integer(t_color color);
-t_color		clamp_color(t_color color);
+t_vec3	divide_vec3(t_vec3 v, double scalar)
+{
+	return (scale_vec3(v, 1 / scalar));
+}
 
-#endif
+t_vec3	negative_vec3(t_vec3 v)
+{
+	return (scale_vec3(v, -1));
+}
+
+t_vec3	multiply_vec3(t_vec3 a, t_vec3 b)
+{
+	return (init_vec3(a.x * b.x, a.y * b.y, a.z * b.z));
+}

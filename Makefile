@@ -38,6 +38,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/error_utils.c \
 				$(SRC_DIR)/hit_record.c \
 				$(SRC_DIR)/main.c \
+				$(SRC_DIR)/init_material.c \
 				$(SRC_DIR)/material.c \
 				$(SRC_DIR)/math_utils.c \
 				$(SRC_DIR)/image_utils.c \
@@ -50,19 +51,28 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/sphere.c \
 				$(SRC_DIR)/plane.c \
 				$(SRC_DIR)/cylinder.c \
-				$(SRC_DIR)/utilities.c \
-				$(SRC_DIR)/vec3_basic.c \
-				$(SRC_DIR)/vec3_basic2.c \
-				$(SRC_DIR)/vec3_random.c \
-				$(SRC_DIR)/vec3_physics.c \
-				$(SRC_DIR)/vec3_utils.c \
+				$(SRC_DIR)/utils/string_utils.c \
+				$(SRC_DIR)/utils/utilities1.c \
+				$(SRC_DIR)/utils/utilities2.c \
+				$(SRC_DIR)/utils/xmalloc.c \
+				$(SRC_DIR)/vec3/vec3_basic.c \
+				$(SRC_DIR)/vec3/vec3_basic2.c \
+				$(SRC_DIR)/vec3/vec3_random.c \
+				$(SRC_DIR)/vec3/vec3_physics.c \
+				$(SRC_DIR)/vec3/vec3_utils.c \
 				$(SRC_DIR)/light.c \
 				$(SRC_DIR)/calculate_color.c \
-				$(SRC_DIR)/ft_atof.c \
-				$(SRC_DIR)/parse.c \
-				$(SRC_DIR)/parse_line.c \
-				$(SRC_DIR)/parse_utils.c \
-				$(SRC_DIR)/xmalloc.c \
+				$(SRC_DIR)/parse/ft_atof.c \
+				$(SRC_DIR)/parse/parse_ambient.c \
+				$(SRC_DIR)/parse/parse_camera.c \
+				$(SRC_DIR)/parse/parse_cylinder.c \
+				$(SRC_DIR)/parse/parse_double.c \
+				$(SRC_DIR)/parse/parse_light.c \
+				$(SRC_DIR)/parse/parse_line.c \
+				$(SRC_DIR)/parse/parse_plane.c \
+				$(SRC_DIR)/parse/parse_sphere.c \
+				$(SRC_DIR)/parse/parse_utils.c \
+				$(SRC_DIR)/parse/parse.c
 
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

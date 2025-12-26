@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   xmalloc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/26 00:17:52 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 00:17:53 by squinn           ###   ########.fr       */
+/*   Created: 2025/12/26 15:13:19 by squinn            #+#    #+#             */
+/*   Updated: 2025/12/26 15:13:20 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#include "error_utils.h"
+#include "xmalloc.h"
+#include <stdlib.h>
 
-# include "vec3.h"
+void	*xmalloc(size_t size)
+{
+	void	*result;
 
-t_color		init_color(double red, double green, double blue);
-void		gamma_correction(t_color *color);
-uint32_t	rgb_to_integer(t_color color);
-t_color		clamp_color(t_color color);
-
-#endif
+	result = malloc(size);
+	if (result == NULL)
+	{
+		error_exit("xmalloc()");
+	}
+	return (result);
+}

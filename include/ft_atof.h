@@ -1,6 +1,18 @@
-#ifndef PARSE_FLOATING_POINT_H
-#define PARSE_FLOATING_POINT_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atof.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/25 20:05:06 by squinn            #+#    #+#             */
+/*   Updated: 2025/12/25 20:06:17 by squinn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-double ft_atof(const char *nptr);
+#ifndef FT_ATOF_H
+# define FT_ATOF_H
 
-#endif // !PARSE_FLOATING_POINT_H
+double	ft_atof(const char *nptr);
+
+#endif
