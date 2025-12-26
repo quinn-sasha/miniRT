@@ -6,7 +6,7 @@
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 18:25:50 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 18:27:20 by squinn           ###   ########.fr       */
+/*   Updated: 2025/12/26 18:56:54 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	destroy_mlx_resources_if_allocated(t_program *data)
 	{
 		mlx_destroy_window(data->mlx, data->window);
 	}
-	mlx_destroy_display(data->mlx);
+	// mlx_destroy_display(data->mlx);
 	free(data->mlx);
 }
 

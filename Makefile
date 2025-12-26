@@ -62,6 +62,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/vec3/vec3_utils.c \
 				$(SRC_DIR)/light.c \
 				$(SRC_DIR)/calculate_color.c \
+				$(SRC_DIR)/calculate_diffuse_specular.c \
 				$(SRC_DIR)/parse/ft_atof.c \
 				$(SRC_DIR)/parse/parse_ambient.c \
 				$(SRC_DIR)/parse/parse_camera.c \
