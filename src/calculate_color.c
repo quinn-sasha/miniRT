@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 17:47:15 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 19:04:13 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/26 19:37:18 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ t_color	calculate_direct_lighting(t_hit_record *record, t_program *data,
 }
 
 t_color	calculate_indirect_lighting(t_hit_record record,
-		t_xorshift64_state *state, t_ray ray, t_program *data)
+		t_xorshift64_state *state, t_ray ray, t_program *data, int num_recursions)
 {
 	t_ray	scattered;
 	t_color	attenuation;
@@ -63,7 +63,7 @@ t_color	calculate_indirect_lighting(t_hit_record record,
 	if (can_scatter)
 	{
 		recursive_color = calculate_color(scattered, data, state,
-				data->max_recursions - 1);
+				num_recursions - 1);
 		indirect_light = multiply_vec3(recursive_color, attenuation);
 	}
 	return (indirect_light);
@@ -109,7 +109,7 @@ t_color	calculate_color(t_ray ray, t_program *data, t_xorshift64_state *state,
 		if (record.material.type == MAT_LAMBERTIAN
 			|| record.material.type == MAT_METAL)
 			direct_light = calculate_direct_lighting(&record, data, ray, range);
-		indirect_light = calculate_indirect_lighting(record, state, ray, data);
+		indirect_light = calculate_indirect_lighting(record, state, ray, data, num_recursions);
 		ambient_color = calculate_ambient_color(data, record);
 		return (clamp_color(add_triple_vec3(direct_light, indirect_light,
 					ambient_color)));
