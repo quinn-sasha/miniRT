@@ -1,23 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   utilities1.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/26 00:17:52 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 00:17:53 by squinn           ###   ########.fr       */
+/*   Created: 2025/12/26 14:51:53 by squinn            #+#    #+#             */
+/*   Updated: 2025/12/26 14:51:54 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#include "utilities.h"
+#include <stdlib.h>
 
-# include "vec3.h"
+double	clamp(double x, double lower_limit, double upper_limit)
+{
+	if (x < lower_limit)
+		return (lower_limit);
+	if (x > upper_limit)
+		return (upper_limit);
+	return (x);
+}
 
-t_color		init_color(double red, double green, double blue);
-void		gamma_correction(t_color *color);
-uint32_t	rgb_to_integer(t_color color);
-t_color		clamp_color(t_color color);
+double	min_double(double a, double b)
+{
+	if (a < b)
+		return (a);
+	return (b);
+}
 
-#endif
+// Simpler version of original fabs
+double	ft_fabs(double x)
+{
+	if (x < 0.0)
+		return (-x);
+	return (x);
+}
