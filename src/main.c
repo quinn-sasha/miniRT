@@ -5,6 +5,7 @@
 #include "light.h"
 #include "material.h"
 #include "minilibx_utils.h"
+#include "minirt.h"
 #include "mlx.h"
 #include "object_list.h"
 #include "parse.h"
@@ -37,8 +38,8 @@ t_color calculate_color(t_ray ray, t_program *data, t_xorshift64_state *state,
     direct_light = init_color(0, 0, 0);
     if (record.material.type == MAT_LAMBERTIAN ||
         record.material.type == MAT_METAL)
-      direct_light =
-          calculate_direct_lighting(&record, &data->head, &data->light, ray, range);
+      direct_light = calculate_direct_lighting(&record, &data->head,
+                                               &data->light, ray, range);
     indirect_light =
         calculate_indirect_lighting(record, state, ray, num_recursions, data);
     ambient_effect = scale_vec3(data->ambient.color, data->ambient.ratio);
@@ -49,39 +50,32 @@ t_color calculate_color(t_ray ray, t_program *data, t_xorshift64_state *state,
   return (calculate_background_color(ray));
 }
 
+t_color calculate_average_color(t_program *data, int x, int y) {
+  t_color pixel_color = init_color(0, 0, 0);
+  for (int sample = 0; sample < data->num_samples; sample++) {
+    double x_offset = (x + random_double(&data->state)) / (WIDTH - 1);
+    double y_offset = (y + random_double(&data->state)) / (HEIGHT - 1);
+    t_ray ray = get_ray(data->camera, x_offset, y_offset);
+    pixel_color = add_vec3(pixel_color, calculate_color(ray, data, &data->state,
+                                                        data->max_recursions));
+  }
+  pixel_color = divide_vec3(pixel_color, data->num_samples);
+  return pixel_color;
+}
+
 int render(t_program *data) {
   if (data->window == NULL)
     return (EXIT_SUCCESS);
-
-  t_xorshift64_state state;
-  init_xorshift64_state(&state);
-
-  printf("Rendering started\n");
-  clock_t begin = clock();
-  const int max_recursions = 50;
-  const int num_samples_per_pixel = 100;
   for (int y = 0; y < HEIGHT; y++) {
-    printf("Scanlines reamaining: %d\n", HEIGHT - y);
+    printf("Scanlines remaining: %d\n", HEIGHT - y);
     for (int x = 0; x < WIDTH; x++) {
-
-      t_color pixel_color = init_color(0, 0, 0);
-      for (int sample = 0; sample < num_samples_per_pixel; sample++) {
-        double x_offset = (x + random_double(&state)) / (WIDTH - 1);
-        double y_offset = (y + random_double(&state)) / (HEIGHT - 1);
-        t_ray ray = get_ray(data->camera, x_offset, y_offset);
-        pixel_color = add_vec3(
-            pixel_color, calculate_color(ray, data, &state, max_recursions));
-      }
-      pixel_color = divide_vec3(pixel_color, num_samples_per_pixel);
+      t_color pixel_color = calculate_average_color(data, x, y);
       gamma_correction(&pixel_color);
       set_pixel_color(x, y, &data->img, rgb_to_integer(pixel_color));
     }
   }
-  mlx_put_image_to_window(data->mlx, data->window, data->img.mlx_img, 0, 0);
-  clock_t end = clock();
-  double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-  printf("Time spent: %lf seconds\n", time_spent);
   printf("Rendering done\n");
+  mlx_put_image_to_window(data->mlx, data->window, data->img.mlx_img, 0, 0);
   return EXIT_SUCCESS;
 }
 

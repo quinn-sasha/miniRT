@@ -1,11 +1,11 @@
 #ifndef MINIRT_H
-# define MINIRT_H
+#define MINIRT_H
 
 #include "camera.h"
 #include "img.h"
 #include "light.h"
 #include "object_list.h"
-#include "light.h"
+#include "random_number_generator.h"
 
 #define WIDTH 384
 #define HEIGHT 216
@@ -18,6 +18,9 @@ typedef struct s_program {
   t_camera camera;
   t_ambient ambient;
   t_light light;
+  t_xorshift64_state state;
+  int max_recursions;
+  int num_samples;
 } t_program;
 
 #endif
