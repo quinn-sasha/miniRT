@@ -51,11 +51,11 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/utils/string_utils.c \
 				$(SRC_DIR)/utils/utilities1.c \
 				$(SRC_DIR)/utils/utilities2.c \
-				$(SRC_DIR)/vec3_basic.c \
-				$(SRC_DIR)/vec3_basic2.c \
-				$(SRC_DIR)/vec3_random.c \
-				$(SRC_DIR)/vec3_physics.c \
-				$(SRC_DIR)/vec3_utils.c \
+				$(SRC_DIR)/vec3/vec3_basic.c \
+				$(SRC_DIR)/vec3/vec3_basic2.c \
+				$(SRC_DIR)/vec3/vec3_random.c \
+				$(SRC_DIR)/vec3/vec3_physics.c \
+				$(SRC_DIR)/vec3/vec3_utils.c \
 				$(SRC_DIR)/light.c \
 				$(SRC_DIR)/calculate_color.c \
 				$(SRC_DIR)/parse/ft_atof.c \
