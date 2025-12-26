@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 17:35:34 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 19:05:13 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/26 19:48:54 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "light.h"
 #include "minirt.h"
 #include "vec3.h"
+#include <math.h>
 
 t_vec3	calculate_diffuse(t_light *light, t_hit_record *record,
 		t_vec3 normalized_light_dir_vec)
