@@ -1,3 +1,4 @@
+#include "range.h"
 #include "plane.h"
 #include "hit_record.h"
 #include "xmalloc.h"
@@ -12,7 +13,7 @@ t_plane *new_plane(t_vec3 point, t_vec3 normal, t_material material) {
   return (new_plane);
 }
 
-bool hits_plane(const t_ray ray, double min_t, double max_t,
+bool hits_plane(const t_ray ray, t_range range,
                 t_hit_record *record, t_plane *plane) {
   double denom = dot_vec3(ray.direction, plane->normal);
 
@@ -22,7 +23,7 @@ bool hits_plane(const t_ray ray, double min_t, double max_t,
   double numerator = dot_vec3(tmp, plane->normal);
   double t = numerator / denom;
 
-  if (t < min_t || t > max_t)
+  if (t < range.min_t || t > range.max_t)
     return false;
   record->t = t;
   record->intersection = ray_at(ray, t);

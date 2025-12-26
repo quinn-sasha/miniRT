@@ -47,10 +47,9 @@ static t_vec3	calculate_specular(t_hit_record *record, t_light *light,
 }
 
 t_color	calculate_direct_lighting(t_hit_record *record,
-		t_scene_object *head, t_light *light, t_ray ray)
+		t_scene_object *head, t_light *light, t_ray ray, t_range range)
 {
 	t_vec3			light_dir_vec;
-	double			distance_to_light;
 	t_vec3			normalized_light_dir_vec;
 	t_ray			shadow_ray;
 	t_hit_record	shadow_rec;
@@ -58,10 +57,10 @@ t_color	calculate_direct_lighting(t_hit_record *record,
 	t_color			specular;
 
 	light_dir_vec = sub_vec3(light->pos, record->intersection);
-	distance_to_light = length_vec3(light_dir_vec);
+	range.max_t = length_vec3(light_dir_vec);
 	normalized_light_dir_vec = normalize_vec3(light_dir_vec);
 	shadow_ray = init_ray(record->intersection, normalized_light_dir_vec);
-	if (hits_any_object(head, shadow_ray, 0.001, distance_to_light,
+	if (hits_any_object(head, shadow_ray, range,
 			&shadow_rec))
 		return (init_color(0, 0, 0));
 	diffuse = calculate_diffuse(light, record, normalized_light_dir_vec);

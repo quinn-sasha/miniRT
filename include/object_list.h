@@ -1,6 +1,7 @@
 #ifndef OBJECT_LIST_H
 #define OBJECT_LIST_H
 
+#include "range.h"
 #include "cylinder.h"
 #include "plane.h"
 #include "sphere.h"
@@ -29,8 +30,7 @@ void add_object_generic(t_scene_object *head, void *object, e_object_type type);
 void add_sphere(t_scene_object *head, t_sphere *sphere);
 void add_plane(t_scene_object *head, t_plane *plane);
 void add_cylinder(t_scene_object *head, t_cylinder *cylinder);
-bool hits_any_object(t_scene_object *head, t_ray ray, double min_t,
-                     double max_t, t_hit_record *record);
+bool hits_any_object(t_scene_object *head, t_ray ray, t_range range, t_hit_record *record);
 int count_objects(t_scene_object *head);
 
 #endif

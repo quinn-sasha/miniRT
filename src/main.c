@@ -27,15 +27,18 @@ t_color calculate_color(t_ray ray, t_program *data, t_xorshift64_state *state,
   t_color indirect_light;
   t_color ambient_effect;
   t_color final_ambient;
+  t_range range;
 
   if (num_recursions <= 0)
     return (init_color(0, 0, 0));
-  if (hits_any_object(&data->head, ray, 0.001, INFINITY, &record)) {
+  range.min_t = 0.001;
+  range.max_t = INFINITY;
+  if (hits_any_object(&data->head, ray, range, &record)) {
     direct_light = init_color(0, 0, 0);
     if (record.material.type == MAT_LAMBERTIAN ||
         record.material.type == MAT_METAL)
       direct_light =
-          calculate_direct_lighting(&record, &data->head, &data->light, ray);
+          calculate_direct_lighting(&record, &data->head, &data->light, ray, range);
     indirect_light =
         calculate_indirect_lighting(record, state, ray, num_recursions, data);
     ambient_effect = scale_vec3(data->ambient.color, data->ambient.ratio);

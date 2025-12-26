@@ -1,4 +1,4 @@
-#include "object_list.h"
+#include "range.h"
 #include "cylinder.h"
 #include "error_utils.h"
 #include "hit_record.h"
@@ -77,32 +77,31 @@ void add_cylinder(t_scene_object *head, t_cylinder *cylinder) {
   add_object_generic(head, cylinder, OBJ_CYLINDER);
 }
 
-static bool hits_object(t_ray ray, double min_t, double max_t,
+static bool hits_object(t_ray ray, t_range range,
                         t_hit_record *record, t_scene_object *object) {
   if (object->type == OBJ_SPHERE) {
-    return hits_sphere(ray, min_t, max_t, record, *object->data.sphere);
+    return hits_sphere(ray, range, record, *object->data.sphere);
   }
   if (object->type == OBJ_PLANE) {
-    return hits_plane(ray, min_t, max_t, record, object->data.plane);
+    return hits_plane(ray, range, record, object->data.plane);
   }
   if (object->type == OBJ_CYLINDER) {
-    return hit_cylinder(ray, min_t, max_t, record, object->data.cylinder);
+    return hit_cylinder(ray, range, record, object->data.cylinder);
   }
   print_error("hits_object(): Unknown object type");
   return false;
 }
 
-bool hits_any_object(t_scene_object *head, t_ray ray, double min_t,
-                     double max_t, t_hit_record *record) {
+bool hits_any_object(t_scene_object *head, t_ray ray,
+                     t_range range, t_hit_record *record) {
   t_hit_record temp_record;
   bool hits_anything = false;
-  double closest_so_far = max_t;
 
   t_scene_object *object = head->next;
   while (object) {
-    if (hits_object(ray, min_t, closest_so_far, &temp_record, object)) {
+    if (hits_object(ray, range, &temp_record, object)) {
       hits_anything = true;
-      closest_so_far = temp_record.t;
+      range.max_t = temp_record.t;
       *record = temp_record;
     }
     object = object->next;
