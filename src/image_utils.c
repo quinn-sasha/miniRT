@@ -13,13 +13,14 @@
 #include "error_utils.h"
 #include "mlx.h"
 
-void set_pixel_color(int x, int y, t_img *img, uint32_t color) {
-  int bytes_per_pixel;
-  int offset;
-  char *pixel_addr;
+void	set_pixel_color(int x, int y, t_img *img, uint32_t color)
+{
+	int		bytes_per_pixel;
+	int		offset;
+	char	*pixel_addr;
 
-  bytes_per_pixel = img->bits_per_pixel / 8;
-  offset = img->row_size * y + x * bytes_per_pixel;
-  pixel_addr = img->address + offset;
-  *(uint32_t *)pixel_addr = color;
+	bytes_per_pixel = img->bits_per_pixel / 8;
+	offset = img->row_size * y + x * bytes_per_pixel;
+	pixel_addr = img->address + offset;
+	*(uint32_t *)pixel_addr = color;
 }
