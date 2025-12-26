@@ -51,6 +51,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/utils/string_utils.c \
 				$(SRC_DIR)/utils/utilities1.c \
 				$(SRC_DIR)/utils/utilities2.c \
+				$(SRC_DIR)/utils/xmalloc.c \
 				$(SRC_DIR)/vec3/vec3_basic.c \
 				$(SRC_DIR)/vec3/vec3_basic2.c \
 				$(SRC_DIR)/vec3/vec3_random.c \
@@ -68,8 +69,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/parse/parse_plane.c \
 				$(SRC_DIR)/parse/parse_sphere.c \
 				$(SRC_DIR)/parse/parse_utils.c \
-				$(SRC_DIR)/parse/parse.c \
-				$(SRC_DIR)/xmalloc.c
+				$(SRC_DIR)/parse/parse.c
 
 
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

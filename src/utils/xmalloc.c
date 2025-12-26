@@ -1,20 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xmalloc.h                                          :+:      :+:    :+:   */
+/*   xmalloc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/26 15:13:29 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 15:13:30 by squinn           ###   ########.fr       */
+/*   Created: 2025/12/26 15:13:19 by squinn            #+#    #+#             */
+/*   Updated: 2025/12/26 15:13:20 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef XMALLOC_H
-# define XMALLOC_H
+#include "error_utils.h"
+#include "xmalloc.h"
+#include <stdlib.h>
 
-# include <stddef.h>
+void	*xmalloc(size_t size)
+{
+	void	*result;
 
-void	*xmalloc(size_t size);
-
-#endif // !XMALLOC_H
+	result = malloc(size);
+	if (result == NULL)
+	{
+		error_exit("xmalloc()");
+	}
+	return (result);
+}
