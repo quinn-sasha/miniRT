@@ -48,7 +48,9 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/sphere.c \
 				$(SRC_DIR)/plane.c \
 				$(SRC_DIR)/cylinder.c \
-				$(SRC_DIR)/utilities.c \
+				$(SRC_DIR)/utils/string_utils.c \
+				$(SRC_DIR)/utils/utilities1.c \
+				$(SRC_DIR)/utils/utilities2.c \
 				$(SRC_DIR)/vec3_basic.c \
 				$(SRC_DIR)/vec3_basic2.c \
 				$(SRC_DIR)/vec3_random.c \
