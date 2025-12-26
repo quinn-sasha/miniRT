@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cylinder.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:28:16 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 17:03:43 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/27 01:50:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 #include <stdlib.h>
 
 t_cylinder *new_cylinder(t_vec3 *vectors, double *dimensions,
-                         t_material material) {
+                         t_material material)
+{
   t_cylinder *new_cylinder;
   new_cylinder = xmalloc(sizeof(t_cylinder));
   new_cylinder->center = vectors[0];
@@ -31,7 +32,8 @@ t_cylinder *new_cylinder(t_vec3 *vectors, double *dimensions,
 }
 
 static bool hit_cylinder_side(const t_ray ray, t_range range,
-                              t_hit_record *record, const t_cylinder *cyl) {
+                              t_hit_record *record, const t_cylinder *cyl) 
+{
   t_quadratic quadratic;
   t_vec3 intersection;
   double half_h;
@@ -55,24 +57,23 @@ static bool hit_cylinder_side(const t_ray ray, t_range range,
 }
 
 static bool hit_cylinder_cap(const t_ray ray, t_range range,
-                             t_hit_record *record, const t_cylinder *cyl,
-                             double cap_height) {
+                             t_hit_record *record, const t_cylinder *cyl)
+{
   double t;
   t_vec3 intersection;
-  double dx;
-  double dz;
+  double cap_height;
   t_vec3 outward_normal_vector;
 
   if (fabs(ray.direction.y) < 1e-6)
     return (false);
+  cap_height = cyl->center.y;
   t = (cap_height - ray.origin.y) / ray.direction.y;
   if (t < range.min_t || t > range.max_t)
     return (false);
   intersection = ray_at(ray, t);
-  dx = intersection.x - cyl->center.x;
-  dz = intersection.z - cyl->center.z;
   // 交点が中心軸から半径ｒ以内にあるかどうか
-  if ((dx * dx + dz * dz) > cyl->radius * cyl->radius)
+  if ((intersection.x * intersection.x + intersection.z * intersection.z)
+        > cyl->radius * cyl->radius)
     return (false);
   record->t = t;
   record->intersection = intersection;
@@ -87,29 +88,31 @@ static bool hit_cylinder_cap(const t_ray ray, t_range range,
 }
 
 static bool record_hit(bool *hit_anything, double *closest_so_far,
-                       t_hit_record *record) {
+                       t_hit_record *record)
+{
   *hit_anything = true;
   *closest_so_far = record->t;
   return (true);
 }
 
-static t_ray world_to_local_ray(t_ray ray, t_vec3 center, t_vec3 ex, t_vec3 ey,
-                                t_vec3 ez) {
+static t_ray world_to_local_ray(t_ray ray, t_vec3 center, t_basis basis)
+{
   t_vec3 origin_diff;
   t_ray local_ray;
 
   origin_diff = sub_vec3(ray.origin, center);
   local_ray.origin =
-      init_vec3(dot_vec3(origin_diff, ex), dot_vec3(origin_diff, ey),
-                dot_vec3(origin_diff, ez));
+      init_vec3(dot_vec3(origin_diff, basis.ex), dot_vec3(origin_diff, basis.ey),
+                dot_vec3(origin_diff, basis.ez));
   local_ray.direction =
-      init_vec3(dot_vec3(ray.direction, ex), dot_vec3(ray.direction, ey),
-                dot_vec3(ray.direction, ez));
+      init_vec3(dot_vec3(ray.direction, basis.ex), dot_vec3(ray.direction, basis.ey),
+                dot_vec3(ray.direction, basis.ez));
   return (local_ray);
 }
 
 static bool hit_cylinder_side_cap(t_ray local_ray, t_range range,
-                                  t_hit_record *record, const t_cylinder *cyl) {
+                                  t_hit_record *record, const t_cylinder *cyl)
+{
   bool hit_anything;
   double closest_so_far;
   t_cylinder local_cyl;
@@ -119,40 +122,40 @@ static bool hit_cylinder_side_cap(t_ray local_ray, t_range range,
   local_cyl.center = init_vec3(0, 0, 0);
   if (hit_cylinder_side(local_ray, range, record, &local_cyl))
     hit_anything = record_hit(&hit_anything, &closest_so_far, record);
-  if (hit_cylinder_cap(local_ray, range, record, &local_cyl,
-                       -cyl->height / 2.0))
+  local_cyl.center.y = -cyl->height / 2.0;
+  if (hit_cylinder_cap(local_ray, range, record, &local_cyl))
     hit_anything = record_hit(&hit_anything, &closest_so_far, record);
-  if (hit_cylinder_cap(local_ray, range, record, &local_cyl, cyl->height / 2.0))
+   local_cyl.center.y = cyl->height / 2.0;
+  if (hit_cylinder_cap(local_ray, range, record, &local_cyl))
     hit_anything = record_hit(&hit_anything, &closest_so_far, record);
   return (hit_anything);
 }
 
 bool hit_cylinder(const t_ray ray, t_range range, t_hit_record *record,
-                  const t_cylinder *cyl) {
-  t_vec3 ey;
+                  const t_cylinder *cyl)
+{
   t_vec3 tmp;
-  t_vec3 ex;
-  t_vec3 ez;
+  t_basis basis;
   t_ray local_ray;
   t_vec3 local_n;
 
   // ローカル基底ベクトルの作成
-  ey = normalize_vec3(cyl->axis);
+  basis.ey = normalize_vec3(cyl->axis);
   tmp = init_vec3(0, 0, 0);
-  if (fabs(ey.y) < 0.9) // ey と tmpのなす角が十分に離れていることを保証するため
+  if (fabs(basis.ey.y) < 0.9) // ey と tmpのなす角が十分に離れていることを保証するため
     tmp = init_vec3(0, 1, 0);
   else
     tmp = init_vec3(1, 0, 0);
-  ex = normalize_vec3(cross_vec3(tmp, ey));
-  ez = cross_vec3(ex, ey);
-  local_ray = world_to_local_ray(ray, cyl->center, ex, ey, ez);
+  basis.ex = normalize_vec3(cross_vec3(tmp, basis.ey));
+  basis.ez = cross_vec3(basis.ex, basis.ey);
+  local_ray = world_to_local_ray(ray, cyl->center, basis);
   if (!hit_cylinder_side_cap(local_ray, range, record, cyl))
     return (false);
   // 結果をワールド空間に戻す
   local_n = record->normal_vector;
   record->normal_vector =
-      add_triple_vec3(scale_vec3(ex, local_n.x), scale_vec3(ey, local_n.y),
-                      scale_vec3(ez, local_n.z));
+      add_triple_vec3(scale_vec3(basis.ex, local_n.x), scale_vec3(basis.ey, local_n.y),
+                      scale_vec3(basis.ez, local_n.z));
   record->intersection = ray_at(ray, record->t);
   set_fronts_face_and_normal_vector(record, ray, record->normal_vector);
   return (true);

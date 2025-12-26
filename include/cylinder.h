@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cylinder.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:26:19 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 13:55:58 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/27 01:10:01 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@ typedef struct s_cylinder {
   double height;
   t_material material;
 } t_cylinder;
+
+typedef struct s_basis {
+  t_vec3 ex;
+  t_vec3 ey;
+  t_vec3 ez;
+} t_basis;
 
 t_cylinder *new_cylinder(t_vec3 *vectors, double *dimensions,
                          t_material material);
