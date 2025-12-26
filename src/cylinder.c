@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:28:16 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 13:52:32 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/26 14:54:15 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "cylinder.h"
 #include "hit_record.h"
 #include "xmalloc.h"
+#include "math_utils.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -34,37 +35,16 @@ t_cylinder	*new_cylinder(t_vec3 center, t_vec3 axis, double radius,
 static bool	hit_cylinder_side(const t_ray ray, t_range range,
 		t_hit_record *record, const t_cylinder *cyl)
 {
-	t_vec3	oc;
-	double	a;
-	double	half_b;
-	double	c;
-	double	discriminant;
-	double	smaller_t;
-	double	bigger_t;
+	t_quadratic	quadratic;
 	double	t;
 	t_vec3	intersection;
 	double	half_h;
 	t_vec3	outward_normal_vector;
 
-	oc = sub_vec3(ray.origin, cyl->center);
-	a = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z;
-	half_b = oc.x * ray.direction.x + oc.z * ray.direction.z;
-	c = oc.x * oc.x + oc.z * oc.z - cyl->radius * cyl->radius;
-	// 判別式: discriminant = b^2 - 4ac
-	// double t = solve_quadratic_t(a, half_b, c, min_t, max_t);
-	// if (t == false)
-	// return (false);
-	discriminant = half_b * half_b - a * c;
-	if (discriminant < 0)
-		return (false);
-	smaller_t = (-half_b - sqrt(discriminant)) / a;
-	bigger_t = (-half_b + sqrt(discriminant)) / a;
-	if (smaller_t > range.min_t && smaller_t < range.max_t)
-		t = smaller_t;
-	else if (bigger_t > range.min_t && bigger_t < range.max_t)
-		t = bigger_t;
-	else
-		return (false);
+	quadratic = prepare_quadratic_cylinder(ray, cyl);
+	t = solve_quadratic_t(quadratic, range);
+	if (t == false)
+		return false;
 	intersection = ray_at(ray, t);
 	half_h = cyl->height / 2.0;
 	if (intersection.y < -half_h || intersection.y > half_h)
