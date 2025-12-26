@@ -40,6 +40,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/main.c \
 				$(SRC_DIR)/material.c \
 				$(SRC_DIR)/math_utils.c \
+				$(SRC_DIR)/image_utils.c \
 				$(SRC_DIR)/minilibx_utils.c \
 				$(SRC_DIR)/object_list.c \
 				$(SRC_DIR)/object_list_add.c \
