@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vec3.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 15:04:11 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 15:04:12 by squinn           ###   ########.fr       */
+/*   Updated: 2025/12/27 18:55:35 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ t_vec3			init_random_vec3(t_xorshift64_state *state);
 t_vec3			init_random_vec3_range(t_xorshift64_state *state, double min,
 					double max);
 t_vec3			init_random_vec3_in_unit_sphere(t_xorshift64_state *state);
-t_vec3			init_random_vec3_in_unit_circle(t_xorshift64_state *state);
 t_vec3			init_random_normalize_vec3(t_xorshift64_state *state);
 t_vec3			reflect(t_vec3 incoming, t_vec3 normal);
 t_vec3			refract(t_vec3 incoming, t_vec3 n, double eta_in_over_etat);
