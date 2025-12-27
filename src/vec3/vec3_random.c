@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vec3_random.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 15:03:05 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 15:03:06 by squinn           ###   ########.fr       */
+/*   Updated: 2025/12/27 18:54:27 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,4 @@ t_vec3	init_random_normalize_vec3(t_xorshift64_state *state)
 	z = random_double_range(state, -1, 1);
 	small_r = sqrt(1 - z * z);
 	return (init_vec3(small_r * cos(a), small_r * sin(a), z));
-}
-
-t_vec3	random_in_hemisphere(const t_vec3 normal, t_xorshift64_state *state)
-{
-	t_vec3	in_unit_sphere;
-
-	in_unit_sphere = init_random_vec3_in_unit_sphere(state);
-	if (dot_vec3(in_unit_sphere, normal) > 0.0)
-		return (in_unit_sphere);
-	else
-		return (negative_vec3(in_unit_sphere));
 }
