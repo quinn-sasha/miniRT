@@ -49,6 +49,7 @@ SRCS := $(SRC_DIR)/camera.c \
 				$(SRC_DIR)/object/sphere.c \
 				$(SRC_DIR)/object/plane.c \
 				$(SRC_DIR)/object/cylinder.c \
+				$(SRC_DIR)/object/hit_cylinder.c \
 				$(SRC_DIR)/random_number_generator.c \
 				$(SRC_DIR)/ray.c \
 				$(SRC_DIR)/utils/string_utils.c \

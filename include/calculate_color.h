@@ -11,26 +11,26 @@
 /* ************************************************************************** */
 
 #ifndef CALCULATE_COLOR_H
-#define CALCULATE_COLOR_H
+# define CALCULATE_COLOR_H
 
-#include "hit_record.h"
-#include "light.h"
-#include "minirt.h"
-#include "vec3.h"
+# include "hit_record.h"
+# include "light.h"
+# include "minirt.h"
+# include "vec3.h"
 
-t_vec3 calculate_diffuse(t_light *light, t_hit_record *record,
-                         t_vec3 normalized_light_dir_vec);
-t_vec3 calculate_specular(t_hit_record *record, t_light *light, t_ray ray,
-                          t_vec3 normalized_light_dir_vec);
-t_color calculate_diffuse_specular(t_program *data, t_hit_record *record,
-                                   t_vec3 normalized_light_dir_vec, t_ray ray);
+t_vec3	calculate_diffuse(t_light *light, t_hit_record *record,
+			t_vec3 normalized_light_dir_vec);
+t_vec3	calculate_specular(t_hit_record *record, t_light *light, t_ray ray,
+			t_vec3 normalized_light_dir_vec);
+t_color	calculate_diffuse_specular(t_program *data, t_hit_record *record,
+			t_vec3 normalized_light_dir_vec, t_ray ray);
 
-t_color calculate_direct_lighting(t_hit_record *record, t_program *data,
-                                  t_ray ray, t_range range);
-t_color calculate_indirect_lighting(t_hit_record record, t_ray ray,
-                                    t_program *data, int num_recursions);
-t_color calculate_background_color(t_ray ray);
+t_color	calculate_direct_lighting(t_hit_record *record, t_program *data,
+			t_ray ray, t_range range);
+t_color	calculate_indirect_lighting(t_hit_record record, t_ray ray,
+			t_program *data, int num_recursions);
+t_color	calculate_background_color(t_ray ray);
 
-t_color calculate_color(t_ray ray, t_program *data, int num_recursions);
+t_color	calculate_color(t_ray ray, t_program *data, int num_recursions);
 
 #endif

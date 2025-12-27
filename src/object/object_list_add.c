@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 15:06:20 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 15:17:25 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/27 14:34:57 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "xmalloc.h"
 #include <stdio.h>
 
-t_scene_object	*new_scene_object(void *object, e_object_type type)
+t_scene_object	*new_scene_object(void *object, t_object_type type)
 {
 	t_scene_object	*new_object;
 
@@ -36,7 +36,7 @@ t_scene_object	*new_scene_object(void *object, e_object_type type)
 }
 
 void	add_object_generic(t_scene_object *head, void *object,
-		e_object_type type)
+		t_object_type type)
 {
 	t_scene_object	*node;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minilibx_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 18:25:50 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 18:56:54 by squinn           ###   ########.fr       */
+/*   Updated: 2025/12/27 14:25:47 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// parse で動的に確保したものはfree()を呼び出さずに終了する
 void	init_mlx_resources(t_program *data)
 {
 	t_img	*image;
@@ -49,7 +48,6 @@ void	destroy_mlx_resources_if_allocated(t_program *data)
 	{
 		mlx_destroy_window(data->mlx, data->window);
 	}
-	// mlx_destroy_display(data->mlx);
 	free(data->mlx);
 }
 

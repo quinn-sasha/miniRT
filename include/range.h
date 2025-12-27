@@ -13,9 +13,10 @@
 #ifndef RANGE_H
 # define RANGE_H
 
-typedef struct s_range{
-  double min_t;
-  double max_t;
-} t_range;
+typedef struct s_range
+{
+	double	min_t;
+	double	max_t;
+}			t_range;
 
 #endif
