@@ -6,14 +6,14 @@
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 14:52:04 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/26 14:52:05 by squinn           ###   ########.fr       */
+/*   Updated: 2025/12/27 16:12:40 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdbool.h>
 
-// オーバーフローなどのチェックはしていない
+// No overflow check
 bool	is_unsigned_int(char *str)
 {
 	int	i;
@@ -28,7 +28,7 @@ bool	is_unsigned_int(char *str)
 	return (true);
 }
 
-// 10進数以外の数や、指数標記に対応してない
+// Doesn't support non-decimal numbers or exponential notation
 bool	is_floating_point(const char *str)
 {
 	int	i;

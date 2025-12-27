@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   object_list_destroy.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 15:12:56 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/26 15:13:55 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/27 16:10:08 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	destroy_scene_object(t_scene_object *object)
 	error_exit("destroy_scene_object(): Unknown object type");
 }
 
-// head は静的に割り当てられている
+// head is statically allocated
 void	destroy_object_list(t_scene_object *head)
 {
 	t_scene_object	*node;
