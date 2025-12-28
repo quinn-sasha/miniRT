@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:47:18 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/27 14:19:37 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/28 16:07:27 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,14 @@ static void	read_from_rt_file(int fd, t_program *data)
 		if (result == PARSE_FAILED)
 		{
 			destroy_object_list(&data->head);
+			close(fd);
 			exit(EXIT_FAILURE);
 		}
 	}
 	if (!is_valid_setting(elements_count))
 	{
 		destroy_object_list(&data->head);
+		close(fd);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -101,4 +103,5 @@ void	parse(int argc, char *argv[], t_program *data)
 	data->state = init_xorshift64_state();
 	init_dummy_head(&data->head);
 	read_from_rt_file(fd, data);
+	close(fd);
 }
