@@ -6,7 +6,7 @@
 /*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:47:18 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/28 13:56:13 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/27 14:19:37 by ikota            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 #include "random_number_generator.h"
 #include <fcntl.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <stdio.h>
 
 static bool	is_rt_extension(const char *filename)
 {
@@ -65,26 +65,25 @@ static void	read_from_rt_file(int fd, t_program *data)
 {
 	t_elements_count	elements_count;
 	char				*line;
-	bool				error_occurred;
+	int					result;
 
-	error_occurred = false;
 	ft_memset(&elements_count, 0, sizeof(elements_count));
 	while (true)
 	{
 		line = get_next_line(fd);
 		if (!line)
 			break ;
-		if (!error_occurred)
-		{
-			if (parse_line(line, &elements_count, data) == PARSE_FAILED)
-				error_occurred = true;
-		}
+		result = parse_line(line, &elements_count, data);
 		free(line);
+		if (result == PARSE_FAILED)
+		{
+			destroy_object_list(&data->head);
+			exit(EXIT_FAILURE);
+		}
 	}
-	if (error_occurred || !is_valid_setting(elements_count))
+	if (!is_valid_setting(elements_count))
 	{
 		destroy_object_list(&data->head);
-		close(fd);
 		exit(EXIT_FAILURE);
 	}
 }
