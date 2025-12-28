@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hit_cylinder.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikota <ikota@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/27 14:00:36 by ikota             #+#    #+#             */
-/*   Updated: 2025/12/27 14:04:13 by ikota            ###   ########.fr       */
+/*   Updated: 2025/12/28 22:09:45 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,11 @@ static bool	hit_cylinder_cap(const t_ray ray, t_range range,
 {
 	double	t;
 	t_vec3	intersection;
-	double	cap_height;
 	t_vec3	outward_normal_vector;
 
 	if (fabs(ray.direction.y) < 1e-6)
 		return (false);
-	cap_height = cyl->center.y;
-	t = (cap_height - ray.origin.y) / ray.direction.y;
+	t = (cyl->center.y - ray.origin.y) / ray.direction.y;
 	if (t < range.min_t || t > range.max_t)
 		return (false);
 	intersection = ray_at(ray, t);
@@ -64,7 +62,7 @@ static bool	hit_cylinder_cap(const t_ray ray, t_range range,
 	record->t = t;
 	record->intersection = intersection;
 	outward_normal_vector = init_vec3(0, 0, 0);
-	if (cap_height > cyl->center.y)
+	if (cyl->center.y > 0)
 		outward_normal_vector = init_vec3(0, 1.0, 0);
 	else
 		outward_normal_vector = init_vec3(0, -1.0, 0);
