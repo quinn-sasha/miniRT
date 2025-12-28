@@ -6,7 +6,7 @@
 /*   By: squinn <squinn@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:26:48 by squinn            #+#    #+#             */
-/*   Updated: 2025/12/25 23:58:09 by squinn           ###   ########.fr       */
+/*   Updated: 2025/12/28 22:45:01 by squinn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "math_utils.h"
 #include "minirt.h"
 #include "ray.h"
+#include "utilities.h"
 #include "vec3.h"
 #include <math.h>
 
@@ -72,8 +73,14 @@ t_camera	init_camera(t_vec3 look_from, t_vec3 direction, t_vec3 view_up,
 void	setup_camera(t_vec3 lookfrom, t_vec3 direction, double hfov,
 		t_program *data)
 {
-	const t_vec3	view_up = init_vec3(0, 1, 0);
+	t_vec3	view_up;
 
+	view_up = init_vec3(0, 1, 0);
+	if (ft_fabs(direction.x) < 1e-6 && ft_fabs(direction.z) < 1e-6) {
+		view_up = init_vec3(0, 0, 1);
+		if (direction.y > 0)
+			view_up = init_vec3(0, 0, -1);
+	}
 	data->camera = init_camera(lookfrom, direction, view_up, hfov);
 }
 
